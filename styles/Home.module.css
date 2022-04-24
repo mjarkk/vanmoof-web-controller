@@ -1,0 +1,124 @@
+.container {
+  padding: 0 2rem;
+}
+
+.main {
+  padding: 4rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 20px 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.description {
+  text-align: center;
+}
+
+.errorBlock, .warningBlock {
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  max-width: 600px;
+}
+
+.errorBlock {
+  background-color: #ffccbc;
+}
+
+.errorBlock::before {
+  content: '🧨';
+  padding-right: 10px;
+}
+
+.warningBlock {
+  background-color: #ffecb3;
+}
+
+.warningBlock::before {
+  content: '⚠️';
+  padding-right: 10px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.formField, .loginBtn, .bikeConnectBtn {
+  max-width: 100%;
+  width: 260px;
+  margin-top: 15px;
+}
+
+.formField label {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(0,0,0,0.7);
+  padding-bottom: 4px;
+}
+
+.formField input {
+  width: 100%;
+}
+
+.loginBtn, .bikeConnectBtn, .formField input {
+  padding: 10px;
+  font-size: 0.9rem;
+  border: 2px solid black;
+  background-color: rgba(0,0,0,0);
+}
+
+.formField input[disabled], .loginBtn[disabled] {
+  background-color: rgba(0,0,0,.07);
+  color: grey;
+}
+
+.errorBox {
+  max-width: 260px;
+  padding-top: 10px;
+  color: darkred;
+  display: inline-block;
+}
+
+.setSpeedLimit {
+  display: inline-block;
+}
+
+.setSpeedLimit button {
+  background-color: transparent;
+  border: 2px solid black;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 0;
+}
+
+.setSpeedLimit button h1 {
+  margin: 0;
+}
+
+.setSpeedLimit button span {
+  color: rgba(0,0,0,0.6)
+}
+
+.setSpeedLimit button:focus, .loginBtn:focus, .bikeConnectBtn:focus {
+  border-color: #1976d2;
+}
