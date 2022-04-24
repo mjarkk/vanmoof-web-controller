@@ -2,15 +2,15 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { FormEvent, ReactNode, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
-import { connectToBike, Bike } from '../lib/bike'
-import { setRevalidateHeaders } from 'next/dist/server/send-payload'
+import type { Bike } from '../lib/bike'
+import dynamic from 'next/dynamic'
+
+const Unsupported = dynamic(() => import('../lib/Unsupported'), { ssr: false })
 
 const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
 
 const Home: NextPage = () => {
-  const [browserCompatible, setBrowserCompatible] = useState<{
-    bluetooth?: boolean
-  }>({})
+  const [browserCompatible, setBrowserCompatible] = useState(true)
   const [bikeCredentials, setBikeCredentials] = useState<undefined | BikeCredentials>(undefined)
   const [bikeInstance, setBikeInstance] = useState<undefined | Bike>(undefined)
 
@@ -24,18 +24,16 @@ const Home: NextPage = () => {
     setBikeCredentials(undefined)
   }
 
-
   useEffect(() => {
     if (bikeCredentials)
       localStorage.setItem('vm-bike-credentials', JSON.stringify(bikeCredentials))
   }, [bikeCredentials])
 
   useEffect(() => {
-    setBrowserCompatible({
-      bluetooth: !!navigator.bluetooth,
-    })
+    setBrowserCompatible(!!navigator.bluetooth)
     const bikeCredentials = localStorage.getItem('vm-bike-credentials')
     if (bikeCredentials) setBikeCredentials(JSON.parse(bikeCredentials))
+    import('../lib/bike')
   }, [])
 
   useEffect(() => {
@@ -61,8 +59,14 @@ const Home: NextPage = () => {
           Change VanMoof S&X 3 speed limit
         </h1>
 
-        {browserCompatible.bluetooth === false
-          ? <BrowserMissingFeatures />
+        {!browserCompatible || (!bikeInstance && !bikeCredentials) ?
+          <p className={styles.description}>
+            Using this site you can change the speed limit of your VanMoof S3 and X3
+          </p>
+          : undefined}
+
+        {!browserCompatible
+          ? <Unsupported />
           : bikeInstance
             ? <BikeControls
               bike={bikeInstance}
@@ -137,6 +141,7 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: Blu
     try {
       setLoading(true)
       setError(undefined)
+      const { connectToBike } = await import('../lib/bike')
       const bike = await connectToBike({
         mac: bikeCredentials.mac,
         encryptionKey: bikeCredentials.encryptionKey,
@@ -173,23 +178,6 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: Blu
       >
         Back to login
       </button>
-    </>
-  )
-}
-
-function BrowserMissingFeatures() {
-  return (
-    <>
-      <p className={styles.description}>
-        Using this site you can change the speed limit of your VanMoof S3 and X3
-      </p>
-
-      <div className={styles.errorBlock}>
-        <div>
-          This browser does not support <a href="https://caniuse.com/web-bluetooth">Web Bluetooth</a>.<br />
-          we need that to communicate with your bike
-        </div>
-      </div>
     </>
   )
 }
@@ -262,9 +250,6 @@ function Login({ setBikeCredentials }: LoginArgs) {
 
   return (
     <form className={styles.loginForm} onSubmit={onSubmit}>
-      <p className={styles.description}>
-        Using this site you can change the speed limit of your VanMoof S3 and X3
-      </p>
       <WarningBlock>This website is <b>NOT</b> an offical VanMoof service/product</WarningBlock>
       <WarningBlock>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</WarningBlock>
       Login using your VanMoof account
