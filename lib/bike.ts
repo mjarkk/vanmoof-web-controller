@@ -49,6 +49,10 @@ export class Bike {
             await this.playSound(0x1)
     }
 
+    disconnect() {
+        this.server.disconnect()
+    }
+
     async checkConnection() {
         if (this.server.connected) return
         console.log('trying to reconnect..')

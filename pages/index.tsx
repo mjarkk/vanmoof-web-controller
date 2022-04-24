@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { FormEvent, ReactNode, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { connectToBike, Bike } from '../lib/bike'
+import { setRevalidateHeaders } from 'next/dist/server/send-payload'
 
 const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
 
@@ -12,6 +13,17 @@ const Home: NextPage = () => {
   }>({})
   const [bikeCredentials, setBikeCredentials] = useState<undefined | BikeCredentials>(undefined)
   const [bikeInstance, setBikeInstance] = useState<undefined | Bike>(undefined)
+
+  const disconnect = () => {
+    bikeInstance?.disconnect()
+    setBikeInstance(undefined)
+  }
+
+  const backToLogin = () => {
+    disconnect()
+    setBikeCredentials(undefined)
+  }
+
 
   useEffect(() => {
     if (bikeCredentials)
@@ -29,7 +41,8 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (bikeInstance) {
       const connectedTimer = setInterval(() => {
-        bikeInstance.checkConnection().catch(() => setBikeInstance(undefined))
+        bikeInstance.checkConnection()
+          .catch((_) => setBikeInstance(undefined))
       }, 1_000)
       return () => clearTimeout(connectedTimer)
     }
@@ -51,9 +64,16 @@ const Home: NextPage = () => {
         {browserCompatible.bluetooth === false
           ? <BrowserMissingFeatures />
           : bikeInstance
-            ? <BikeControls bike={bikeInstance} />
+            ? <BikeControls
+              bike={bikeInstance}
+              disconnect={disconnect}
+            />
             : bikeCredentials
-              ? <BluetoothConnect bikeCredentials={bikeCredentials} setBikeInstance={setBikeInstance} />
+              ? <BluetoothConnect
+                bikeCredentials={bikeCredentials}
+                setBikeInstance={setBikeInstance}
+                backToLogin={backToLogin}
+              />
               : <Login setBikeCredentials={setBikeCredentials} />
         }
       </main>
@@ -67,16 +87,23 @@ const Home: NextPage = () => {
 
 interface BikeControlsArgs {
   bike: Bike
+  disconnect: () => void
 }
 
-function BikeControls({ bike }: BikeControlsArgs) {
+function BikeControls({ bike, disconnect }: BikeControlsArgs) {
   return (
-    <div className={styles.setSpeedLimit}>
-      <SetSpeedLimitButton bike={bike} country='🇯🇵' id={2} maxSpeed={24} />
-      <SetSpeedLimitButton bike={bike} country='🇪🇺' id={0} maxSpeed={27} />
-      <SetSpeedLimitButton bike={bike} country='🇺🇸' id={1} maxSpeed={32} />
-      <SetSpeedLimitButton bike={bike} country='😎' id={3} maxSpeed={37} />
-    </div>
+    <>
+      <div className={styles.setSpeedLimit}>
+        <SetSpeedLimitButton bike={bike} country='🇯🇵' id={2} maxSpeed={24} />
+        <SetSpeedLimitButton bike={bike} country='🇪🇺' id={0} maxSpeed={27} />
+        <SetSpeedLimitButton bike={bike} country='🇺🇸' id={1} maxSpeed={32} />
+        <SetSpeedLimitButton bike={bike} country='😎' id={3} maxSpeed={37} />
+      </div>
+      <button
+        className={styles.button + ' ' + styles.secondary}
+        onClick={disconnect}
+      >Disconnect bike</button>
+    </>
   )
 }
 
@@ -98,15 +125,18 @@ function SetSpeedLimitButton({ bike, country, id, maxSpeed }: SetSpeedLimitButto
 
 interface BluetoothConnectArgs {
   bikeCredentials: BikeCredentials
+  backToLogin: () => void
   setBikeInstance: (bike: Bike) => void,
 }
 
-function BluetoothConnect({ bikeCredentials, setBikeInstance }: BluetoothConnectArgs) {
+function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: BluetoothConnectArgs) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | undefined>(undefined)
 
   const clickConnect = async () => {
     try {
       setLoading(true)
+      setError(undefined)
       const bike = await connectToBike({
         mac: bikeCredentials.mac,
         encryptionKey: bikeCredentials.encryptionKey,
@@ -115,8 +145,8 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance }: BluetoothConnect
       setBikeInstance(bike)
     } catch (e) {
       const eStr = `${e}`
-      if (!/permission/.test(eStr)) {
-        console.log(e)
+      if (!/permission|cancelled/.test(eStr)) {
+        setError(eStr)
       }
     } finally {
       setLoading(false)
@@ -129,7 +159,20 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance }: BluetoothConnect
 
   return (
     <>
-      <button className={styles.bikeConnectBtn} onClick={clickConnect}>Connect to your bike</button>
+      <button
+        className={styles.button + ' ' + styles.positive}
+        onClick={clickConnect}
+        disabled={loading}
+      >
+        {loading ? 'loading' : 'Connect your bike'}
+      </button>
+      {error ? <div className={styles.errorBox}>{error}</div> : undefined}
+      <button
+        className={styles.button + ' ' + styles.secondary}
+        onClick={backToLogin}
+      >
+        Back to login
+      </button>
     </>
   )
 }
