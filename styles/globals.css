@@ -24,7 +24,7 @@
     --border-color: white;
     --secondary-border-color: rgba(255, 255, 255, 0.75);
     --divider-color: #404040;
-    --error-box-bg-color: #b71c1c;
+    --error-box-bg-color: #741818;
     --warning-box-bg-color: #5d4037;
     --positive-box-bg-color: #004d40;
     --active-color: #42a5f5;
@@ -46,7 +46,7 @@ body {
 }
 
 a {
-  color: #1976d2;
+  color: var(--active-color);
   text-decoration: none;
 }
 

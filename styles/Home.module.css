@@ -43,6 +43,10 @@
   background-color: var(--error-box-bg-color);
 }
 
+.errorBlock a {
+  font-weight: bold;
+}
+
 .errorBlock::before {
   content: '🧨';
   padding-right: 10px;
