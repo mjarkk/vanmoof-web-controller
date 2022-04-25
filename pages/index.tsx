@@ -83,7 +83,7 @@ const Home: NextPage = () => {
       </main>
 
       <footer className={styles.footer}>
-        <span><b>NOT</b> an offical VanMoof service/product!</span>
+        <span><b>NOT</b> an offical VanMoof service/product!, <a href="https://github.com/mjarkk/vanmoof-web-controller">Source code</a></span>
       </footer>
     </div>
   )
