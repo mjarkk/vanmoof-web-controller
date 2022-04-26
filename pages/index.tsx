@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { FormEvent, ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
-import type { Bike } from '../lib/bike'
+import { Bike, BikeCredentials } from '../lib/bike'
+import type { BikeControlsArgs } from '../lib/Controls'
+import Login from '../lib/Login'
 import dynamic from 'next/dynamic'
 
 const Unsupported = dynamic(() => import('../lib/Unsupported'), { ssr: false })
-
-const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
+const BikeControls = dynamic<BikeControlsArgs>(() => import('../lib/Controls'))
 
 const Home: NextPage = () => {
   const [browserCompatible, setBrowserCompatible] = useState(true)
@@ -33,7 +34,7 @@ const Home: NextPage = () => {
     setBrowserCompatible(!!navigator.bluetooth)
     const bikeCredentials = localStorage.getItem('vm-bike-credentials')
     if (bikeCredentials) setBikeCredentials(JSON.parse(bikeCredentials))
-    import('../lib/bike')
+    import('../lib/bike') // Start importing the bike lib
   }, [])
 
   useEffect(() => {
@@ -89,44 +90,6 @@ const Home: NextPage = () => {
   )
 }
 
-interface BikeControlsArgs {
-  bike: Bike
-  disconnect: () => void
-}
-
-function BikeControls({ bike, disconnect }: BikeControlsArgs) {
-  return (
-    <>
-      <div className={styles.setSpeedLimit}>
-        <SetSpeedLimitButton bike={bike} country='🇯🇵' id={2} maxSpeed={24} />
-        <SetSpeedLimitButton bike={bike} country='🇪🇺' id={0} maxSpeed={27} />
-        <SetSpeedLimitButton bike={bike} country='🇺🇸' id={1} maxSpeed={32} />
-        <SetSpeedLimitButton bike={bike} country='😎' id={3} maxSpeed={37} />
-      </div>
-      <button
-        className={styles.button + ' ' + styles.secondary}
-        onClick={disconnect}
-      >Disconnect bike</button>
-    </>
-  )
-}
-
-interface SetSpeedLimitButtonArgs {
-  bike: Bike
-  country: string
-  id: number
-  maxSpeed: number
-}
-
-function SetSpeedLimitButton({ bike, country, id, maxSpeed }: SetSpeedLimitButtonArgs) {
-  return (
-    <button onClick={() => bike.setSpeedLimit(id)}>
-      <h1>{country}</h1>
-      <span>{maxSpeed} km/h</span>
-    </button>
-  )
-}
-
 interface BluetoothConnectArgs {
   bikeCredentials: BikeCredentials
   backToLogin: () => void
@@ -141,12 +104,15 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: Blu
     try {
       setLoading(true)
       setError(undefined)
+
+      // Start pre-loading the bike controls
+      const controlsPannelPreload = import('../lib/Controls')
+
       const { connectToBike } = await import('../lib/bike')
-      const bike = await connectToBike({
-        mac: bikeCredentials.mac,
-        encryptionKey: bikeCredentials.encryptionKey,
-        userKeyId: bikeCredentials.userKeyId,
-      })
+      const bike = await connectToBike(bikeCredentials)
+
+      await controlsPannelPreload
+
       setBikeInstance(bike)
     } catch (e) {
       const eStr = `${e}`
@@ -179,117 +145,6 @@ function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: Blu
         Back to login
       </button>
     </>
-  )
-}
-
-interface BikeCredentials {
-  mac: string
-  encryptionKey: string
-  userKeyId: number
-}
-
-interface LoginArgs {
-  setBikeCredentials: (data: BikeCredentials) => void
-}
-
-function Login({ setBikeCredentials }: LoginArgs) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [login, setLogin] = useState({
-    username: '',
-    password: '',
-  })
-
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    try {
-      setLoading(true)
-      let req = await fetch('/api/authenticate', {
-        method: 'POST',
-        headers: {
-          'Api-Key': API_KEY,
-          'Authorization': 'Basic ' + btoa(login.username + ':' + login.password),
-        },
-      })
-
-      if (req.status >= 400)
-        throw await req.text()
-
-      const { token } = await req.json()
-      if (!token)
-        throw 'login failed, missing token or refreshToken'
-
-      req = await fetch(`/api/getCustomerData?includeBikeDetails`, {
-        headers: {
-          'Api-Key': API_KEY,
-          'Authorization': 'Bearer ' + token,
-        }
-      })
-
-      if (req.status >= 400)
-        throw await req.text()
-
-      const resp = await req.json()
-
-      const bikes = resp.data.bikeDetails
-      if (bikes.length == 0)
-        throw 'You don\'t have a bike connected to your account'
-      const bike = bikes[0]
-
-      setBikeCredentials({
-        mac: bike.macAddress,
-        encryptionKey: bike.key.encryptionKey,
-        userKeyId: bike.key.userKeyId,
-      })
-    } catch (e) {
-      setError(`${e}`)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <form className={styles.loginForm} onSubmit={onSubmit}>
-      <WarningBlock>This website is <b>NOT</b> an offical VanMoof service/product</WarningBlock>
-      <WarningBlock>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</WarningBlock>
-      Login using your VanMoof account
-      <div className={styles.formField}>
-        <label htmlFor="username">Username</label>
-        <input
-          disabled={loading}
-          id="username"
-          value={login.username}
-          onChange={e => setLogin(v => ({ ...v, username: e.target.value }))}
-          placeholder="example@example.com"
-        />
-      </div>
-      <div className={styles.formField}>
-        <label htmlFor='password'>Password</label>
-        <input
-          disabled={loading}
-          id="password"
-          value={login.password}
-          onChange={e => setLogin(v => ({ ...v, password: e.target.value }))}
-          type="password"
-        />
-      </div>
-      <button
-        disabled={loading || !login.username || !login.password}
-        className={styles.loginBtn}
-        type='submit'
-      >Login</button>
-      {error ? <div className={styles.errorBox}>{error}</div> : undefined}
-    </form>
-  )
-}
-
-function WarningBlock({ children }: { children?: ReactNode }) {
-  return (
-    <div className={styles.warningBlock}>
-      <div>
-        {children}
-      </div>
-    </div>
   )
 }
 

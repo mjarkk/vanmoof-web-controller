@@ -76,13 +76,13 @@ export class Bike {
     }
 }
 
-interface connectToBikeArgs {
+export interface BikeCredentials {
     mac: string
     encryptionKey: string
     userKeyId: number
 }
 
-export async function connectToBike({ mac, encryptionKey, userKeyId }: connectToBikeArgs): Promise<Bike> {
+export async function connectToBike({ mac, encryptionKey, userKeyId }: BikeCredentials): Promise<Bike> {
     const device = await navigator.bluetooth.requestDevice({
         filters: [
             { name: 'ES3-' + mac.replaceAll(':', '').toUpperCase() },
