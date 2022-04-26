@@ -2,6 +2,6 @@
 
 **NOT** an offical VanMoof service/product!
 
-![preview](https://i.imgur.com/k8taZCH.png "preview")
+![preview](public/screenshot_light.png?raw=true "preview")
 
 https://vanmoof-web-controller.vercel.app/

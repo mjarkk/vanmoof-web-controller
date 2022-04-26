@@ -146,3 +146,16 @@
   background-color: rgba(0, 0, 0, .07);
   color: var(--disabled-text-color);
 }
+
+.previewLight, .previewDark {
+  height: 400px;
+  width: 400px;
+}
+
+.previewLight {display: block !important;}
+.previewDark {display: none !important;}
+
+@media (prefers-color-scheme: dark) {
+  .previewLight {display: none !important;}
+  .previewDark {display: block !important;}
+}

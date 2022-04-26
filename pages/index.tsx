@@ -6,6 +6,9 @@ import { Bike, BikeCredentials } from '../lib/bike'
 import type { BikeControlsArgs } from '../lib/Controls'
 import Login from '../lib/Login'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import screenshotLight from '../public/screenshot_light.png'
+import screenshotDark from '../public/screenshot_dark.png'
 
 const Unsupported = dynamic(() => import('../lib/Unsupported'), { ssr: false })
 const BikeControls = dynamic<BikeControlsArgs>(() => import('../lib/Controls'))
@@ -61,9 +64,28 @@ const Home: NextPage = () => {
         </h1>
 
         {!browserCompatible || (!bikeInstance && !bikeCredentials) ?
-          <p className={styles.description}>
-            Using this site you can change the speed limit of your VanMoof S3 and X3
-          </p>
+          <>
+            <p className={styles.description}>
+              Using this site you can change the speed limit of your VanMoof S3 and X3
+            </p>
+            <div className={styles.previewLight}>
+              <Image
+                alt="Site preview"
+                src={screenshotLight}
+                placeholder='blur'
+                layout="responsive"
+              />
+            </div>
+            <div className={styles.previewDark}>
+              <Image
+                className={styles.darkScreenshot}
+                alt="Site preview"
+                src={screenshotDark}
+                placeholder='blur'
+                layout="responsive"
+              />
+            </div>
+          </>
           : undefined}
 
         {!browserCompatible
