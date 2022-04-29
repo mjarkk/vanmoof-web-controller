@@ -54,8 +54,11 @@ const Home: NextPage = () => {
     <div className={styles.container}>
       <Head>
         <title>Change VanMoof S&X 3 speed limit</title>
-        <meta name="description" content="Change the speed limit of your vanmoof S3 and X3" />
         <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Change the speed limit of your vanmoof S3 and X3" />
+        <meta property="og:title" content="Change the speed limit of your vanmoof S3 and X3" />
+        <meta property="og:type" content="video.movie" />
+        <meta property="og:image" content="/screenshot_dark.png" />
       </Head>
 
       <main className={styles.main}>
