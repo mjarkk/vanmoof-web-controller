@@ -57,8 +57,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <meta name="description" content="Change the speed limit of your vanmoof S3 and X3" />
         <meta property="og:title" content="Change the speed limit of your vanmoof S3 and X3" />
-        <meta property="og:type" content="video.movie" />
-        <meta property="og:image" content="/screenshot_dark.png" />
+        <meta property="og:image" content="https://vanmoof-web-controller.vercel.app/screenshot_dark.png" />
       </Head>
 
       <main className={styles.main}>
