@@ -159,3 +159,14 @@
   .previewLight {display: none !important;}
   .previewDark {display: block !important;}
 }
+
+.bikeInfo {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bikeInfo > * {
+  display: inline-block;
+  margin-right: 10px;
+}

@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { Bike } from './bike'
 import styles from '../styles/Home.module.css'
 import soundboardStyle from '../styles/Soundboard.module.css'
@@ -13,6 +13,7 @@ const BikeContext = createContext({} as Bike)
 export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
     return (
         <BikeContext.Provider value={bike}>
+            <BikeStats bike={bike} />
             <SpeedLimit />
             <SoundBoard />
             <button
@@ -20,6 +21,35 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
                 onClick={disconnect}
             >Disconnect bike</button>
         </BikeContext.Provider>
+    )
+}
+
+function BikeStats({ bike }: { bike: Bike }) {
+    const [info, setInfo] = useState<{
+        version?: string
+        distance?: number
+    }>({})
+
+    const loadInfo = async () => {
+        setInfo({
+            version: await bike.bikeFirmwareVersion(),
+            distance: await bike.bikeDistance(),
+        })
+    }
+
+    useEffect(() => {
+        loadInfo()
+    }, [])
+
+    return (
+        <>
+            <h3>Bike info</h3>
+            <div className={styles.bikeInfo}>
+                <p>Version: <b>{info.version ?? 'loading..'}</b></p>
+                <p>Distance driven: <b>{info.distance ? info.distance + ' KM' : 'loading..'}</b></p>
+                <p>Mac: <b>{bike.mac}</b></p>
+            </div>
+        </>
     )
 }
 

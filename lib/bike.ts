@@ -1,4 +1,5 @@
 import { AESECB } from './aes'
+import { Queue } from './queue'
 
 export class Bike {
     mac: string
@@ -6,6 +7,7 @@ export class Bike {
     encryptionKey: string
     userKeyId: number
     aesEcb: AESECB
+    queue: Queue
 
     constructor(mac: string, encryptionKey: string, userKeyId: number, server: BluetoothRemoteGATTServer) {
         this.mac = mac
@@ -13,10 +15,11 @@ export class Bike {
         this.userKeyId = userKeyId
         this.server = server
         this.aesEcb = new AESECB(new Uint8Array(Buffer.from(this.encryptionKey, 'hex')))
+        this.queue = new Queue
     }
 
     private async makeEncryptedPayload(data: Uint8Array): Promise<Uint8Array> {
-        const nonce = new Uint8Array((await this.bluetoothRead(CHALLENGE)).buffer)
+        const nonce = await this.bluetoothRead(CHALLENGE, false)
         const paddLength = 16 - ((nonce.length + data.length) % 16)
         const dataToEncrypt = new Uint8Array([
             ...nonce,
@@ -26,22 +29,41 @@ export class Bike {
         return this.aesEcb.encrypt(dataToEncrypt)
     }
 
-    private async bluetoothRead(characteristic: Characteristic, encrypted = true): Promise<DataView> {
-        const bluetoothService = await this.server.getPrimaryService(characteristic.service)
-        const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
-        return await bluetoothCharacteristic.readValue()
+    private async decrypt(data: Uint8Array): Promise<Uint8Array> {
+        let decryptedValue = this.aesEcb.decrypt(data).reverse()
+        for (const v of decryptedValue) {
+            if (v != 0) {
+                decryptedValue.slice()
+                break
+            }
+            decryptedValue = decryptedValue.slice(1)
+        }
+        return decryptedValue.reverse()
+    }
+
+    private async bluetoothRead(characteristic: Characteristic, decrypt = true): Promise<Uint8Array> {
+        const data = await this.queue.push(async () => {
+            const bluetoothService = await this.server.getPrimaryService(characteristic.service)
+            const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
+            const buff = await bluetoothCharacteristic.readValue()
+            return new Uint8Array(buff.buffer)
+        })
+        return decrypt ? this.decrypt(data) : data
     }
 
     private async bluetoothWrite(characteristic: Characteristic, data: Uint8Array, encrypted = true) {
-        const bluetoothService = await this.server.getPrimaryService(characteristic.service)
-        const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
-        await bluetoothCharacteristic.writeValue(encrypted ? await this.makeEncryptedPayload(data) : data)
+        const payload = encrypted ? await this.makeEncryptedPayload(data) : data
+        await this.queue.push(async () => {
+            const bluetoothService = await this.server.getPrimaryService(characteristic.service)
+            const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
+            await bluetoothCharacteristic.writeValue(payload)
+        })
     }
 
     async authenticate(playSuccessSound = true) {
         const nonce = await this.bluetoothRead(CHALLENGE, false)
         const dataToEncrypt = new Uint8Array(16)
-        dataToEncrypt.set(new Uint8Array(nonce.buffer))
+        dataToEncrypt.set(nonce)
         const encryptedData = this.aesEcb.encrypt(dataToEncrypt)
         const data = new Uint8Array([...encryptedData, 0, 0, 0, this.userKeyId])
         await this.bluetoothWrite(KEY_INDEX, data, false)
@@ -49,10 +71,26 @@ export class Bike {
             await this.playSound(0x1)
     }
 
+    async bikeFirmwareVersion(): Promise<string> {
+        const value = await this.bluetoothRead(BIKE_FIRMWARE_VERSION)
+        const strValue = new TextDecoder().decode(value)
+        return strValue.split('.').map(part => part.match(/^0+(.+)/)?.[1] ?? part).join('.')
+    }
+
+    // returns the distance in kilometers
+    async bikeDistance(): Promise<number> {
+        const distanceInBytes = await this.bluetoothRead(DISTANCE)
+        const distance = distanceInBytes.reduce((acc, v, idx) => acc + (v << (idx * 8)), 0)
+        return distance / 10
+    }
+
+    // disconnect the bluetooth connection
+    // this makes the bike also available for other devices again
     disconnect() {
         this.server.disconnect()
     }
 
+    // checkConnection throws if the bike is not connected anymore and is unable to be reconnected with
     async checkConnection() {
         if (this.server.connected) return
         console.log('trying to reconnect..')
