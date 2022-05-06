@@ -2,16 +2,17 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
-import { Bike, BikeCredentials } from '../lib/bike'
-import type { BikeControlsArgs } from '../lib/Controls'
-import Login from '../lib/Login'
+import type { Bike, BikeCredentials } from '../lib/bike'
+import type { BikeControlsArgs } from '../components/Controls'
+import Login from '../components/Login'
+import BluetoothConnect from '../components/Connect'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import screenshotLight from '../public/screenshot_light.png'
 import screenshotDark from '../public/screenshot_dark.png'
 
-const Unsupported = dynamic(() => import('../lib/Unsupported'), { ssr: false })
-const BikeControls = dynamic<BikeControlsArgs>(() => import('../lib/Controls'))
+const Unsupported = dynamic(() => import('../components/Unsupported'), { ssr: false })
+const BikeControls = dynamic<BikeControlsArgs>(() => import('../components/Controls'))
 
 const Home: NextPage = () => {
   const [browserCompatible, setBrowserCompatible] = useState(true)
@@ -114,62 +115,6 @@ const Home: NextPage = () => {
   )
 }
 
-interface BluetoothConnectArgs {
-  bikeCredentials: BikeCredentials
-  backToLogin: () => void
-  setBikeInstance: (bike: Bike) => void,
-}
 
-function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: BluetoothConnectArgs) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | undefined>(undefined)
-
-  const clickConnect = async () => {
-    try {
-      setLoading(true)
-      setError(undefined)
-
-      // Start pre-loading the bike controls
-      const controlsPannelPreload = import('../lib/Controls')
-
-      const { connectToBike } = await import('../lib/bike')
-      const bike = await connectToBike(bikeCredentials)
-
-      await controlsPannelPreload
-
-      setBikeInstance(bike)
-    } catch (e) {
-      const eStr = `${e}`
-      if (!/permission|cancelled/.test(eStr)) {
-        setError(eStr)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    clickConnect()
-  }, [])
-
-  return (
-    <>
-      <button
-        className={styles.button + ' ' + styles.positive}
-        onClick={clickConnect}
-        disabled={loading}
-      >
-        {loading ? 'loading' : 'Connect your bike'}
-      </button>
-      {error ? <div className={styles.errorBox}>{error}</div> : undefined}
-      <button
-        className={styles.button + ' ' + styles.secondary}
-        onClick={backToLogin}
-      >
-        Back to login
-      </button>
-    </>
-  )
-}
 
 export default Home

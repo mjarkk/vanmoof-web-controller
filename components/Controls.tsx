@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
-import { Bike } from './bike'
+import type { Bike } from '../lib/bike'
 import styles from '../styles/Home.module.css'
 import soundboardStyle from '../styles/Soundboard.module.css'
 

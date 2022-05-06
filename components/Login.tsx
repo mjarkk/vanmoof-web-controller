@@ -1,6 +1,6 @@
 import { useState, FormEvent, ReactNode } from 'react'
 import styles from '../styles/Home.module.css'
-import type { BikeCredentials } from './bike'
+import type { BikeCredentials } from '../lib/bike'
 
 const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
 

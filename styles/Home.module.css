@@ -107,10 +107,21 @@
 }
 
 .errorBox {
-  max-width: 260px;
+  max-width: 400px;
   padding: 10px 0;
   color: darkred;
   display: inline-block;
+}
+
+.hintBox {
+  max-width: 400px;
+  padding: 10px 0;
+  display: inline-block;
+}
+
+.hintBox::before {
+  content: 'hint: ';
+  color: var(--label-color);
 }
 
 .setSpeedLimit {

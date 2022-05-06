@@ -134,9 +134,7 @@ export async function connectToBike({ mac, encryptionKey, userKeyId }: BikeCrede
     const server = await gatt.connect()
     if (!server.connected) throw `device not connected`
 
-    const bike = new Bike(mac, encryptionKey, userKeyId, server)
-    await bike.authenticate()
-    return bike
+    return new Bike(mac, encryptionKey, userKeyId, server)
 }
 
 export interface Characteristic {
