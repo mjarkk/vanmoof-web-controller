@@ -15,6 +15,7 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
         <BikeContext.Provider value={bike}>
             <BikeStats bike={bike} />
             <SpeedLimit />
+            <PowerLevel />
             <SoundBoard />
             <button
                 className={styles.button + ' ' + styles.secondary}
@@ -67,6 +68,54 @@ function SpeedLimit() {
     )
 }
 
+interface SetSpeedLimitButtonArgs {
+    country: string
+    id: number
+    maxSpeed: number
+}
+
+function SetSpeedLimitButton({ country, id, maxSpeed }: SetSpeedLimitButtonArgs) {
+    return (
+        <BikeContext.Consumer>{bike =>
+            <button onClick={() => bike.setSpeedLimit(id)}>
+                <h1>{country}</h1>
+                <span>{maxSpeed} km/h</span>
+            </button>
+        }</BikeContext.Consumer>
+    )
+}
+
+function PowerLevel() {
+    return (
+        <>
+            <h3>Power level</h3>
+            <div className={styles.setSpeedLimit}>
+                <SetPowerLevelButton id={0} level="0" />
+                <SetPowerLevelButton id={1} level="1" />
+                <SetPowerLevelButton id={2} level="2" />
+                <SetPowerLevelButton id={3} level="3" />
+                <SetPowerLevelButton id={4} level="4" />
+                <SetPowerLevelButton id={5} level="5" />
+            </div>
+        </>
+    )
+}
+
+interface SetPowerLevelButtonArgs {
+    level: string
+    id: number
+}
+
+function SetPowerLevelButton({ level, id }: SetPowerLevelButtonArgs) {
+    return (
+        <BikeContext.Consumer>{bike =>
+            <button onClick={() => bike.setPowerLvl(id)}>
+                <h1>{level}</h1>
+            </button>
+        }</BikeContext.Consumer>
+    )
+}
+
 function SoundBoard() {
     return (
         <>
@@ -107,23 +156,6 @@ function SoundBtn({ children, id }: { children: string, id: number }) {
                 className={styles.button}
                 onClick={() => bike.playSound(id)}
             >{children}</button>
-        }</BikeContext.Consumer>
-    )
-}
-
-interface SetSpeedLimitButtonArgs {
-    country: string
-    id: number
-    maxSpeed: number
-}
-
-function SetSpeedLimitButton({ country, id, maxSpeed }: SetSpeedLimitButtonArgs) {
-    return (
-        <BikeContext.Consumer>{bike =>
-            <button onClick={() => bike.setSpeedLimit(id)}>
-                <h1>{country}</h1>
-                <span>{maxSpeed} km/h</span>
-            </button>
         }</BikeContext.Consumer>
     )
 }

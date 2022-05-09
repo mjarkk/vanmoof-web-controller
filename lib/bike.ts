@@ -110,6 +110,7 @@ export class Bike {
     }
 
     async setSpeedLimit(limit: number) {
+        if (limit < 0 || limit > 3) return;
         await this.bluetoothWrite(SPEED_LIMIT, new Uint8Array([limit, 0x1]))
     }
 }
