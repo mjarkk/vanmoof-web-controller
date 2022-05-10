@@ -1,6 +1,9 @@
-import { useState, FormEvent, ReactNode } from 'react'
-import styles from '../styles/Home.module.css'
+import { useState, FormEvent } from 'react'
 import type { BikeCredentials } from '../lib/bike'
+import { Callout, CalloutKind } from './Callouts'
+import { Button } from './Button'
+import { FormError } from './Form'
+import { P } from './Spacing'
 
 const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
 
@@ -65,11 +68,11 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
     }
 
     return (
-        <form className={styles.loginForm} onSubmit={onSubmit}>
-            <WarningBlock>This website is <b>NOT</b> an offical VanMoof service/product</WarningBlock>
-            <WarningBlock>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</WarningBlock>
+        <form className='loginForm' onSubmit={onSubmit}>
+            <Callout kind={CalloutKind.Warning}>This website is <b>NOT</b> an offical VanMoof service/product</Callout>
+            <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
             Login using your VanMoof account
-            <div className={styles.formField}>
+            <div className='formField'>
                 <label htmlFor="username">Username</label>
                 <input
                     disabled={loading}
@@ -79,7 +82,7 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
                     placeholder="example@example.com"
                 />
             </div>
-            <div className={styles.formField}>
+            <div className='formField'>
                 <label htmlFor='password'>Password</label>
                 <input
                     disabled={loading}
@@ -89,23 +92,53 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
                     type="password"
                 />
             </div>
-            <button
-                disabled={loading || !login.username || !login.password}
-                className={styles.loginBtn}
-                type='submit'
-            >Login</button>
-            {error ? <div className={styles.errorBox}>{error}</div> : undefined}
+            <P top={20}>
+                <Button
+                    disabled={loading || !login.username || !login.password}
+                    type='submit'
+                >Login</Button>
+            </P>
+            <FormError error={error} />
+            <style jsx>{`
+                .loginForm {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .formField {
+                    max-width: 100%;
+                    width: 260px;
+                    margin-top: 15px;
+                }
+
+                .formField label {
+                    display: block;
+                    font-size: 0.9rem;
+                    color: var(--label-color);
+                    padding-bottom: 4px;
+                }
+
+                .formField input {
+                    width: 100%;
+                    color: var(--text-color);
+                    padding: 10px;
+                    font-size: 0.9rem;
+                    border: 2px solid var(--border-color);
+                    background-color: transparent;
+                }
+
+                .formField input:focus {
+                    border: 2px solid var(--active-color);
+                    outline: none;
+                }
+
+                .formField input[disabled] {
+                    background-color: rgba(0, 0, 0, .07);
+                    color: var(--disabled-text-color);
+                }
+            `}</style>
         </form>
-    )
-}
-
-
-function WarningBlock({ children }: { children?: ReactNode }) {
-    return (
-        <div className={styles.warningBlock}>
-            <div>
-                {children}
-            </div>
-        </div>
     )
 }

@@ -1,19 +1,24 @@
-import styles from '../styles/Home.module.css'
+import { Callout, CalloutKind } from './Callouts'
 import UAParser from 'ua-parser-js'
+import { useEffect, useState, ReactNode } from 'react'
 
 export default function Unsupported() {
+    const [sugestion, setSugestion] = useState<ReactNode>('')
+
+    useEffect(() => {
+        setSugestion(getSugestion())
+    }, [])
+
     return (
-        <div className={styles.errorBlock}>
-            <div>
-                This browser does not support <a href="https://caniuse.com/web-bluetooth">Web Bluetooth</a>.<br />
-                we need that to communicate with your bike<br />
-                {getSugestion()}
-            </div>
-        </div>
+        <Callout kind={CalloutKind.Error}>
+            This browser does not support <a style={{ fontWeight: 'bold' }} href="https://caniuse.com/web-bluetooth">Web Bluetooth</a>.<br />
+            we need that to communicate with your bike<br />
+            {sugestion}
+        </Callout>
     )
 }
 
-function getSugestion() {
+function getSugestion(): ReactNode {
     const parser = new UAParser()
 
     const os = parser.getOS().name?.toLowerCase()

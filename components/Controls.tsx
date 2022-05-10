@@ -1,14 +1,12 @@
-import { createContext, useEffect, useState } from 'react'
-import type { Bike } from '../lib/bike'
-import styles from '../styles/Home.module.css'
-import soundboardStyle from '../styles/Soundboard.module.css'
+import { useEffect, useState } from 'react'
+import { BikeContext, Bike } from '../lib/bike'
+import { SoundBoard } from './SoundBoard'
+import { Button } from './Button'
 
 export interface BikeControlsArgs {
     bike: Bike
     disconnect: () => void
 }
-
-const BikeContext = createContext({} as Bike)
 
 export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
     return (
@@ -17,10 +15,9 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
             <SpeedLimit />
             <PowerLevel />
             <SoundBoard />
-            <button
-                className={styles.button + ' ' + styles.secondary}
-                onClick={disconnect}
-            >Disconnect bike</button>
+            <Button onClick={disconnect} secondary>
+                Disconnect bike
+            </Button>
         </BikeContext.Provider>
     )
 }
@@ -45,10 +42,21 @@ function BikeStats({ bike }: { bike: Bike }) {
     return (
         <>
             <h3>Bike info</h3>
-            <div className={styles.bikeInfo}>
+            <div className='bikeInfo'>
                 <p>Version: <b>{info.version ?? 'loading..'}</b></p>
                 <p>Distance driven: <b>{info.distance ? info.distance + ' KM' : 'loading..'}</b></p>
                 <p>Mac: <b>{bike.mac}</b></p>
+                <style jsx>{`
+                    .bikeInfo {
+                        display: flex;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                    }
+                    .bikeInfo p {
+                        display: inline-block;
+                        margin-right: 10px;
+                    }
+                `}</style>
             </div>
         </>
     )
@@ -58,7 +66,7 @@ function SpeedLimit() {
     return (
         <>
             <h3>Speed limit</h3>
-            <div className={styles.setSpeedLimit}>
+            <div style={{ display: 'inline-block' }}>
                 <SetSpeedLimitButton country='🇯🇵' id={2} maxSpeed={24} />
                 <SetSpeedLimitButton country='🇪🇺' id={0} maxSpeed={27} />
                 <SetSpeedLimitButton country='🇺🇸' id={1} maxSpeed={32} />
@@ -77,10 +85,17 @@ interface SetSpeedLimitButtonArgs {
 function SetSpeedLimitButton({ country, id, maxSpeed }: SetSpeedLimitButtonArgs) {
     return (
         <BikeContext.Consumer>{bike =>
-            <button onClick={() => bike.setSpeedLimit(id)}>
-                <h1>{country}</h1>
-                <span>{maxSpeed} km/h</span>
-            </button>
+            <Button
+                onClick={() => bike.setSpeedLimit(id)}
+                style={{
+                    margin: 4,
+                    padding: '6px 10px',
+                    width: 'auto',
+                }}
+            >
+                <h1 style={{ margin: 0 }}>{country}</h1>
+                <span style={{ color: 'var(--secondary-border-color)' }}>{maxSpeed} km/h</span>
+            </Button>
         }</BikeContext.Consumer>
     )
 }
@@ -89,7 +104,7 @@ function PowerLevel() {
     return (
         <>
             <h3>Power level</h3>
-            <div className={styles.setSpeedLimit}>
+            <div style={{ display: 'inline-block' }}>
                 <SetPowerLevelButton id={0} level="0" />
                 <SetPowerLevelButton id={1} level="1" />
                 <SetPowerLevelButton id={2} level="2" />
@@ -109,53 +124,18 @@ interface SetPowerLevelButtonArgs {
 function SetPowerLevelButton({ level, id }: SetPowerLevelButtonArgs) {
     return (
         <BikeContext.Consumer>{bike =>
-            <button onClick={() => bike.setPowerLvl(id)}>
-                <h1>{level}</h1>
-            </button>
+            <Button
+                onClick={() => bike.setPowerLvl(id)}
+                style={{
+                    margin: 4,
+                    padding: '6px 10px',
+                    width: 44,
+                    height: 50,
+                }}
+            >
+                <h1 style={{ margin: 0 }}>{level}</h1>
+            </Button>
         }</BikeContext.Consumer>
     )
 }
 
-function SoundBoard() {
-    return (
-        <>
-            <h3>Sound board</h3>
-            <p className={soundboardStyle.label}>Short</p>
-            <div className={soundboardStyle.board}>
-                <SoundBtn id={0x1}>🔘 Click</SoundBtn>
-                <SoundBtn id={0x2}>🧨 Error</SoundBtn>
-                <SoundBtn id={0x3}>👍 Pling</SoundBtn>
-                <SoundBtn id={0x6}>🤔 Cling clong</SoundBtn>
-                <SoundBtn id={0xA}>🔔 Bell</SoundBtn>
-                <SoundBtn id={0x16}>🔔 Normal bike bell</SoundBtn>
-                <SoundBtn id={0x17}>🎉 Bell Tada</SoundBtn>
-                <SoundBtn id={0xB}>😚 Whistle</SoundBtn>
-                <SoundBtn id={0x18}>🚢 BOAT</SoundBtn>
-                <SoundBtn id={0x14}>⚡️ Wuup</SoundBtn>
-                <SoundBtn id={0x19}>🫤 Success but error</SoundBtn>
-            </div>
-            <p className={soundboardStyle.label}>Long</p>
-            <div className={soundboardStyle.board}>
-                <SoundBtn id={0x7}>🔋 Charding noise..</SoundBtn>
-                <SoundBtn id={0xE}>🚨 Alarm</SoundBtn>
-                <SoundBtn id={0xF}>🚨 Alarm stage 2</SoundBtn>
-                <SoundBtn id={0x12}>🔋 Charging..</SoundBtn>
-                <SoundBtn id={0x13}>🆕 Updating..</SoundBtn>
-                <SoundBtn id={0x15}>🎉 Update complete</SoundBtn>
-                <SoundBtn id={0x1A}>💥 Make wired noises</SoundBtn>
-                {/* TODO add more bell sounds */}
-            </div>
-        </>
-    )
-}
-
-function SoundBtn({ children, id }: { children: string, id: number }) {
-    return (
-        <BikeContext.Consumer>{bike =>
-            <button
-                className={styles.button}
-                onClick={() => bike.playSound(id)}
-            >{children}</button>
-        }</BikeContext.Consumer>
-    )
-}
