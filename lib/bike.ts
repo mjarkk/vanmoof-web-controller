@@ -1,5 +1,8 @@
+import { createContext } from 'react'
 import { AESECB } from './aes'
 import { Queue } from './queue'
+
+export const BikeContext = createContext({} as Bike)
 
 export class Bike {
     mac: string

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import type { Bike, BikeCredentials } from '../lib/bike'
-import styles from '../styles/Home.module.css'
+import { Button } from './Button'
+import { FormError, FormHint } from './Form'
+import { P } from './Spacing'
 
 interface BluetoothConnectArgs {
     bikeCredentials: BikeCredentials
@@ -40,28 +42,30 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
     }
 
     useEffect(() => {
-        // clickConnect()
+        clickConnect()
     }, [])
 
     return (
         <>
-            <button
-                className={styles.button + ' ' + styles.positive}
-                onClick={clickConnect}
-                disabled={loading}
-            >
-                {loading ? 'loading' : 'Connect your bike'}
-            </button>
-            {error ? <div className={styles.errorBox}>{error}</div> : undefined}
-            {showWakeupMessage ? <div className={styles.hintBox}>
-                You might need to wake the bike before you can connect
-            </div> : undefined}
-            <button
-                className={styles.button + ' ' + styles.secondary}
-                onClick={backToLogin}
-            >
-                Back to login
-            </button>
+            <P vertical={10}>
+                <Button
+                    onClick={clickConnect}
+                    disabled={loading}
+                    positive
+                >
+                    {loading ? 'loading' : 'Connect your bike'}
+                </Button>
+            </P>
+            <FormError error={error} />
+            <FormHint hint={showWakeupMessage ? 'You might need to wake the bike before you can connect' : undefined} />
+            <P vertical={10}>
+                <Button
+                    onClick={backToLogin}
+                    secondary
+                >
+                    Back to login
+                </Button>
+            </P>
         </>
     )
 }
