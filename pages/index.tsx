@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import type { Bike, BikeCredentials } from '../lib/bike'
 import type { BikeControlsArgs } from '../components/Controls'
@@ -9,6 +8,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import screenshotLight from '../public/screenshot_light.png'
 import screenshotDark from '../public/screenshot_dark.png'
+import { Footer } from '../components/Footer'
 
 const Unsupported = dynamic(() => import('../components/Unsupported'), { ssr: false })
 const BikeControls = dynamic<BikeControlsArgs>(() => import('../components/Controls'))
@@ -51,15 +51,7 @@ const Home: NextPage = () => {
   }, [bikeInstance])
 
   return (
-    <div className='container'>
-      <Head>
-        <title>Change VanMoof S&X 3 speed limit</title>
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="description" content="Change the speed limit of your vanmoof S3 and X3" />
-        <meta property="og:title" content="Change the speed limit of your vanmoof S3 and X3" />
-        <meta property="og:image" content="https://vanmoof-web-controller.vercel.app/screenshot_dark.png" />
-      </Head>
-
+    <div>
       <main>
         <h1 className='title'>Change VanMoof S&X 3 speed limit</h1>
 
@@ -104,33 +96,18 @@ const Home: NextPage = () => {
         }
       </main>
 
-      <footer>
-        <span><b>NOT</b> an offical VanMoof service/product!, <a href="https://github.com/mjarkk/vanmoof-web-controller">Source code</a></span>
-      </footer>
+      <Footer />
 
       <style jsx>{`
-        .container {
-          padding: 0 2rem;
-        }
-
         main {
-          padding: 4rem 0;
+          padding: 4rem 2rem;
           flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
         }
-
-        footer {
-          display: flex;
-          flex: 1;
-          padding: 20px 0;
-          border-top: 1px solid var(--divider-color);
-          justify-content: center;
-          align-items: center;
-        }
-
+        
         .title {
           font-size: 2rem;
           text-align: center;
