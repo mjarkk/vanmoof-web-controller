@@ -5,13 +5,14 @@ export default function DonationPage() {
     return (
         <div>
             <main>
-                <h1><Link href="/"><a>Back</a></Link> Donate</h1>
+                <h1>Donate</h1>
                 <p>If you like the website and want to support me you can do so with the following links.</p>
                 <div className='options'>
                     <DonateOption name="Paypal" link="https://paypal.me/mkopenga" />
                     <DonateOption name="Bunq" link="https://bunq.me/mjarkk" />
                 </div>
                 <p>If there is enough support i can maybe also add support for newer and/or older bikes</p>
+                <Link href="/"><a>Back to homepage</a></Link>
             </main>
             <Footer noDonate />
             <style jsx>{`
@@ -55,14 +56,12 @@ function DonateOption({ name, link }: { name: string, link: string }) {
                 h2 {
                     margin: 0;
                     color: var(--active-title-color);
+                    text-decoration: none;
                 }
                 p {
                     margin: 0;
                     font-size: 0.9rem;
                     opacity: 0.9;
-                }
-                a:hover p {
-                    text-decoration: underline;
                 }
             `}</style>
         </a>

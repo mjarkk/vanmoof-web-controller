@@ -7,21 +7,29 @@ interface FooterProps {
 export function Footer({ noDonate }: FooterProps) {
     return (
         <footer>
-            <span>
-                <b>NOT</b>{' an offical VanMoof service/product!, '}
+            <div>
                 <a href="https://github.com/mjarkk/vanmoof-web-controller">Source code</a>
-                {noDonate ? undefined : <>{', '} <Link href="/donate">
+                {noDonate ? undefined : <Link href="/donate">
                     <a>Donate!</a>
-                </Link></>}
-            </span>
+                </Link>}
+            </div>
+            <div>
+                <b>NOT</b> an offical VanMoof service/product!
+            </div>
             <style jsx>{`
                 footer {
-                    display: flex;
-                    flex: 1;
-                    padding: 20px 2rem;
+                    padding: 20px 2rem 0 2rem;
+
                     border-top: 1px solid var(--divider-color);
-                    justify-content: center;
-                    align-items: center;
+                }
+                div {
+                    padding-bottom: 10px;
+                    text-align: center;
+                }
+                a {
+                    padding: 10px;
+                    display: inline-block;
+                    font-weight: bold;
                 }
             `}</style>
         </footer>
