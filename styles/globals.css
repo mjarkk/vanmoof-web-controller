@@ -12,6 +12,7 @@
   --positive-box-bg-color: #c8e6c9;
   --active-color: #1976d2;
   --active-title-color: #1976d2;
+  --error-text-color: darkred;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,6 +31,7 @@
     --positive-box-bg-color: #004d40;
     --active-color: #42a5f5;
     --active-title-color: #92c9ff;
+    --error-text-color: #f57979;
   }
 }
 

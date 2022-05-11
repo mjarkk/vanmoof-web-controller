@@ -31,7 +31,7 @@ export function FormError({ error }: FormErrorProps) {
                 .error {
                     max-width: 400px;
                     padding: 10px 0;
-                    color: darkred;
+                    color: var(--error-text-color);
                     display: inline-block;
                 }
             `}</style>
