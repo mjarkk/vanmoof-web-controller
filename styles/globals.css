@@ -11,6 +11,7 @@
   --warning-box-bg-color: #ffecb3;
   --positive-box-bg-color: #c8e6c9;
   --active-color: #1976d2;
+  --active-button-bg-color: #7fbbf7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,6 +29,7 @@
     --warning-box-bg-color: #5d4037;
     --positive-box-bg-color: #004d40;
     --active-color: #42a5f5;
+    --active-button-bg-color: #254f71;
   }
 }
 

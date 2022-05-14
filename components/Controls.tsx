@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BikeContext, Bike } from '../lib/bike'
+import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLimitEnum } from '../lib/bike'
 import { SoundBoard } from './SoundBoard'
 import { Button } from './Button'
 
@@ -12,8 +12,8 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
     return (
         <BikeContext.Provider value={bike}>
             <BikeStats bike={bike} />
-            <SpeedLimit />
-            <PowerLevel />
+            <SpeedLimit bike={bike} />
+            <PowerLevel bike={bike} />
             <SoundBoard />
             <Button onClick={disconnect} secondary>
                 Disconnect bike
@@ -62,15 +62,37 @@ function BikeStats({ bike }: { bike: Bike }) {
     )
 }
 
-function SpeedLimit() {
+function SpeedLimit({ bike }: { bike: Bike }) {
+    const [currentSpeedLimit, setCurrentSpeedLimit] = useState<SpeedLimitEnum | undefined>(undefined)
+
+    const obtainFromBike = () => bike.getSpeedLimit().then(setCurrentSpeedLimit)
+    useEffect(() => { obtainFromBike() }, [])
+
+    const newLimit = async (id: SpeedLimitEnum) => {
+        setCurrentSpeedLimit(id)
+        setCurrentSpeedLimit(await bike.setSpeedLimit(id))
+    }
+
+    const options: Array<[string, number, SpeedLimitEnum]> = [
+        ['🇯🇵', 24, SpeedLimitEnum.JP],
+        ['🇪🇺', 27, SpeedLimitEnum.EU],
+        ['🇺🇸', 32, SpeedLimitEnum.US],
+        ['😎', 37, SpeedLimitEnum.NO_LIMIT],
+    ]
+
     return (
         <>
             <h3>Speed limit</h3>
             <div style={{ display: 'inline-block' }}>
-                <SetSpeedLimitButton country='🇯🇵' id={2} maxSpeed={24} />
-                <SetSpeedLimitButton country='🇪🇺' id={0} maxSpeed={27} />
-                <SetSpeedLimitButton country='🇺🇸' id={1} maxSpeed={32} />
-                <SetSpeedLimitButton country='😎' id={3} maxSpeed={37} />
+                {options.map(([countryFlag, maxSpeed, id]) =>
+                    <SetSpeedLimitButton
+                        key={id}
+                        country={countryFlag}
+                        maxSpeed={maxSpeed}
+                        selected={currentSpeedLimit === id}
+                        select={() => newLimit(id)}
+                    />
+                )}
             </div>
         </>
     )
@@ -78,39 +100,60 @@ function SpeedLimit() {
 
 interface SetSpeedLimitButtonArgs {
     country: string
-    id: number
     maxSpeed: number
+    selected: boolean
+    select(): void
 }
 
-function SetSpeedLimitButton({ country, id, maxSpeed }: SetSpeedLimitButtonArgs) {
+function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLimitButtonArgs) {
     return (
-        <BikeContext.Consumer>{bike =>
-            <Button
-                onClick={() => bike.setSpeedLimit(id)}
-                style={{
-                    margin: 4,
-                    padding: '6px 10px',
-                    width: 'auto',
-                }}
-            >
-                <h1 style={{ margin: 0 }}>{country}</h1>
-                <span style={{ color: 'var(--secondary-border-color)' }}>{maxSpeed} km/h</span>
-            </Button>
-        }</BikeContext.Consumer>
+        <Button
+            onClick={select}
+            style={{
+                margin: 4,
+                padding: '6px 10px',
+                width: 'auto',
+                backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
+            }}
+        >
+            <h1 style={{ margin: 0 }}>{country}</h1>
+            <span style={{ color: 'var(--secondary-border-color)' }}>{maxSpeed} km/h</span>
+        </Button>
     )
 }
 
-function PowerLevel() {
+function PowerLevel({ bike }: { bike: Bike }) {
+    const [currentLevel, setCurrentLevel] = useState<PowerLevelEnum | undefined>(undefined)
+
+    const obtainFromBike = () => bike.getPowerLvl().then(setCurrentLevel)
+    useEffect(() => { obtainFromBike() }, [])
+
+    const setNewLevel = async (id: PowerLevelEnum) => {
+        setCurrentLevel(id)
+        setCurrentLevel(await bike.setPowerLvl(id))
+    }
+
+    const levels: Array<[string, PowerLevelEnum]> = [
+        ['0', PowerLevelEnum.Off],
+        ['1', PowerLevelEnum.First],
+        ['2', PowerLevelEnum.Second],
+        ['3', PowerLevelEnum.Third],
+        ['4', PowerLevelEnum.Fourth],
+        ['5', PowerLevelEnum.Max],
+    ]
+
     return (
         <>
             <h3>Power level</h3>
             <div style={{ display: 'inline-block' }}>
-                <SetPowerLevelButton id={0} level="0" />
-                <SetPowerLevelButton id={1} level="1" />
-                <SetPowerLevelButton id={2} level="2" />
-                <SetPowerLevelButton id={3} level="3" />
-                <SetPowerLevelButton id={4} level="4" />
-                <SetPowerLevelButton id={5} level="5" />
+                {levels.map(([label, id]) =>
+                    <SetPowerLevelButton
+                        key={id}
+                        level={label}
+                        selected={currentLevel === id}
+                        onSelect={() => setNewLevel(id)}
+                    />
+                )}
             </div>
         </>
     )
@@ -118,24 +161,24 @@ function PowerLevel() {
 
 interface SetPowerLevelButtonArgs {
     level: string
-    id: number
+    selected: boolean
+    onSelect(): void
 }
 
-function SetPowerLevelButton({ level, id }: SetPowerLevelButtonArgs) {
+function SetPowerLevelButton({ level, selected, onSelect }: SetPowerLevelButtonArgs) {
     return (
-        <BikeContext.Consumer>{bike =>
-            <Button
-                onClick={() => bike.setPowerLvl(id)}
-                style={{
-                    margin: 4,
-                    padding: '6px 10px',
-                    width: 44,
-                    height: 50,
-                }}
-            >
-                <h1 style={{ margin: 0 }}>{level}</h1>
-            </Button>
-        }</BikeContext.Consumer>
+        <Button
+            onClick={onSelect}
+            style={{
+                margin: 4,
+                padding: '6px 10px',
+                width: 44,
+                height: 50,
+                backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
+            }}
+        >
+            <h1 style={{ margin: 0 }}>{level}</h1>
+        </Button>
     )
 }
 

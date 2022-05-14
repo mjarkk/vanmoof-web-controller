@@ -4,6 +4,25 @@ import { Queue } from './queue'
 
 export const BikeContext = createContext({} as Bike)
 
+export enum PowerLevel {
+    Off = 0,
+    First = 1,
+    Second = 2,
+    Third = 3,
+    Fourth = 4,
+    Max = 5,
+}
+
+export enum SpeedLimit {
+    JP = 2,
+    EU = 0,
+    US = 1,
+    NO_LIMIT = 3,
+}
+
+const wait = (timeout: number): Promise<never> =>
+    new Promise(res => setTimeout(res, timeout))
+
 export class Bike {
     mac: string
     server: BluetoothRemoteGATTServer
@@ -21,8 +40,8 @@ export class Bike {
         this.queue = new Queue
     }
 
-    private async makeEncryptedPayload(data: Uint8Array): Promise<Uint8Array> {
-        const nonce = await this.bluetoothRead(CHALLENGE, false)
+    private async makeEncryptedPayloadWithoutQueue(data: Uint8Array): Promise<Uint8Array> {
+        const nonce = await this.bluetoothReadWithoutQueue(CHALLENGE, false)
         const paddLength = 16 - ((nonce.length + data.length) % 16)
         const dataToEncrypt = new Uint8Array([
             ...nonce,
@@ -44,22 +63,46 @@ export class Bike {
         return decryptedValue.reverse()
     }
 
+    private async bluetoothReadWithoutQueue(characteristic: Characteristic, decrypt = true): Promise<Uint8Array> {
+        let lastError: any;
+        for (let retry = 0; retry < 5; retry++) {
+            if (retry != 0) {
+                console.log('retrying to read bluetooth value, attempt:', retry)
+            }
+
+            try {
+                const bluetoothService = await this.server.getPrimaryService(characteristic.service)
+                const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
+                const buff = await bluetoothCharacteristic.readValue()
+                const data = new Uint8Array(buff.buffer)
+                return decrypt ? this.decrypt(data) : data
+            } catch (e) {
+                lastError = e
+            }
+        }
+        throw lastError
+    }
+
     private async bluetoothRead(characteristic: Characteristic, decrypt = true): Promise<Uint8Array> {
-        const data = await this.queue.push(async () => {
-            const bluetoothService = await this.server.getPrimaryService(characteristic.service)
-            const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
-            const buff = await bluetoothCharacteristic.readValue()
-            return new Uint8Array(buff.buffer)
-        })
-        return decrypt ? this.decrypt(data) : data
+        return await this.queue.push(() => this.bluetoothReadWithoutQueue(characteristic, decrypt))
+    }
+
+    private async bluetoothWriteWithoutQueue(characteristic: Characteristic, data: Uint8Array, encrypted = true) {
+        const payload = encrypted ? await this.makeEncryptedPayloadWithoutQueue(data) : data
+        const bluetoothService = await this.server.getPrimaryService(characteristic.service)
+        const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
+        await bluetoothCharacteristic.writeValue(payload)
     }
 
     private async bluetoothWrite(characteristic: Characteristic, data: Uint8Array, encrypted = true) {
-        const payload = encrypted ? await this.makeEncryptedPayload(data) : data
-        await this.queue.push(async () => {
-            const bluetoothService = await this.server.getPrimaryService(characteristic.service)
-            const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
-            await bluetoothCharacteristic.writeValue(payload)
+        await this.queue.push(() => this.bluetoothWriteWithoutQueue(characteristic, data, encrypted))
+    }
+
+    private async bluetoothReadWrite(characteristic: Characteristic, data: Uint8Array, { encryptedAndDecrypt = true, timeout = 0 }): Promise<Uint8Array> {
+        return await this.queue.push(async () => {
+            await this.bluetoothWriteWithoutQueue(characteristic, data, encryptedAndDecrypt)
+            if (timeout != 0) await wait(timeout)
+            return await this.bluetoothReadWithoutQueue(characteristic, encryptedAndDecrypt)
         })
     }
 
@@ -107,14 +150,24 @@ export class Bike {
         await this.bluetoothWrite(PLAY_SOUND, new Uint8Array([id, 0x1]))
     }
 
-    async setPowerLvl(lvl: number) {
-        if (lvl < 0 || lvl > 5) return;
-        await this.bluetoothWrite(POWER_LEVEL, new Uint8Array([lvl, 0x1]))
+    async getPowerLvl(): Promise<PowerLevel> {
+        const result = await this.bluetoothRead(POWER_LEVEL)
+        return result[0] as PowerLevel
     }
 
-    async setSpeedLimit(limit: number) {
-        if (limit < 0 || limit > 3) return;
-        await this.bluetoothWrite(SPEED_LIMIT, new Uint8Array([limit, 0x1]))
+    async setPowerLvl(lvl: PowerLevel): Promise<PowerLevel> {
+        const result = await this.bluetoothReadWrite(POWER_LEVEL, new Uint8Array([lvl, 0x1]), {})
+        return result[0] as PowerLevel
+    }
+
+    async getSpeedLimit(): Promise<SpeedLimit> {
+        const result = await this.bluetoothRead(SPEED_LIMIT)
+        return uwnrapSpeedLimit(result)
+    }
+
+    async setSpeedLimit(limit: SpeedLimit): Promise<SpeedLimit> {
+        const result = await this.bluetoothReadWrite(SPEED_LIMIT, new Uint8Array([limit, 0x1]), { timeout: 400 })
+        return uwnrapSpeedLimit(result)
     }
 }
 
@@ -139,6 +192,13 @@ export async function connectToBike({ mac, encryptionKey, userKeyId }: BikeCrede
     if (!server.connected) throw `device not connected`
 
     return new Bike(mac, encryptionKey, userKeyId, server)
+}
+
+function uwnrapSpeedLimit(data: Uint8Array): SpeedLimit {
+    const lvlNr = data[0]
+    if (lvlNr === undefined) return SpeedLimit.EU
+    if (lvlNr === 255) return SpeedLimit.NO_LIMIT
+    return lvlNr as SpeedLimit
 }
 
 export interface Characteristic {
