@@ -12,8 +12,7 @@ https://vanmoof-web-controller.vercel.app/
 
 Here are some things you can do to help!
 
-1. If you have a bike with version 1.8.0 or above verify if you can connect to your bike and change the regio to anything other than the maxium, it's currently unclear if this version works. Issue: https://github.com/mjarkk/vanmoof-web-controller/issues/2
-2. Hackin support for older bikes
+- Hackin support for older bikes
 
 ### Development
 
