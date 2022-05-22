@@ -177,12 +177,14 @@ export interface BikeCredentials {
     userKeyId: number
 }
 
-export async function connectToBike({ mac, encryptionKey, userKeyId }: BikeCredentials): Promise<Bike> {
+export async function connectToBike(credentials: Array<BikeCredentials>): Promise<Bike> {
+    const credentialFilters = credentials.map(({ mac }) => [
+        { name: 'ES3-' + mac.replaceAll(':', '').toUpperCase() },
+        { name: 'EX3-' + mac.replaceAll(':', '').toUpperCase() }
+    ])
+
     const device = await navigator.bluetooth.requestDevice({
-        filters: [
-            { name: 'ES3-' + mac.replaceAll(':', '').toUpperCase() },
-            { name: 'EX3-' + mac.replaceAll(':', '').toUpperCase() }
-        ],
+        filters: credentialFilters.flat(),
         optionalServices: [SECURITY_SERVICE, DEFENSE_SERVICE, MOVEMENT_SERVICE, BIKE_INFO_SERVICE, BIKE_STATE_SERVICE, SOUND_SERVICE, LIGHT_SERVICE]
     })
 
@@ -191,7 +193,20 @@ export async function connectToBike({ mac, encryptionKey, userKeyId }: BikeCrede
     const server = await gatt.connect()
     if (!server.connected) throw `device not connected`
 
-    return new Bike(mac, encryptionKey, userKeyId, server)
+    if (credentials.length == 1) {
+        // There is only one bike connected to this accound, no need to find the credentials for the bike connected
+        const { mac, encryptionKey, userKeyId } = credentials[0]
+        return new Bike(mac, encryptionKey, userKeyId, server)
+    }
+
+    for (let idx = 0; idx < credentialFilters.length; idx++) {
+        if (credentialFilters[idx].find(({ name }) => name == device.name)) {
+            const { mac, encryptionKey, userKeyId } = credentials[idx]
+            return new Bike(mac, encryptionKey, userKeyId, server)
+        }
+    }
+
+    throw 'The bike you connected does not belong to your accound'
 }
 
 function uwnrapSpeedLimit(data: Uint8Array): SpeedLimit {

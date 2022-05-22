@@ -8,7 +8,7 @@ import { P } from './Spacing'
 const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
 
 export interface LoginArgs {
-    setBikeCredentials: (data: BikeCredentials) => void
+    setBikeCredentials: (data: Array<BikeCredentials>) => void
 }
 
 export default function Login({ setBikeCredentials }: LoginArgs) {
@@ -53,13 +53,12 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             const bikes = resp.data.bikeDetails
             if (bikes.length == 0)
                 throw 'You don\'t have a bike connected to your account'
-            const bike = bikes[0]
 
-            setBikeCredentials({
-                mac: bike.macAddress,
-                encryptionKey: bike.key.encryptionKey,
-                userKeyId: bike.key.userKeyId,
-            })
+            setBikeCredentials(bikes.map((b: any) => ({
+                mac: b.macAddress,
+                encryptionKey: b.key.encryptionKey,
+                userKeyId: b.key.userKeyId,
+            })))
         } catch (e) {
             setError(`${e}`)
         } finally {

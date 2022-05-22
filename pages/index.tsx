@@ -15,7 +15,7 @@ const BikeControls = dynamic<BikeControlsArgs>(() => import('../components/Contr
 
 const Home: NextPage = () => {
   const [browserCompatible, setBrowserCompatible] = useState(true)
-  const [bikeCredentials, setBikeCredentials] = useState<undefined | BikeCredentials>(undefined)
+  const [bikeCredentials, setBikeCredentials] = useState<undefined | Array<BikeCredentials>>(undefined)
   const [bikeInstance, setBikeInstance] = useState<undefined | Bike>(undefined)
 
   const disconnect = () => {
@@ -36,7 +36,10 @@ const Home: NextPage = () => {
   useEffect(() => {
     setBrowserCompatible(!!navigator.bluetooth)
     const bikeCredentials = localStorage.getItem('vm-bike-credentials')
-    if (bikeCredentials) setBikeCredentials(JSON.parse(bikeCredentials))
+    if (bikeCredentials) {
+      const bikeCredentialsJson = JSON.parse(bikeCredentials)
+      setBikeCredentials(Array.isArray(bikeCredentialsJson) ? bikeCredentialsJson : [bikeCredentialsJson])
+    }
     import('../lib/bike') // Start importing the bike lib
   }, [])
 
@@ -107,7 +110,7 @@ const Home: NextPage = () => {
           justify-content: center;
           align-items: center;
         }
-        
+
         .title {
           font-size: 2rem;
           text-align: center;

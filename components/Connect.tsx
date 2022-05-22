@@ -5,7 +5,7 @@ import { FormError, FormHint } from './Form'
 import { P } from './Spacing'
 
 interface BluetoothConnectArgs {
-    bikeCredentials: BikeCredentials
+    bikeCredentials: Array<BikeCredentials>
     backToLogin: () => void
     setBikeInstance: (bike: Bike) => void,
 }
