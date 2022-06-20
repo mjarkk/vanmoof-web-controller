@@ -1,14 +1,13 @@
 import { useState, FormEvent } from 'react'
 import type { BikeCredentials } from '../lib/bike'
+import { Api, API_KEY } from '../lib/api'
 import { Callout, CalloutKind } from './Callouts'
 import { Button } from './Button'
 import { FormError } from './Form'
 import { P } from './Spacing'
 
-const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
-
 export interface LoginArgs {
-    setBikeCredentials: (data: Array<BikeCredentials>) => void
+    setBikeCredentials: (bikes: Array<BikeCredentials>, api: Api) => void
 }
 
 export default function Login({ setBikeCredentials }: LoginArgs) {
@@ -34,31 +33,11 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             if (req.status >= 400)
                 throw await req.text()
 
-            const { token } = await req.json()
-            if (!token)
-                throw 'login failed, missing token or refreshToken'
-
-            req = await fetch(`/api/getCustomerData?includeBikeDetails`, {
-                headers: {
-                    'Api-Key': API_KEY,
-                    'Authorization': 'Bearer ' + token,
-                }
-            })
-
-            if (req.status >= 400)
-                throw await req.text()
-
-            const resp = await req.json()
-
-            const bikes = resp.data.bikeDetails
-            if (bikes.length == 0)
-                throw 'You don\'t have a bike connected to your account'
-
-            setBikeCredentials(bikes.map((b: any) => ({
-                mac: b.macAddress,
-                encryptionKey: b.key.encryptionKey,
-                userKeyId: b.key.userKeyId,
-            })))
+            const credentials = await req.json()
+            const api = new Api(credentials)
+            const bikes = await api.getBikeCredentials()
+            api.storeCredentialsInLocalStorage()
+            setBikeCredentials(bikes, api)
         } catch (e) {
             setError(`${e}`)
         } finally {

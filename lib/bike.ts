@@ -172,6 +172,7 @@ export class Bike {
 }
 
 export interface BikeCredentials {
+    id: string
     mac: string
     encryptionKey: string
     userKeyId: number

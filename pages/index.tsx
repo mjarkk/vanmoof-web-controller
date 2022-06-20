@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import type { Bike, BikeCredentials } from '../lib/bike'
+import { Api, ApiContext } from '../lib/api'
 import type { BikeControlsArgs } from '../components/Controls'
 import Login from '../components/Login'
 import BluetoothConnect from '../components/Connect'
@@ -16,6 +17,7 @@ const BikeControls = dynamic<BikeControlsArgs>(() => import('../components/Contr
 const Home: NextPage = () => {
   const [browserCompatible, setBrowserCompatible] = useState(true)
   const [bikeCredentials, setBikeCredentials] = useState<undefined | Array<BikeCredentials>>(undefined)
+  const [api, setApi] = useState<undefined | Api>(undefined)
   const [bikeInstance, setBikeInstance] = useState<undefined | Bike>(undefined)
 
   const disconnect = () => {
@@ -28,6 +30,11 @@ const Home: NextPage = () => {
     setBikeCredentials(undefined)
   }
 
+  const setBikeCredentialsAndApi = (bikes: Array<BikeCredentials>, api: Api) => {
+    setBikeCredentials(bikes)
+    setApi(api)
+  }
+
   useEffect(() => {
     if (bikeCredentials)
       localStorage.setItem('vm-bike-credentials', JSON.stringify(bikeCredentials))
@@ -35,10 +42,24 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     setBrowserCompatible(!!navigator.bluetooth)
+    const apiCredential = localStorage.getItem('vm-api-credentials')
+    if (apiCredential) {
+      try {
+        const apiCredentials = JSON.parse(apiCredential)
+        const api = new Api(apiCredentials)
+        setApi(api)
+      } catch (e) {
+        console.log('unable to parse api credentials from local storage, error:', e)
+      }
+    }
     const bikeCredentials = localStorage.getItem('vm-bike-credentials')
     if (bikeCredentials) {
-      const bikeCredentialsJson = JSON.parse(bikeCredentials)
-      setBikeCredentials(Array.isArray(bikeCredentialsJson) ? bikeCredentialsJson : [bikeCredentialsJson])
+      try {
+        const bikeCredentialsJson = JSON.parse(bikeCredentials)
+        setBikeCredentials(Array.isArray(bikeCredentialsJson) ? bikeCredentialsJson : [bikeCredentialsJson])
+      } catch (e) {
+        console.log('unable to parse bike credentials from local storage, error:', e)
+      }
     }
     import('../lib/bike') // Start importing the bike lib
   }, [])
@@ -85,17 +106,19 @@ const Home: NextPage = () => {
         {!browserCompatible
           ? <Unsupported />
           : bikeInstance
-            ? <BikeControls
-              bike={bikeInstance}
-              disconnect={disconnect}
-            />
+            ? <ApiContext.Provider value={api}>
+              <BikeControls
+                bike={bikeInstance}
+                disconnect={disconnect}
+              />
+            </ApiContext.Provider>
             : bikeCredentials
               ? <BluetoothConnect
                 bikeCredentials={bikeCredentials}
                 setBikeInstance={setBikeInstance}
                 backToLogin={backToLogin}
               />
-              : <Login setBikeCredentials={setBikeCredentials} />
+              : <Login setBikeCredentials={setBikeCredentialsAndApi} />
         }
       </main>
 

@@ -1,5 +1,6 @@
 import BikeControls from '../components/Controls'
 import { Bike, SpeedLimit, PowerLevel } from '../lib/bike'
+import { ApiContext, Api } from '../lib/api'
 
 class FakeBike {
     mac = '1234'
@@ -36,11 +37,17 @@ class FakeBike {
 
 export default function ControlsTest() {
     const fakeBike = new FakeBike as unknown as Bike
+    const api = new Api({
+        token: 'dummy',
+        refreshToken: 'dummy',
+    })
 
     return (
         <div>
             <h1>Page for testing the bike controls</h1>
-            <BikeControls bike={fakeBike} disconnect={() => console.log('click disconnect')} />
+            <ApiContext.Provider value={api}>
+                <BikeControls bike={fakeBike} disconnect={() => console.log('click disconnect')} />
+            </ApiContext.Provider>
 
             <style jsx>{`
                 div {
