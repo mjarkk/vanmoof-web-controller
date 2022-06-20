@@ -11,6 +11,10 @@ export interface ApiCredentials {
 export const ApiContext = createContext<Api | undefined>(undefined)
 
 export class Api {
+    /*
+        TODO: Add support for the refresh token
+    */
+
     private credentials: ApiCredentials
 
     constructor(credentials: ApiCredentials) {
