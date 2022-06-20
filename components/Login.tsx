@@ -72,7 +72,7 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
             Login using your VanMoof account
             <div className='formField'>
-                <label htmlFor="username">Username</label>
+                <label htmlFor="username">Email</label>
                 <input
                     disabled={loading}
                     id="username"
