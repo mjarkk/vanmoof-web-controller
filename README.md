@@ -12,7 +12,9 @@ https://vanmoof-web-controller.vercel.app/
 
 Here are some things you can do to help!
 
+- Help reverse engineer how the refresh token works for the VanMoof API
 - Hackin support for older bikes
+- Help with finding out what is send from / to the bike over bluetooth and having a good workflow for doing this
 
 ### Development
 
