@@ -3,6 +3,7 @@ import { Bike, SpeedLimit, PowerLevel } from '../lib/bike'
 import { ApiContext, Api } from '../lib/api'
 
 class FakeBike {
+    id = '12345'
     mac = '1234'
     private speedLimit = SpeedLimit.EU
     private powerLevel = PowerLevel.Fourth

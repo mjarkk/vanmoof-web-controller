@@ -25,14 +25,16 @@ const wait = (timeout: number): Promise<never> =>
 
 export class Bike {
     mac: string
+    id: string | number
     server: BluetoothRemoteGATTServer
     encryptionKey: string
     userKeyId: number
     aesEcb: AESECB
     queue: Queue
 
-    constructor(mac: string, encryptionKey: string, userKeyId: number, server: BluetoothRemoteGATTServer) {
+    constructor(mac: string, id: string | number, encryptionKey: string, userKeyId: number, server: BluetoothRemoteGATTServer) {
         this.mac = mac
+        this.id = id
         this.encryptionKey = encryptionKey
         this.userKeyId = userKeyId
         this.server = server
@@ -196,14 +198,14 @@ export async function connectToBike(credentials: Array<BikeCredentials>): Promis
 
     if (credentials.length == 1) {
         // There is only one bike connected to this accound, no need to find the credentials for the bike connected
-        const { mac, encryptionKey, userKeyId } = credentials[0]
-        return new Bike(mac, encryptionKey, userKeyId, server)
+        const { mac, id, encryptionKey, userKeyId } = credentials[0]
+        return new Bike(mac, id, encryptionKey, userKeyId, server)
     }
 
     for (let idx = 0; idx < credentialFilters.length; idx++) {
         if (credentialFilters[idx].find(({ name }) => name == device.name)) {
-            const { mac, encryptionKey, userKeyId } = credentials[idx]
-            return new Bike(mac, encryptionKey, userKeyId, server)
+            const { mac, id, encryptionKey, userKeyId } = credentials[idx]
+            return new Bike(mac, id, encryptionKey, userKeyId, server)
         }
     }
 
