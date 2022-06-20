@@ -15,7 +15,7 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [login, setLogin] = useState({
-        username: '',
+        email: '',
         password: '',
     })
 
@@ -27,7 +27,7 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
                 method: 'POST',
                 headers: {
                     'Api-Key': API_KEY,
-                    'Authorization': 'Basic ' + btoa(login.username + ':' + login.password),
+                    'Authorization': 'Basic ' + btoa(login.email + ':' + login.password),
                 },
             })
 
@@ -72,12 +72,12 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
             Login using your VanMoof account
             <div className='formField'>
-                <label htmlFor="username">Email</label>
+                <label htmlFor="email">Email</label>
                 <input
                     disabled={loading}
-                    id="username"
-                    value={login.username}
-                    onChange={e => setLogin(v => ({ ...v, username: e.target.value }))}
+                    id="email"
+                    value={login.email}
+                    onChange={e => setLogin(v => ({ ...v, email: e.target.value }))}
                     placeholder="example@example.com"
                 />
             </div>
@@ -93,7 +93,7 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             </div>
             <P top={20}>
                 <Button
-                    disabled={loading || !login.username || !login.password}
+                    disabled={loading || !login.email || !login.password}
                     type='submit'
                 >Login</Button>
             </P>
