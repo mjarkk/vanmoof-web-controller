@@ -1,6 +1,7 @@
 import BikeControls from '../components/Controls'
 import { Bike, SpeedLimit, PowerLevel } from '../lib/bike'
 import { ApiContext, Api } from '../lib/api'
+import { useEffect, useState } from 'react'
 
 class FakeBike {
     id = '12345'
@@ -38,10 +39,23 @@ class FakeBike {
 
 export default function ControlsTest() {
     const fakeBike = new FakeBike as unknown as Bike
-    const api = new Api({
+    const [api, setApi] = useState(new Api({
         token: 'dummy',
         refreshToken: 'dummy',
-    })
+    }))
+
+    useEffect(() => {
+        try {
+            const apiCredential = localStorage.getItem('vm-api-credentials')
+            if (!apiCredential)
+                throw 'api credentials not in local storage, if you login via the / page you should have them here also'
+
+            const apiCredentials = JSON.parse(apiCredential)
+            setApi(new Api(apiCredentials))
+        } catch (e) {
+            console.log('unable to parse api credentials from local storage, error:', e)
+        }
+    }, [])
 
     return (
         <div>

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-import type { Bike, BikeCredentials } from '../lib/bike'
+import type { Bike } from '../lib/bike'
 import { Api, ApiContext } from '../lib/api'
 import type { BikeControlsArgs } from '../components/Controls'
 import Login, { BikeAndApiCredentials } from '../components/Login'
