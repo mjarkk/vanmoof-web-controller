@@ -11,10 +11,10 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [shareinfo, setShareinfo] = useState({
-        "email": "",
-        "bikeId": 0,
-        "role": "user",
-        "duration" : 1 
+        email: "",
+        bikeId: bike.id,
+        role: "user",
+        duration: 1 
     })
 
     const ButtonStyling = {
