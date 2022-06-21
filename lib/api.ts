@@ -15,7 +15,7 @@ export class Api {
         TODO: Add support for the refresh token
     */
 
-    public credentials: ApiCredentials
+    private credentials: ApiCredentials
 
     constructor(credentials: ApiCredentials) {
         this.credentials = credentials
@@ -52,6 +52,35 @@ export class Api {
             modelColor: b.modelColor,
             links: b.links,
         }))
+    }
+
+    async createBikeSharingInvitation(shareinfo: any): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof_com/createBikeSharingInvitation`, {
+            method: 'POST',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(shareinfo)
+        })
+
+        if (req.status === 200) {
+            const res = await req.json()
+            // setSuccessModal(true) - TODO
+            return res
+        } else if (req.status === 400) {
+            const res = await req.json()
+            // console.log(res)
+            if(res.error) {
+                throw await res.message
+            } else {
+                throw await req.text()
+            }
+        }
+        else {
+            throw await req.text()
+        }
     }
 
     storeCredentialsInLocalStorage() {

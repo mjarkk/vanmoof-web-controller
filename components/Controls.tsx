@@ -3,7 +3,7 @@ import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLim
 import { SoundBoard } from './SoundBoard'
 import { ShareBike } from './ShareBike'
 import { Button } from './Button'
-import { Api } from '../lib/api'
+import { ApiContext } from '../lib/api'
 
 export interface BikeControlsArgs {
     bike: Bike
@@ -17,7 +17,11 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
             <SpeedLimit bike={bike} />
             <PowerLevel bike={bike} />
             <SoundBoard />
-            <ShareBike bike={Bike} api={Api} />
+            <ApiContext.Consumer>
+                {api => 
+                <ShareBike bike={bike} api={api} />
+                }
+            </ApiContext.Consumer>
             <Button onClick={disconnect} secondary>
                 Disconnect bike
             </Button>

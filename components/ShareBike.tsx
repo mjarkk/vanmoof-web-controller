@@ -2,7 +2,7 @@ import { Bike } from '../lib/bike'
 import { Button } from './Button'
 import { useState, FormEvent } from 'react'
 import { FormError } from './Form'
-import { Api, API_KEY } from '../lib/api'
+import { Api } from '../lib/api'
 
 export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
@@ -21,23 +21,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
-            let req = await fetch(`/api/api_vanmoof_com/createBikeSharingInvitation`, {
-                method: 'POST',
-                headers: {
-                    'Api-Key': API_KEY,
-                    'Authorization': 'Bearer ' + api.credentials.token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(shareinfo)
-            })
-
-            if (req.status === 200) {
-                const res = await req.json()
-                console.log(res)
-                setSuccessModal(true)
-            } else {
-                throw await req.text()
-            }
+            api.createBikeSharingInvitation(shareinfo)
         } catch (e) {
             setError(`${e}`)
         }
