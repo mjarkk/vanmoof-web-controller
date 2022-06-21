@@ -24,7 +24,7 @@ export class Api {
     }
 
     async getBikeCredentials(): Promise<Array<BikeCredentials>> {
-        const req = await fetch(`/api/getCustomerData?includeBikeDetails`, {
+        const req = await fetch(`/api/my_vanmoof_com/getCustomerData?includeBikeDetails`, {
             headers: {
                 'Api-Key': API_KEY,
                 'Authorization': 'Bearer ' + this.credentials.token,
