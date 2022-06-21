@@ -11,19 +11,15 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
         email: "",
         bikeId: bike.id,
         role: "user",
-        duration: 86400 // 86400 = 1 day, the current duration is just 1 second.
+        duration: 86400 // 86400 = 1 day but in seconds.
     })
-
-    const ButtonStyling = {
-        "margin": "1rem"
-   }
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
             const result = await api.createBikeSharingInvitation(shareinfo)
             if(result.result) {
-                // stuff you wanna do with the result like a success popup
+                // TODO: success popup
                 console.log(result)
             } else if(result.message){
                 setError(`${result.message}`)
@@ -76,7 +72,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     />
 
                     <input
-                        className = "inputNumber"
+                        className = "inputCustom"
                         type = "number"
                         min = "1"
                         onChange = { 
@@ -86,7 +82,6 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                         }
                         value = { shareinfo.duration / 86400 }
                     />
-
                     <Button type="submit" style={{margin: "1rem"}}>
                         Share
                     </Button>
@@ -124,7 +119,11 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                 }
 
                 .inputGroup .inputNumber {
-                    width: 100%;
+                    width: 80%;
+                }
+
+                .inputGroup .inputCustom {
+                    width: 20%;
                 }
 
                 .inputGroup .inputMail {
