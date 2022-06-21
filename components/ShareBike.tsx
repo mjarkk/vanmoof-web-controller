@@ -17,6 +17,10 @@ export function ShareBike({bike, api}: {bike: typeof Bike, api: typeof Api}) {
         "duration" : 1 
     })
 
+    const ButtonStyling = {
+        "margin": "1rem"
+   }
+
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
@@ -113,7 +117,7 @@ export function ShareBike({bike, api}: {bike: typeof Bike, api: typeof Api}) {
                         value = { shareinfo.duration }
                     />
 
-                    <Button type="submit">
+                    <Button type="submit" style={ ButtonStyling }>
                         Share
                     </Button>
                 </div>
