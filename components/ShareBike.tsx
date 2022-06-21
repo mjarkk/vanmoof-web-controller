@@ -7,7 +7,7 @@ import { Api, ApiContext, API_KEY } from '../lib/api'
 // Private key don't share this with anyone
 var token = ""
 
-export function ShareBike({bike, api}: {bike: typeof Bike, api: typeof Api}) {
+export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [shareinfo, setShareinfo] = useState({
