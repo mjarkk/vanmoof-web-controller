@@ -64,20 +64,17 @@ export class Api {
         })
 
         if (req.status === 200) {
-            const res = await req.json()
             // setSuccessModal(true) - TODO
-            return res
-        } else if (req.status === 400) {
             const res = await req.json()
-            // console.log(res)
-            if(res.error) {
-                throw await res.message
-            } else {
-                throw await req.text()
+            return res
+        } else {
+            let text = await req.text()
+            try {
+                text = JSON.parse(text).message;
+            } catch {
+                
             }
-        }
-        else {
-            throw await req.text()
+            throw text
         }
     }
 
