@@ -32,11 +32,11 @@ export class Bike {
     aesEcb: AESECB
     queue: Queue
 
-    constructor(mac: string, id: string | number, encryptionKey: string, userKeyId: number, server: BluetoothRemoteGATTServer) {
-        this.mac = mac
-        this.id = id
-        this.encryptionKey = encryptionKey
-        this.userKeyId = userKeyId
+    constructor(credentials: BikeCredentials, server: BluetoothRemoteGATTServer) {
+        this.mac = credentials.mac
+        this.id = credentials.id
+        this.encryptionKey = credentials.encryptionKey
+        this.userKeyId = credentials.userKeyId
         this.server = server
         this.aesEcb = new AESECB(new Uint8Array(Buffer.from(this.encryptionKey, 'hex')))
         this.queue = new Queue
@@ -193,14 +193,12 @@ export interface BikeCredentials {
     }
 }
 
-export async function connectToBike(credentials: Array<BikeCredentials>): Promise<Bike> {
-    const credentialFilters = credentials.map(({ mac }) => [
-        { name: 'ES3-' + mac.replaceAll(':', '').toUpperCase() },
-        { name: 'EX3-' + mac.replaceAll(':', '').toUpperCase() }
-    ])
-
+export async function connectToBike(credentials: BikeCredentials): Promise<Bike> {
     const device = await navigator.bluetooth.requestDevice({
-        filters: credentialFilters.flat(),
+        filters: [
+            { name: 'ES3-' + credentials.mac.replaceAll(':', '').toUpperCase() },
+            { name: 'EX3-' + credentials.mac.replaceAll(':', '').toUpperCase() }
+        ],
         optionalServices: [SECURITY_SERVICE, DEFENSE_SERVICE, MOVEMENT_SERVICE, BIKE_INFO_SERVICE, BIKE_STATE_SERVICE, SOUND_SERVICE, LIGHT_SERVICE]
     })
 
@@ -209,20 +207,7 @@ export async function connectToBike(credentials: Array<BikeCredentials>): Promis
     const server = await gatt.connect()
     if (!server.connected) throw `device not connected`
 
-    if (credentials.length == 1) {
-        // There is only one bike connected to this accound, no need to find the credentials for the bike connected
-        const { mac, id, encryptionKey, userKeyId } = credentials[0]
-        return new Bike(mac, id, encryptionKey, userKeyId, server)
-    }
-
-    for (let idx = 0; idx < credentialFilters.length; idx++) {
-        if (credentialFilters[idx].find(({ name }) => name == device.name)) {
-            const { mac, id, encryptionKey, userKeyId } = credentials[idx]
-            return new Bike(mac, id, encryptionKey, userKeyId, server)
-        }
-    }
-
-    throw 'The bike you connected does not belong to your accound'
+    return new Bike(credentials, server)
 }
 
 function uwnrapSpeedLimit(data: Uint8Array): SpeedLimit {
