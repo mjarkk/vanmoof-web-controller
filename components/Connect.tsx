@@ -34,7 +34,8 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
             setBikeInstance(bike)
         } catch (e) {
             const eStr = `${e}`
-            if (!/permission|cancelled/.test(eStr)) setError(eStr)
+            // eStr = 2 if you cancled the bluetooth connection screen on the Bluefy browser
+            if (eStr != '2' && !/permission|cancelled/.test(eStr)) setError(eStr)
             if (reachedAuth) setShowWakeupMessage(true)
         } finally {
             setLoading(false)
