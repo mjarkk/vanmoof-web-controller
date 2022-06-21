@@ -21,7 +21,16 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
-            api.createBikeSharingInvitation(shareinfo)
+            const result = await api.createBikeSharingInvitation(shareinfo)
+            if(result.result) {
+                // stuff you wanna do with the result like a success popup
+                console.log(result)
+            } else if(result.message){
+                setError(`${result.message}`)
+            } else {
+                setError(`${result}`)
+            }
+            
         } catch (e) {
             setError(`${e}`)
         }
