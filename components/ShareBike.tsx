@@ -11,7 +11,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
         email: "",
         bikeId: bike.id,
         role: "user",
-        duration: 1 // 86400 = 1 day, the current duration is just 1 second.
+        duration: 86400 // 86400 = 1 day, the current duration is just 1 second.
     })
 
     const ButtonStyling = {
@@ -64,9 +64,9 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                         type = "range" 
                         id = "days" 
                         name = "days" 
-                        step = "1"
-                        min  = "1" 
-                        max = "10" 
+                        step = "86400"
+                        min  = "86400" 
+                        max = "864000" 
                         list = "tickmarks"
                         onChange = { 
                             e => setShareinfo(v => ({
