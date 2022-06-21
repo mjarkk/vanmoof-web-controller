@@ -67,7 +67,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                         value = { shareinfo.duration }
                     />
 
-                    <Button type="submit" style={ ButtonStyling }>
+                    <Button type="submit" style={{margin: "1rem"}}>
                         Share
                     </Button>
                 </div>
