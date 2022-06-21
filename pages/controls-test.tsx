@@ -56,6 +56,7 @@ const dummyBike: BikeCredentials = {
         primary: '#25282a',
         secondary: '#25282a',
     },
+    links: null,
 }
 
 export default function ControlsTest() {
