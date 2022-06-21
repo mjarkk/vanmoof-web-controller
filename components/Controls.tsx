@@ -75,7 +75,7 @@ function SpeedLimit({ bike }: { bike: Bike }) {
 
     const options: Array<[string, number, SpeedLimitEnum]> = [
         ['🇯🇵', 24, SpeedLimitEnum.JP],
-        ['🇪🇺', 27, SpeedLimitEnum.EU],
+        ['🇪🇺', 25, SpeedLimitEnum.EU],
         ['🇺🇸', 32, SpeedLimitEnum.US],
         ['😎', 37, SpeedLimitEnum.NO_LIMIT],
     ]
