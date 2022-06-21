@@ -15,7 +15,7 @@ export class Api {
         TODO: Add support for the refresh token
     */
 
-    private credentials: ApiCredentials
+    public credentials: ApiCredentials
 
     constructor(credentials: ApiCredentials) {
         this.credentials = credentials
