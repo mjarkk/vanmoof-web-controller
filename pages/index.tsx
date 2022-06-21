@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { Bike, BikeCredentials } from '../lib/bike'
 import { Api, ApiContext } from '../lib/api'
 import type { BikeControlsArgs } from '../components/Controls'
-import Login from '../components/Login'
+import Login, { BikeAndApiCredentials } from '../components/Login'
 import BluetoothConnect from '../components/Connect'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -16,8 +16,7 @@ const BikeControls = dynamic<BikeControlsArgs>(() => import('../components/Contr
 
 const Home: NextPage = () => {
   const [browserCompatible, setBrowserCompatible] = useState(true)
-  const [bikeCredentials, setBikeCredentials] = useState<undefined | Array<BikeCredentials>>(undefined)
-  const [api, setApi] = useState<undefined | Api>(undefined)
+  const [credentials, setCredentials] = useState<undefined | BikeAndApiCredentials>(undefined)
   const [bikeInstance, setBikeInstance] = useState<undefined | Bike>(undefined)
 
   const disconnect = () => {
@@ -27,40 +26,33 @@ const Home: NextPage = () => {
 
   const backToLogin = () => {
     disconnect()
-    setBikeCredentials(undefined)
+    setCredentials(undefined)
   }
-
-  const setBikeCredentialsAndApi = (bikes: Array<BikeCredentials>, api: Api) => {
-    setBikeCredentials(bikes)
-    setApi(api)
-  }
-
-  useEffect(() => {
-    if (bikeCredentials)
-      localStorage.setItem('vm-bike-credentials', JSON.stringify(bikeCredentials))
-  }, [bikeCredentials])
 
   useEffect(() => {
     setBrowserCompatible(!!navigator.bluetooth)
+
     const apiCredential = localStorage.getItem('vm-api-credentials')
-    if (apiCredential) {
+    const rawBikeCredentials = localStorage.getItem('vm-bike-credentials')
+    if (apiCredential && rawBikeCredentials) {
       try {
         const apiCredentials = JSON.parse(apiCredential)
-        const api = new Api(apiCredentials)
-        setApi(api)
+        const parsedBikeCredentials = JSON.parse(rawBikeCredentials)
+
+        if (!Array.isArray(parsedBikeCredentials))
+          throw 'old bike credentials format'
+
+        const parsedApi = new Api(apiCredentials)
+
+        setCredentials({
+          api: parsedApi,
+          bikes: parsedBikeCredentials,
+        })
       } catch (e) {
-        console.log('unable to parse api credentials from local storage, error:', e)
+        console.log('unable to parse bike/api credentials from local storage, error:', e)
       }
     }
-    const bikeCredentials = localStorage.getItem('vm-bike-credentials')
-    if (bikeCredentials) {
-      try {
-        const bikeCredentialsJson = JSON.parse(bikeCredentials)
-        setBikeCredentials(Array.isArray(bikeCredentialsJson) ? bikeCredentialsJson : [bikeCredentialsJson])
-      } catch (e) {
-        console.log('unable to parse bike credentials from local storage, error:', e)
-      }
-    }
+
     import('../lib/bike') // Start importing the bike lib
   }, [])
 
@@ -79,7 +71,7 @@ const Home: NextPage = () => {
       <main>
         <h1 className='title'>Change VanMoof S&X 3 speed limit</h1>
 
-        {!browserCompatible || (!bikeInstance && !bikeCredentials) ?
+        {!browserCompatible || (!bikeInstance && !credentials) ?
           <>
             <p className='description'>
               Using this site you can change the speed limit of your VanMoof S3 and X3
@@ -105,20 +97,20 @@ const Home: NextPage = () => {
 
         {!browserCompatible
           ? <Unsupported />
-          : bikeInstance
-            ? <ApiContext.Provider value={api}>
-              <BikeControls
-                bike={bikeInstance}
-                disconnect={disconnect}
-              />
-            </ApiContext.Provider>
-            : bikeCredentials
-              ? <BluetoothConnect
-                bikeCredentials={bikeCredentials}
+          : credentials
+            ? bikeInstance
+              ? <ApiContext.Provider value={credentials.api}>
+                <BikeControls
+                  bike={bikeInstance}
+                  disconnect={disconnect}
+                />
+              </ApiContext.Provider>
+              : <BluetoothConnect
+                bikeCredentials={credentials.bikes}
                 setBikeInstance={setBikeInstance}
                 backToLogin={backToLogin}
               />
-              : <Login setBikeCredentials={setBikeCredentialsAndApi} />
+            : <Login setCredentials={setCredentials} />
         }
       </main>
 

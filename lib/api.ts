@@ -40,11 +40,17 @@ export class Api {
         if (bikes.length == 0)
             throw 'You don\'t have a bike connected to your account'
 
-        return bikes.map((b: any) => ({
+        return bikes.map((b: any): BikeCredentials => ({
             id: b.id,
             mac: b.macAddress,
             encryptionKey: b.key.encryptionKey,
             userKeyId: b.key.userKeyId,
+
+            name: b.name,
+            ownerName: b.ownerName,
+
+            modelColor: b.modelColor,
+            links: b.links,
         }))
     }
 

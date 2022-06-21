@@ -6,11 +6,16 @@ import { Button } from './Button'
 import { FormError } from './Form'
 import { P } from './Spacing'
 
-export interface LoginArgs {
-    setBikeCredentials: (bikes: Array<BikeCredentials>, api: Api) => void
+export interface BikeAndApiCredentials {
+    api: Api,
+    bikes: Array<BikeCredentials>,
 }
 
-export default function Login({ setBikeCredentials }: LoginArgs) {
+export interface LoginArgs {
+    setCredentials: (creds: BikeAndApiCredentials) => void
+}
+
+export default function Login({ setCredentials }: LoginArgs) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [login, setLogin] = useState({
@@ -36,8 +41,11 @@ export default function Login({ setBikeCredentials }: LoginArgs) {
             const credentials = await req.json()
             const api = new Api(credentials)
             const bikes = await api.getBikeCredentials()
+
             api.storeCredentialsInLocalStorage()
-            setBikeCredentials(bikes, api)
+            localStorage.setItem('vm-bike-credentials', JSON.stringify(bikes))
+
+            setCredentials({ bikes, api })
         } catch (e) {
             setError(`${e}`)
         } finally {

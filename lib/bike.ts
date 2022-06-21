@@ -178,6 +178,19 @@ export interface BikeCredentials {
     mac: string
     encryptionKey: string
     userKeyId: number
+
+    name: string
+    ownerName: string
+
+    modelColor: null | {
+        name: 'Dark' | string // TODO find out what other colors this can be
+        primary: string
+        secondary: string
+    }
+    links: null | {
+        hash: string
+        thumbnail: string
+    }
 }
 
 export async function connectToBike(credentials: Array<BikeCredentials>): Promise<Bike> {
