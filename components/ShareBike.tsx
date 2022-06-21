@@ -34,17 +34,13 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                 body: JSON.stringify(shareinfo)
             })
 
-            if (req.status >= 400) {
-                throw await req.text()
-            }
-
-            const res = await req.json()
-
             if (req.status === 200) {
+                const res = await req.json()
                 console.log(res)
                 setSuccessModal(true)
+            } else {
+                throw await req.text()
             }
-
         } catch (e) {
             setError(`${e}`)
         }
