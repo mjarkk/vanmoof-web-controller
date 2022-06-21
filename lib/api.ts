@@ -8,8 +8,6 @@ export interface ApiCredentials {
     refreshToken: string
 }
 
-export const ApiContext = createContext<Api | undefined>(undefined)
-
 export class Api {
     /*
         TODO: Add support for the refresh token
@@ -59,3 +57,5 @@ export class Api {
     }
 
 }
+
+export const ApiContext = createContext<Api>(new Api({ token: 'dummy', refreshToken: 'dummy' }))
