@@ -1,5 +1,5 @@
 import BikeControls from '../components/Controls'
-import { Bike, SpeedLimit, PowerLevel, BikeCredentials } from '../lib/bike'
+import { SpeedLimit, PowerLevel, BikeCredentials } from '../lib/bike'
 import { ApiContext, Api } from '../lib/api'
 import { useEffect, useState } from 'react'
 import { BikeSelector } from '../components/BikeSelector'

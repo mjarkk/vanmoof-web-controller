@@ -43,7 +43,7 @@ export function BikeSelector({ options, onSelect, title }: BikeSelectorProps) {
                 .bikes {
                     display: flex;
                     flex-wrap: wrap;
-                    align-items: center;
+                    justify-content: center;
                 }
                 .previewImage {
                     height: 150px;
