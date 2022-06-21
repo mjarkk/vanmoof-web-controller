@@ -1,11 +1,8 @@
-import { Bike, BikeContext } from '../lib/bike'
+import { Bike } from '../lib/bike'
 import { Button } from './Button'
 import { useState, FormEvent } from 'react'
 import { FormError } from './Form'
-import { Api, ApiContext, API_KEY } from '../lib/api'
-
-// Private key don't share this with anyone
-var token = ""
+import { Api, API_KEY } from '../lib/api'
 
 export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
@@ -14,7 +11,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
         email: "",
         bikeId: bike.id,
         role: "user",
-        duration: 1 
+        duration: 1 // 86400 = 1 day, the current duration is just 1 second.
     })
 
     const ButtonStyling = {
@@ -28,7 +25,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                 method: 'POST',
                 headers: {
                     'Api-Key': API_KEY,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + api.credentials.token,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(shareinfo)
@@ -47,38 +44,11 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     }
 
     return (
-        <div className='ShareBike'>
-            <BikeContext.Consumer>
-                {(bike) => {
-                    if (bike) {
-                        if(shareinfo.bikeId === 0) {
-                            setShareinfo(v => ({...v, bikeId: Number(bike.id)}))
-                        } else {
-                            return <h3>Share bike {bike.id}</h3>;
-                        }
-                    } else {
-                        return <h3>To use the function below, please login again.</h3>;
-                    }
-                }}
-            </BikeContext.Consumer>
-
-            <ApiContext.Consumer>
-                {(api) => {
-                    if (api) {
-                        token = api.credentials.token
-                        if(token !== "") {
-                            return
-                        } else {
-                            return <h3>To use the function below, please login again.</h3>;
-                        }
-                    } else {
-                        return <h3>To use the function below, please login again.</h3>;
-                    }
-                }}
-            </ApiContext.Consumer>
+        <div className='shareBike'>
+            <h3>Share bike</h3>
 
             <form onSubmit={onSubmit}>
-                <div className="input-group">
+                <div className="inputGroup">
                     <label htmlFor="email">Email</label>
                     <input 
                         className = "input-mail"
@@ -123,7 +93,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
             </form>
 
             <style jsx>{`
-                .ShareBike {
+                .shareBike {
                     display: flex;
                     align-items: center;
                     flex-direction: column;
@@ -135,25 +105,25 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     font-size: 0.9rem;
                 }
 
-                .input-group {
+                .inputGroup {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
                 }
 
-                .input-group label {
+                .inputGroup label {
                     display: block;
                     font-size: 0.9rem;
                     color: var(--label-color);
                     padding-bottom: 4px;
                 }
 
-                .input-group .input-number {
+                .inputGroup .input-number {
                     width: 100%;
                 }
 
-                .input-group .input-mail {
+                .inputGroup .input-mail {
                     width: 100%;
                     color: var(--text-color);
                     padding: 10px;
@@ -162,12 +132,12 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     background-color: transparent;
                 }
 
-                .input-group .input-mail:focus {
+                .inputGroup .input-mail:focus {
                     border: 2px solid var(--active-color);
                     outline: none;
                 }
 
-                .input-group .input-mail {
+                .inputGroup .input-mail {
                     background-color: rgba(0, 0, 0, .07);
                     color: var(--disabled-text-color);
                 }
