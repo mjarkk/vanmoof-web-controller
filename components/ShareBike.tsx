@@ -1,7 +1,7 @@
 import { Bike } from '../lib/bike'
 import { Button } from './Button'
 import { useState, FormEvent } from 'react'
-import { FormError } from './Form'
+import { FormError, FormSuccess } from './Form'
 import { Api } from '../lib/api'
 
 export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
@@ -18,10 +18,12 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
         event.preventDefault()
         try {
             setError(undefined)
+            setSuccessModal(false)
             const result = await api.createBikeSharingInvitation(shareinfo)
             if(result.result) {
                 // TODO: success popup
-                console.log(result)
+                setSuccessModal(true)
+                // console.log(result)
             } else if(result.message){
                 setError(`${result.message}`)
             } else {
@@ -89,6 +91,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                 </div>
                 
             
+                <FormSuccess status={successModal} message={"Shared your bike successfully! :)"} />
                 <FormError error={error} />
             </form>
 
