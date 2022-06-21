@@ -44,7 +44,7 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                 <div className="inputGroup">
                     <label htmlFor="email">Email</label>
                     <input 
-                        className = "input-mail"
+                        className = "inputMail"
                         type = "email" 
                         id = "email" 
                         name = "email" 
@@ -60,20 +60,31 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
 
                     <p>How many days would you like to share your bike?</p>
                     <input 
-                        className = "input-number"
+                        className = "inputNumber"
                         type = "range" 
                         id = "days" 
                         name = "days" 
-                        step = "86400"
-                        min  = "86400" 
-                        max = "864000" 
-                        list = "tickmarks"
+                        step = "1"
+                        min  = "1" 
+                        max = "100" // currently a set max for the slider for higher numbers use the input box.
                         onChange = { 
                             e => setShareinfo(v => ({
-                                ...v, duration: Number(e.target.value)
+                                ...v, duration: Number(e.target.value) * 86400
                             }))
                         }
-                        value = { shareinfo.duration }
+                        value = { shareinfo.duration / 86400 }
+                    />
+
+                    <input
+                        className = "inputNumber"
+                        type = "number"
+                        min = "1"
+                        onChange = { 
+                            e => setShareinfo(v => ({
+                                ...v, duration: Number(e.target.value) * 86400
+                            }))
+                        }
+                        value = { shareinfo.duration / 86400 }
                     />
 
                     <Button type="submit" style={{margin: "1rem"}}>
@@ -112,11 +123,11 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     padding-bottom: 4px;
                 }
 
-                .inputGroup .input-number {
+                .inputGroup .inputNumber {
                     width: 100%;
                 }
 
-                .inputGroup .input-mail {
+                .inputGroup .inputMail {
                     width: 100%;
                     color: var(--text-color);
                     padding: 10px;
@@ -125,12 +136,12 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     background-color: transparent;
                 }
 
-                .inputGroup .input-mail:focus {
+                .inputGroup .inputMail:focus {
                     border: 2px solid var(--active-color);
                     outline: none;
                 }
 
-                .inputGroup .input-mail {
+                .inputGroup .inputMail {
                     background-color: rgba(0, 0, 0, .07);
                     color: var(--disabled-text-color);
                 }
