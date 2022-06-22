@@ -45,7 +45,7 @@ interface FormSuccessProps {
 }
 
 export function FormSuccess({ status, message }: FormSuccessProps) {
-    if(status === true) {
+    if (status === true) {
         return message
             ? <div className='success'>
                 {message}

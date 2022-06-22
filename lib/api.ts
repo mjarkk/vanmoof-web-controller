@@ -69,7 +69,7 @@ export class Api {
             let text = await req.text()
             try {
                 text = JSON.parse(text);
-            } catch {}
+            } catch { }
             return text
         }
     }

@@ -6,7 +6,7 @@ import { Api } from '../lib/api'
 import { ShareDurationSlider } from './ShareDurationSlider'
 import { P } from './Spacing'
 
-export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
+export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
     const [successModal, setSuccessModal] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [shareinfo, setShareinfo] = useState({
@@ -22,16 +22,16 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
             setError(undefined)
             setSuccessModal(false)
             const result = await api.createBikeSharingInvitation(shareinfo)
-            if(result.result) {
+            if (result.result) {
                 // TODO: success popup
                 setSuccessModal(true)
                 // console.log(result)
-            } else if(result.message){
+            } else if (result.message) {
                 setError(`${result.message}`)
             } else {
                 setError(`${result}`)
             }
-            
+
         } catch (e) {
             setError(`${e}`)
         }
@@ -44,19 +44,19 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
             <form onSubmit={onSubmit}>
                 <div className="inputGroup">
                     <label htmlFor="email">Email</label>
-                    <input 
-                        className = "inputMail"
-                        type = "email" 
-                        id = "email" 
-                        name = "email" 
-                        placeholder = "Enter email" 
-                        value = { shareinfo.email } 
-                        onChange = {
+                    <input
+                        className="inputMail"
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter email"
+                        value={shareinfo.email}
+                        onChange={
                             e => setShareinfo(v => ({
                                 ...v, email: e.target.value
                             }))
                         }
-                        required 
+                        required
                     />
 
                     <P vertical="1rem">
@@ -64,15 +64,15 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                             e => setShareinfo(v => ({
                                 ...v, duration: e * 60
                             }))
-                        }/>
+                        } />
                     </P>
 
-                    <Button type="submit" style={{margin: "1rem"}}>
+                    <Button type="submit" style={{ margin: "1rem" }}>
                         Share
                     </Button>
                 </div>
-                
-            
+
+
                 <FormSuccess status={successModal} message={"Shared your bike successfully! :)"} />
                 <FormError error={error} />
             </form>

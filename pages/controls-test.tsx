@@ -57,8 +57,8 @@ const dummyBike: BikeCredentials = {
         secondary: '#25282a',
     },
     links: {
-        "hash":"http://my.vanmoof.com/v8/getBikeDataHash/000000",
-        "thumbnail":"https://my.vanmoof.com/image/model/75",
+        "hash": "http://my.vanmoof.com/v8/getBikeDataHash/000000",
+        "thumbnail": "https://my.vanmoof.com/image/model/75",
     }
 }
 

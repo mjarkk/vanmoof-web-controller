@@ -19,13 +19,13 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
             <PowerLevel bike={bike} />
             <SoundBoard />
             <ApiContext.Consumer>
-                {api => 
-                <ShareBike bike={bike} api={api} />
+                {api =>
+                    <ShareBike bike={bike} api={api} />
                 }
             </ApiContext.Consumer>
             <ApiContext.Consumer>
-                {api => 
-                <CurrentShares bike={bike} api={api} />
+                {api =>
+                    <CurrentShares bike={bike} api={api} />
                 }
             </ApiContext.Consumer>
             <Button onClick={disconnect} secondary>

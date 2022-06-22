@@ -72,7 +72,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
             {successModal
                 ? <div className='listContainer'>
                     {invited.length == 0
-                        ? <p>No people found in your invitations list.</p>
+                        ? <p>No one found found in your invitation list.</p>
                         : invited.map((d: InvitedArray, i, arr) =>
                             <form
                                 key={d.email}
@@ -96,7 +96,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                                 </li>
                                 {
                                     arr.length - 1 === i
-                                        ? <div/>
+                                        ? <div />
                                         : <div className='awesomeLine' />
                                 }
                             </form>
