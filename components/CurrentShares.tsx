@@ -116,16 +116,26 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                     display: flex;
                     align-items: center;
                     flex-direction: column;
+                    width: 600px;
+                    max-width: 100%;
                 }
 
                 .listContainer {
                     display: flex;
                     flex-direction: column;
+                    width: 100%;
                 }
 
                 .listItem {
                     display: flex;
                     justify-content: space-between;
+                    align-items: center;
+                }
+
+                .listItem:before {
+                    content: "";
+                    border: 1px solid var(--text-color);
+                    align-self: stretch;
                 }
 
             `}</style>
