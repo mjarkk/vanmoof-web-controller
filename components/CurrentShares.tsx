@@ -43,32 +43,36 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
         <div className='shareBike'>
             <h3>Currently shared with</h3>
 
-            <div className='listContainer'>
-                {invited.length == 0
-                    ? <p>No people found in your invitations list.</p>
-                    : invited.map((d: InvitedArray) =>
-                    <form
+            {successModal 
+            ? <div className='listContainer'>
+            {invited.length == 0
+                ? <p>No people found in your invitations list.</p>
+                : invited.map((d: InvitedArray) =>
+                <form
+                    key={d.email}
+                    onSubmit={LoadInvites}>
+
+                    <li
                         key={d.email}
-                        onSubmit={LoadInvites}>
+                        className="listItem"
+                    >
 
-                        <li
-                            key={d.email}
-                            className="listItem"
+                        {d.email}
+                        <Button
+                            type="submit"
+                            style={{ margin: "1rem" }}
                         >
+                            Remove
+                        </Button>
 
-                            {d.email}
-                            <Button
-                                type="submit"
-                                style={{ margin: "1rem" }}
-                            >
-                                Remove
-                            </Button>
-
-                        </li>
-                    </form>
-                    )
-                }
+                    </li>
+                </form>
+                )
+            }
             </div>
+            : <p>Click on the button below to obtain your share holders list.</p>
+            }
+            
 
             <form onSubmit={LoadInvites}>
                 <Button
