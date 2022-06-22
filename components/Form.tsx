@@ -38,3 +38,29 @@ export function FormError({ error }: FormErrorProps) {
         </div>
         : <></>
 }
+
+interface FormSuccessProps {
+    status?: boolean
+    message?: string
+}
+
+export function FormSuccess({ status, message }: FormSuccessProps) {
+    if (status === true) {
+        return message
+            ? <div className='success'>
+                {message}
+                <style jsx>{`
+                    .success {
+                        max-width: 400px;
+                        padding: 10px 0;
+                        color: var(--positive-box-bg-color);
+                        display: inline-block;
+                        margin-bottom: 1rem;
+                    }
+                `}</style>
+            </div>
+            : <></>
+    } else {
+        return null
+    }
+}

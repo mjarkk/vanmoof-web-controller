@@ -22,7 +22,7 @@ export class Api {
     }
 
     async getBikeCredentials(): Promise<Array<BikeCredentials>> {
-        const req = await fetch(`/api/getCustomerData?includeBikeDetails`, {
+        const req = await fetch(`/api/my_vanmoof_com/getCustomerData?includeBikeDetails`, {
             headers: {
                 'Api-Key': API_KEY,
                 'Authorization': 'Bearer ' + this.credentials.token,
@@ -50,6 +50,54 @@ export class Api {
             modelColor: b.modelColor,
             links: b.links,
         }))
+    }
+
+    async createBikeSharingInvitation(shareinfo: any): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof-api_com/createBikeSharingInvitation`, {
+            method: 'POST',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(shareinfo)
+        })
+
+        if (req.status === 200) {
+            return await req.json()
+        } else {
+            let text = await req.text()
+            try {
+                text = JSON.parse(text);
+            } catch { }
+            return text
+        }
+    }
+
+    async getCurrentShares(bikeid: number | string): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/${bikeid}`, {
+            method: 'GET',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        return await req.json()
+    }
+
+    async RemoveShareHolder(guid: string): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof-api_com/revokeBikeSharingInvitation/${guid}`, {
+            method: 'POST',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        return await req.json()
     }
 
     storeCredentialsInLocalStorage() {

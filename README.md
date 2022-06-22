@@ -8,6 +8,17 @@ A web app for changing the speed limit of your VanMoof S3 and X3.
 
 https://vanmoof-web-controller.vercel.app/
 
+### Current features
+- Change your speed limit to JP (24 km/h), EU (25 km/h), US (32 km/h) or 😎 (37 km/h)
+- Set your power level, this also unlocks a new power level 5.
+- A sound board with the following sounds:
+
+Short | 🔘 Click | 🧨 Error | 👍 Pling | 🤔 Cling clong | 🔔 Bell | 🔔 Normal bike bell | 🎉 Bell Tada | 😚 Whistle | 🚢 BOAT | ⚡️ Wuup | 🫤 Success but error | 
+--- | --- | --- | --- |--- |--- |--- |--- |--- |--- |--- |---
+Long | 🔋 Charding noise.. | 🚨 Alarm | 🚨 Alarm stage 2 | 🔋 Charging.. | 🆕 Updating.. | 🎉 Update complete | 💥 Make wired noises
+- You can share your bike to someone using their email
+
+
 ### Want to help?
 
 Here are some things you can do to help!

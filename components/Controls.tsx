@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLimitEnum } from '../lib/bike'
 import { SoundBoard } from './SoundBoard'
+import { ShareBike } from './ShareBike'
 import { Button } from './Button'
+import { ApiContext } from '../lib/api'
+import { CurrentShares } from './CurrentShares'
 
 export interface BikeControlsArgs {
     bike: Bike
@@ -15,6 +18,16 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
             <SpeedLimit bike={bike} />
             <PowerLevel bike={bike} />
             <SoundBoard />
+            <ApiContext.Consumer>
+                {api =>
+                    <ShareBike bike={bike} api={api} />
+                }
+            </ApiContext.Consumer>
+            <ApiContext.Consumer>
+                {api =>
+                    <CurrentShares bike={bike} api={api} />
+                }
+            </ApiContext.Consumer>
             <Button onClick={disconnect} secondary>
                 Disconnect bike
             </Button>
