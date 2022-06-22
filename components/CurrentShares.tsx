@@ -45,7 +45,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
             const res = await api.RemoveShareHolder(guid)
             setError(undefined)
             setSuccessModal(false)
-            if(res.error) {
+            if (res.error) {
                 setError(res.message)
             } else if (res.result) {
                 const shares = await api.getCurrentShares(bike.id)
@@ -73,7 +73,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                 ? <div className='listContainer'>
                     {invited.length == 0
                         ? <p>No people found in your invitations list.</p>
-                        : invited.map((d: InvitedArray) =>
+                        : invited.map((d: InvitedArray, i, arr) =>
                             <form
                                 key={d.email}
                                 onSubmit={e => RemoveInvite(e, d.guid)}>
@@ -82,16 +82,23 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                                     key={d.email}
                                     className="listItem"
                                 >
-
                                     {d.email}
                                     <Button
                                         type="submit"
-                                        style={{ margin: "1rem" }}
-                                    >
+                                        style={
+                                            {
+                                                "margin": "1rem",
+                                                "width": "160px",
+                                            }
+                                        }>
                                         Remove
                                     </Button>
-
                                 </li>
+                                {
+                                    arr.length - 1 === i
+                                        ? <div/>
+                                        : <div className='awesomeLine' />
+                                }
                             </form>
                         )
                     }
@@ -132,10 +139,8 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                     align-items: center;
                 }
 
-                .listItem:before {
-                    content: "";
-                    border: 1px solid var(--text-color);
-                    align-self: stretch;
+                .awesomeLine {
+                    border-top: 2px solid var(--disabled-text-color);
                 }
 
             `}</style>
