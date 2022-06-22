@@ -30,7 +30,6 @@ export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProp
     useEffect(() => {
         const newValue = onChangeMinutes ? selectedOption.value : undefined
         if (onChangeMinutes && lastOnChangeValue.current !== newValue && newValue !== undefined) {
-            console.log(newValue)
             onChangeMinutes(newValue)
         }
         lastOnChangeValue.current = newValue
