@@ -1,7 +1,7 @@
 import { Bike } from '../lib/bike'
 import { Api } from '../lib/api'
 import { useState, FormEvent } from 'react'
-import { FormError, FormSuccess } from './Form'
+import { FormError } from './Form'
 import { Button } from './Button'
 
 export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
@@ -83,7 +83,6 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                 </Button>
             </form>
 
-            <FormSuccess status={successModal} message={"Successfully obtained share holders."} />
             <FormError error={error} />
 
             <style jsx>{`
