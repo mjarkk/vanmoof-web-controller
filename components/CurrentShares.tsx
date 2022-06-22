@@ -5,7 +5,17 @@ import { FormError, FormSuccess } from './Form'
 import { Button } from './Button'
 
 export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
-    const [invited, setInvites] = useState([])
+    interface InvitedArray {
+        guid: string
+        expiresAt: string
+        startsAt: null
+        endsAt: null
+        duration: number
+        role: string
+        email: string
+    }
+
+    const [invited, setInvites] = useState<Array<InvitedArray>>([])
 
     const [successModal, setSuccessModal] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
@@ -34,27 +44,28 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
             <h3>Currently shared with</h3>
 
             <div className='listContainer'>
-                {                       
-                    invited.map((d) =>
-                        <form 
-                            key = { d.email }
-                            onSubmit = { LoadInvites }>
+                {invited.length == 0
+                    ? <p>No people found in your invitations list.</p>
+                    : invited.map((d: InvitedArray) =>
+                    <form
+                        key={d.email}
+                        onSubmit={LoadInvites}>
 
-                            <li 
-                                key = { d.email }
-                                className = "listItem"
-                                >
-                                
-                                { d.email }
-                                <Button
-                                    type = "submit"
-                                    style = {{ margin: "1rem" }}
-                                >
-                                    Remove
-                                </Button>
-                                
-                            </li>
-                        </form>
+                        <li
+                            key={d.email}
+                            className="listItem"
+                        >
+
+                            {d.email}
+                            <Button
+                                type="submit"
+                                style={{ margin: "1rem" }}
+                            >
+                                Remove
+                            </Button>
+
+                        </li>
+                    </form>
                     )
                 }
             </div>
