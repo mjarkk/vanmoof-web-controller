@@ -72,7 +72,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
             {successModal
                 ? <div className='listContainer'>
                     {invited.length == 0
-                        ? <p>No one found found in your invitation list.</p>
+                        ? <p>No one found in your invitation list.</p>
                         : invited.map((d: InvitedArray, i, arr) =>
                             <form
                                 key={d.email}
