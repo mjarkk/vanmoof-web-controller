@@ -53,7 +53,7 @@ export class Api {
     }
 
     async createBikeSharingInvitation(shareinfo: any): Promise<any> {
-        let req = await fetch(`/api/api_vanmoof_com/createBikeSharingInvitation`, {
+        let req = await fetch(`/api/api_vanmoof-api_com/createBikeSharingInvitation`, {
             method: 'POST',
             headers: {
                 'Api-Key': API_KEY,
@@ -72,6 +72,33 @@ export class Api {
             } catch {}
             return text
         }
+    }
+
+    async getCurrentShares(bikeid: number | string): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/${bikeid}`, {
+            method: 'GET',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        return await req.json()
+    }
+
+    async RemoveShareHolder(): Promise<any> {
+        // let req = await fetch(`/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/${bikeid}`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Api-Key': API_KEY,
+        //         'Authorization': 'Bearer ' + this.credentials.token,
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+
+        // return await req.json()
+        return "test"
     }
 
     storeCredentialsInLocalStorage() {

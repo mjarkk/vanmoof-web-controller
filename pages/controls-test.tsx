@@ -56,7 +56,10 @@ const dummyBike: BikeCredentials = {
         primary: '#25282a',
         secondary: '#25282a',
     },
-    links: null,
+    links: {
+        "hash":"http://my.vanmoof.com/v8/getBikeDataHash/000000",
+        "thumbnail":"https://my.vanmoof.com/image/model/75",
+    }
 }
 
 export default function ControlsTest() {

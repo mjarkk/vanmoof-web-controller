@@ -4,6 +4,7 @@ import { SoundBoard } from './SoundBoard'
 import { ShareBike } from './ShareBike'
 import { Button } from './Button'
 import { ApiContext } from '../lib/api'
+import { CurrentShares } from './CurrentShares'
 
 export interface BikeControlsArgs {
     bike: Bike
@@ -20,6 +21,11 @@ export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
             <ApiContext.Consumer>
                 {api => 
                 <ShareBike bike={bike} api={api} />
+                }
+            </ApiContext.Consumer>
+            <ApiContext.Consumer>
+                {api => 
+                <CurrentShares bike={bike} api={api} />
                 }
             </ApiContext.Consumer>
             <Button onClick={disconnect} secondary>
