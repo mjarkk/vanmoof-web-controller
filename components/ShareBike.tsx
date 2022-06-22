@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react'
 import { FormError, FormSuccess } from './Form'
 import { Api } from '../lib/api'
 import { ShareDurationSlider } from './ShareDurationSlider'
+import { P } from './Spacing'
 
 export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
@@ -58,12 +59,13 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                         required 
                     />
 
-                    <p>How many days would you like to share your bike?</p>
-                    <ShareDurationSlider onChangeMinutes={
-                        e => setShareinfo(v => ({
-                            ...v, duration: e
-                        }))
-                    }/>
+                    <P vertical="1rem">
+                        <ShareDurationSlider onChangeMinutes={
+                            e => setShareinfo(v => ({
+                                ...v, duration: e * 60
+                            }))
+                        }/>
+                    </P>
 
                     <Button type="submit" style={{margin: "1rem"}}>
                         Share
