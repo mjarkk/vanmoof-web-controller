@@ -87,18 +87,17 @@ export class Api {
         return await req.json()
     }
 
-    async RemoveShareHolder(): Promise<any> {
-        // let req = await fetch(`/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/${bikeid}`, {
-        //     method: 'GET',
-        //     headers: {
-        //         'Api-Key': API_KEY,
-        //         'Authorization': 'Bearer ' + this.credentials.token,
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
+    async RemoveShareHolder(guid: string): Promise<any> {
+        let req = await fetch(`/api/api_vanmoof-api_com/revokeBikeSharingInvitation/${guid}`, {
+            method: 'POST',
+            headers: {
+                'Api-Key': API_KEY,
+                'Authorization': 'Bearer ' + this.credentials.token,
+                'Content-Type': 'application/json'
+            }
+        })
 
-        // return await req.json()
-        return "test"
+        return await req.json()
     }
 
     storeCredentialsInLocalStorage() {

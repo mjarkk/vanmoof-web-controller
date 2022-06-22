@@ -3,6 +3,7 @@ import { Button } from './Button'
 import { useState, FormEvent } from 'react'
 import { FormError, FormSuccess } from './Form'
 import { Api } from '../lib/api'
+import { ShareDurationSlider } from './ShareDurationSlider'
 
 export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
     const [successModal, setSuccessModal] = useState(false)
@@ -58,33 +59,12 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     />
 
                     <p>How many days would you like to share your bike?</p>
-                    <input 
-                        className = "inputNumber"
-                        type = "range" 
-                        id = "days" 
-                        name = "days" 
-                        step = "1"
-                        min  = "1" 
-                        max = "100" // currently a set max for the slider for higher numbers use the input box.
-                        onChange = { 
-                            e => setShareinfo(v => ({
-                                ...v, duration: Number(e.target.value) * 86400
-                            }))
-                        }
-                        value = { shareinfo.duration / 86400 }
-                    />
+                    {/* <ShareDurationSlider onChangeMinutes={
+                        e => setShareinfo(v => ({
+                            ...v, duration: e
+                        }))
+                    }/> */}
 
-                    <input
-                        className = "inputCustom"
-                        type = "number"
-                        min = "1"
-                        onChange = { 
-                            e => setShareinfo(v => ({
-                                ...v, duration: Number(e.target.value) * 86400
-                            }))
-                        }
-                        value = { shareinfo.duration / 86400 }
-                    />
                     <Button type="submit" style={{margin: "1rem"}}>
                         Share
                     </Button>

@@ -39,40 +39,66 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
         }
     }
 
+    const RemoveInvite = async (event: FormEvent<HTMLFormElement>, guid: string) => {
+        event.preventDefault()
+        try {
+            const res = await api.RemoveShareHolder(guid)
+            setError(undefined)
+            setSuccessModal(false)
+            if(res.error) {
+                setError(res.message)
+            } else if (res.result) {
+                const shares = await api.getCurrentShares(bike.id)
+                if (shares.invitations) {
+                    setInvites(shares.invitations)
+                    setSuccessModal(true)
+                } else if (shares.error) {
+                    setError(shares.message)
+                } else {
+                    setError(shares)
+                }
+            } else {
+                setError(res)
+            }
+        } catch (e) {
+            setError(`${e}`)
+        }
+    }
+
     return (
         <div className='shareBike'>
             <h3>Currently shared with</h3>
 
-            {successModal 
-            ? <div className='listContainer'>
-            {invited.length == 0
-                ? <p>No people found in your invitations list.</p>
-                : invited.map((d: InvitedArray) =>
-                <form
-                    key={d.email}
-                    onSubmit={LoadInvites}>
+            {successModal
+                ? <div className='listContainer'>
+                    {invited.length == 0
+                        ? <p>No people found in your invitations list.</p>
+                        : invited.map((d: InvitedArray) =>
+                            <form
+                                key={d.email}
+                                onSubmit={e => RemoveInvite(e, d.guid)}>
 
-                    <li
-                        key={d.email}
-                        className="listItem"
-                    >
+                                <li
+                                    key={d.email}
+                                    className="listItem"
+                                >
 
-                        {d.email}
-                        <Button
-                            type="submit"
-                            style={{ margin: "1rem" }}
-                        >
-                            Remove
-                        </Button>
+                                    {d.email}
+                                    <Button
+                                        type="submit"
+                                        style={{ margin: "1rem" }}
+                                    >
+                                        Remove
+                                    </Button>
 
-                    </li>
-                </form>
-                )
+                                </li>
+                            </form>
+                        )
+                    }
+                </div>
+                : <p>Click on the button below to obtain your share holders list.</p>
             }
-            </div>
-            : <p>Click on the button below to obtain your share holders list.</p>
-            }
-            
+
 
             <form onSubmit={LoadInvites}>
                 <Button
