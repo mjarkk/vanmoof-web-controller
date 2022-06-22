@@ -23,9 +23,7 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
             setSuccessModal(false)
             const result = await api.createBikeSharingInvitation(shareinfo)
             if (result.result) {
-                // TODO: success popup
                 setSuccessModal(true)
-                // console.log(result)
             } else if (result.message) {
                 setError(`${result.message}`)
             } else {
