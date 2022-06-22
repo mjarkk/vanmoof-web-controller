@@ -13,12 +13,8 @@ const nextConfig = {
           destination: 'https://api.vanmoof-api.com/v8/:path',
         },
         {
-          source: '/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/:path',
-          destination: 'https://api.vanmoof-api.com/v8/getBikeSharingInvitationsForBike/:path',
-        },
-        {
-          source: '/api/api_vanmoof-api_com/revokeBikeSharingInvitation/:path',
-          destination: 'https://api.vanmoof-api.com/v8/revokeBikeSharingInvitation/:path',
+          source: '/api/api_vanmoof-api_com/:path',
+          destination: 'https://api.vanmoof-api.com/v8/:path',
         }
       ]
     }
