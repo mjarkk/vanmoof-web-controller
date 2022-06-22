@@ -59,11 +59,11 @@ export function ShareBike({bike, api}: {bike: Bike, api: Api}) {
                     />
 
                     <p>How many days would you like to share your bike?</p>
-                    {/* <ShareDurationSlider onChangeMinutes={
+                    <ShareDurationSlider onChangeMinutes={
                         e => setShareinfo(v => ({
                             ...v, duration: e
                         }))
-                    }/> */}
+                    }/>
 
                     <Button type="submit" style={{margin: "1rem"}}>
                         Share
