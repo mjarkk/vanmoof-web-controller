@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const minute = 1
 const hour = minute * 60
@@ -11,6 +11,7 @@ interface ShareDurationSliderProps {
 
 export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProps) {
     const [optionIdx, setOptionIdx] = useState(4)
+    const lastOnChangeValue = useRef<number>()
 
     const options = [
         { value: hour / 2, label: '30 minutes' },
@@ -27,7 +28,13 @@ export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProp
     const selectedOption = options[optionIdx]
 
     useEffect(() => {
-        if (onChangeMinutes) onChangeMinutes(selectedOption.value)
+        const newValue = onChangeMinutes ? selectedOption.value : undefined
+        if (onChangeMinutes && lastOnChangeValue.current !== newValue && newValue !== undefined) {
+            console.log(newValue)
+            onChangeMinutes(newValue)
+        }
+        lastOnChangeValue.current = newValue
+
     }, [selectedOption, onChangeMinutes])
 
     return (
