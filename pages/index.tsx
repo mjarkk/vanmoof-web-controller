@@ -99,12 +99,11 @@ const Home: NextPage = () => {
           ? <Unsupported />
           : credentials
             ? bikeInstance
-              ? <ApiContext.Provider value={credentials.api}>
-                <BikeControls
-                  bike={bikeInstance}
-                  disconnect={disconnect}
-                />
-              </ApiContext.Provider>
+              ? <BikeControls
+                api={credentials.api}
+                bike={bikeInstance}
+                disconnect={disconnect}
+              />
               : <BluetoothConnect
                 bikeCredentials={credentials.bikes}
                 setBikeInstance={setBikeInstance}

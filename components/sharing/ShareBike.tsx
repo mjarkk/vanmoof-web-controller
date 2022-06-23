@@ -1,14 +1,14 @@
-import { Bike } from '../lib/bike'
-import { Button } from './Button'
+import { Bike } from '../../lib/bike'
+import { Button } from '../Button'
 import { useState, FormEvent } from 'react'
-import { FormError, FormSuccess } from './Form'
-import { Api } from '../lib/api'
+import { FormError, FormSuccess } from '../Form'
+import { Api } from '../../lib/api'
 import { ShareDurationSlider } from './ShareDurationSlider'
-import { P } from './Spacing'
+import { P } from '../Spacing'
 
 export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
-    const [successModal, setSuccessModal] = useState(false)
-    const [error, setError] = useState<string | undefined>(undefined)
+    const [shareSuccessfull, setShareSuccessfull] = useState(false)
+    const [error, setError] = useState<string>()
     const [shareinfo, setShareinfo] = useState({
         email: "",
         bikeId: bike.id,
@@ -20,16 +20,9 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
         event.preventDefault()
         try {
             setError(undefined)
-            setSuccessModal(false)
-            const result = await api.createBikeSharingInvitation(shareinfo)
-            if (result.result) {
-                setSuccessModal(true)
-            } else if (result.message) {
-                setError(`${result.message}`)
-            } else {
-                setError(`${result}`)
-            }
-
+            setShareSuccessfull(false)
+            await api.createBikeSharingInvitation(shareinfo)
+            setShareSuccessfull(true)
         } catch (e) {
             setError(`${e}`)
         }
@@ -49,29 +42,23 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
                         name="email"
                         placeholder="Enter email"
                         value={shareinfo.email}
-                        onChange={
-                            e => setShareinfo(v => ({
-                                ...v, email: e.target.value
-                            }))
-                        }
+                        onChange={e => setShareinfo(v => ({ ...v, email: e.target.value }))}
                         required
                     />
 
                     <P vertical="1rem">
-                        <ShareDurationSlider onChangeMinutes={
-                            e => setShareinfo(v => ({
-                                ...v, duration: e * 60
-                            }))
-                        } />
+                        <ShareDurationSlider
+                            onChangeMinutes={e => setShareinfo(v => ({ ...v, duration: e * 60 }))}
+                        />
                     </P>
 
-                    <Button type="submit" style={{ margin: "1rem" }}>
-                        Share
-                    </Button>
+                    <Button
+                        type="submit"
+                        style={{ margin: "1rem" }}
+                    >Share</Button>
                 </div>
 
-
-                <FormSuccess status={successModal} message={"Shared your bike successfully! :)"} />
+                <FormSuccess message={shareSuccessfull ? "Shared your bike successfully!" : undefined} />
                 <FormError error={error} />
             </form>
 
