@@ -44,12 +44,11 @@ interface FormSuccessProps {
     message?: string
 }
 
-export function FormSuccess({ status, message }: FormSuccessProps) {
-    if (status === true) {
-        return message
-            ? <div className='success'>
-                {message}
-                <style jsx>{`
+export function FormSuccess({ message }: FormSuccessProps) {
+    return message
+        ? <div className='success'>
+            {message}
+            <style jsx>{`
                     .success {
                         max-width: 400px;
                         padding: 10px 0;
@@ -58,9 +57,6 @@ export function FormSuccess({ status, message }: FormSuccessProps) {
                         margin-bottom: 1rem;
                     }
                 `}</style>
-            </div>
-            : <></>
-    } else {
-        return null
-    }
+        </div>
+        : <></>
 }

@@ -4,6 +4,7 @@ import { ApiContext, Api } from '../lib/api'
 import { useEffect, useState } from 'react'
 import { BikeSelector } from '../components/BikeSelector'
 import type { BikeAndApiCredentials } from '../components/Login'
+import { P } from '../components/Spacing'
 
 class FakeBike {
     id: string
@@ -99,12 +100,11 @@ export default function ControlsTest() {
             <h1>Page for testing the bike controls</h1>
 
             {fakeBike
-                ? <ApiContext.Provider value={credentials.api}>
-                    <BikeControls
-                        bike={fakeBike}
-                        disconnect={() => setFakeBike(undefined)}
-                    />
-                </ApiContext.Provider>
+                ? <BikeControls
+                    api={credentials.api}
+                    bike={fakeBike}
+                    disconnect={() => setFakeBike(undefined)}
+                />
                 : <BikeSelector
                     options={credentials.bikes}
                     onSelect={bike => setFakeBike(new FakeBike(bike))}
@@ -117,8 +117,9 @@ export default function ControlsTest() {
                     display: flex;
                     align-items: center;
                     flex-direction: column;
+                    padding-bottom: 70px;
                 }
             `}</style>
-        </div>
+        </div >
     )
 }

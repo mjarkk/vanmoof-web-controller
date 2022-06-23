@@ -1,36 +1,31 @@
 import { useEffect, useState } from 'react'
 import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLimitEnum } from '../lib/bike'
 import { SoundBoard } from './SoundBoard'
-import { ShareBike } from './ShareBike'
+import { ShareBike } from './sharing/ShareBike'
 import { Button } from './Button'
-import { ApiContext } from '../lib/api'
-import { CurrentShares } from './CurrentShares'
+import { Api, ApiContext } from '../lib/api'
+import { CurrentShares } from './sharing/CurrentShares'
 
 export interface BikeControlsArgs {
     bike: Bike
+    api: Api
     disconnect: () => void
 }
 
-export default function BikeControls({ bike, disconnect }: BikeControlsArgs) {
+export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs) {
     return (
         <BikeContext.Provider value={bike}>
-            <BikeStats bike={bike} />
-            <SpeedLimit bike={bike} />
-            <PowerLevel bike={bike} />
-            <SoundBoard />
-            <ApiContext.Consumer>
-                {api =>
-                    <ShareBike bike={bike} api={api} />
-                }
-            </ApiContext.Consumer>
-            <ApiContext.Consumer>
-                {api =>
-                    <CurrentShares bike={bike} api={api} />
-                }
-            </ApiContext.Consumer>
-            <Button onClick={disconnect} secondary>
-                Disconnect bike
-            </Button>
+            <ApiContext.Provider value={api}>
+                <BikeStats bike={bike} />
+                <SpeedLimit bike={bike} />
+                <PowerLevel bike={bike} />
+                <SoundBoard />
+                <ShareBike bike={bike} api={api} />
+                <CurrentShares bike={bike} api={api} />
+                <Button onClick={disconnect} secondary>
+                    Disconnect bike
+                </Button>
+            </ApiContext.Provider>
         </BikeContext.Provider>
     )
 }

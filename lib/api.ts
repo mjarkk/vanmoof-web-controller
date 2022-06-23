@@ -8,6 +8,37 @@ export interface ApiCredentials {
     refreshToken: string
 }
 
+export interface BikeShareEntry {
+    guid: string
+    expiresAt: string
+    startsAt: null
+    endsAt: null
+    duration: number
+    role: string
+    email: string
+}
+
+async function checkErrorAndUnwrap(req: Response): Promise<any> {
+    const resp = await req.text()
+
+    // Try parse the json or throw the resp
+    let jsonResp
+    try {
+        jsonResp = JSON.parse(resp)
+    } catch (e) {
+        throw resp
+    }
+
+    // Always throw the error if that apears in the responsse
+    if (jsonResp.error) throw jsonResp.error.toString()
+
+    // Always throw if the response status is above equal or above 400
+    if (req.status >= 400)
+        return jsonResp.message.toString() || jsonResp.toString()
+
+    return jsonResp
+}
+
 export class Api {
     /*
         TODO: Add support for the refresh token
@@ -21,18 +52,18 @@ export class Api {
             throw 'login failed, missing token or refreshToken'
     }
 
+    private get authHeader() {
+        return {
+            'Api-Key': API_KEY,
+            'Authorization': 'Bearer ' + this.credentials.token,
+        }
+    }
+
     async getBikeCredentials(): Promise<Array<BikeCredentials>> {
         const req = await fetch(`/api/my_vanmoof_com/getCustomerData?includeBikeDetails`, {
-            headers: {
-                'Api-Key': API_KEY,
-                'Authorization': 'Bearer ' + this.credentials.token,
-            }
+            headers: this.authHeader,
         })
-
-        if (req.status >= 400)
-            throw await req.text()
-
-        const resp = await req.json()
+        const resp = await checkErrorAndUnwrap(req)
 
         const bikes = resp.data.bikeDetails
         if (bikes.length == 0)
@@ -52,52 +83,40 @@ export class Api {
         }))
     }
 
-    async createBikeSharingInvitation(shareinfo: any): Promise<any> {
+    async createBikeSharingInvitation(shareinfo: any): Promise<void> {
         let req = await fetch(`/api/api_vanmoof-api_com/createBikeSharingInvitation`, {
             method: 'POST',
             headers: {
-                'Api-Key': API_KEY,
-                'Authorization': 'Bearer ' + this.credentials.token,
+                ...this.authHeader,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(shareinfo)
         })
 
-        if (req.status === 200) {
-            return await req.json()
-        } else {
-            let text = await req.text()
-            try {
-                text = JSON.parse(text);
-            } catch { }
-            return text
-        }
+        return await checkErrorAndUnwrap(req)
     }
 
-    async getCurrentShares(bikeid: number | string): Promise<any> {
+    async getCurrentShares(bikeid: number | string): Promise<Array<BikeShareEntry>> {
         let req = await fetch(`/api/api_vanmoof-api_com/getBikeSharingInvitationsForBike/${bikeid}`, {
             method: 'GET',
             headers: {
-                'Api-Key': API_KEY,
-                'Authorization': 'Bearer ' + this.credentials.token,
+                ...this.authHeader,
                 'Content-Type': 'application/json'
             }
         })
-
-        return await req.json()
+        const resp = await checkErrorAndUnwrap(req)
+        return resp.invitations || []
     }
 
-    async RemoveShareHolder(guid: string): Promise<any> {
+    async removeShareHolder(guid: string): Promise<any> {
         let req = await fetch(`/api/api_vanmoof-api_com/revokeBikeSharingInvitation/${guid}`, {
             method: 'POST',
             headers: {
-                'Api-Key': API_KEY,
-                'Authorization': 'Bearer ' + this.credentials.token,
+                ...this.authHeader,
                 'Content-Type': 'application/json'
             }
         })
-
-        return await req.json()
+        return await checkErrorAndUnwrap(req)
     }
 
     storeCredentialsInLocalStorage() {

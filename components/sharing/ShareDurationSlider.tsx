@@ -53,7 +53,8 @@ export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProp
                     <div className="line" style={option.showLabel ? undefined : { opacity: 0 }} key={idx}>
                         {option.showLabel
                             ? <div className="text">{option.label}</div>
-                            : undefined}
+                            : undefined
+                        }
                     </div>
                 )}
             </div>
