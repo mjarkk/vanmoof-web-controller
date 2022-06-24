@@ -9,15 +9,16 @@ A web app for changing the speed limit of your VanMoof S3 and X3.
 https://vanmoof-web-controller.vercel.app/
 
 ### Current features
+
 - Change your speed limit to JP (24 km/h), EU (25 km/h), US (32 km/h) or 😎 (37 km/h)
 - Set your power level, this also unlocks a new power level 5.
 - A sound board with the following sounds:
 
-Short | 🔘 Click | 🧨 Error | 👍 Pling | 🤔 Cling clong | 🔔 Bell | 🔔 Normal bike bell | 🎉 Bell Tada | 😚 Whistle | 🚢 BOAT | ⚡️ Wuup | 🫤 Success but error | 
---- | --- | --- | --- |--- |--- |--- |--- |--- |--- |--- |---
-Long | 🔋 Charding noise.. | 🚨 Alarm | 🚨 Alarm stage 2 | 🔋 Charging.. | 🆕 Updating.. | 🎉 Update complete | 💥 Make wired noises
-- You can share your bike to someone using their email
+| Short | 🔘 Click            | 🧨 Error | 👍 Pling         | 🤔 Cling clong | 🔔 Bell       | 🔔 Normal bike bell | 🎉 Bell Tada         | 😚 Whistle | 🚢 BOAT | ⚡️ Wuup | 🫤 Success but error |
+| ----- | ------------------- | -------- | ---------------- | -------------- | ------------- | ------------------- | -------------------- | ---------- | ------- | -------- | ------------------- |
+| Long  | 🔋 Charding noise.. | 🚨 Alarm | 🚨 Alarm stage 2 | 🔋 Charging..  | 🆕 Updating.. | 🎉 Update complete  | 💥 Make wired noises |
 
+- You can share your bike to someone using their email
 
 ### Want to help?
 
@@ -41,4 +42,15 @@ npm i
 
 ```sh
 npm run dev
+```
+
+**Compress logos**
+
+```sh
+cd public
+npx @squoosh/cli --max-optimizer-rounds 10 --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:512,height:512}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _512 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:256,height:256}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _256 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:128,height:128}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _128 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:64,height:64}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _64 logo_full.png
 ```
