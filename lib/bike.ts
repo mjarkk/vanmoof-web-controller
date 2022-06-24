@@ -53,7 +53,7 @@ export class Bike {
         return this.aesEcb.encrypt(dataToEncrypt)
     }
 
-    private async decrypt(data: Uint8Array): Promise<Uint8Array> {
+    private decrypt(data: Uint8Array): Uint8Array {
         let decryptedValue = this.aesEcb.decrypt(data).reverse()
         for (const v of decryptedValue) {
             if (v != 0) {
