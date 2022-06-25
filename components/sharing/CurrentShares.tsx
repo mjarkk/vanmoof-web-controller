@@ -3,13 +3,41 @@ import type { Api, BikeShareEntry } from '../../lib/api'
 import { useState, FormEvent } from 'react'
 import { FormError } from '../Form'
 import { Button } from '../Button'
+import { P } from '../Spacing'
 
 export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
-    const [shares, setShares] = useState<Array<BikeShareEntry>>()
+    const [shares, setShares] = useState<Array<BikeShareEntry> | undefined>([
+        {
+            guid: '1234',
+            expiresAt: '',
+            startsAt: null,
+            endsAt: null,
+            duration: 1234,
+            role: 'user',
+            email: 'sus@sus.com',
+        },
+        {
+            guid: '1234',
+            expiresAt: '',
+            startsAt: null,
+            endsAt: null,
+            duration: 1234,
+            role: 'user',
+            email: 'mkopenga@gmail.com',
+        },
+        {
+            guid: '1234',
+            expiresAt: '',
+            startsAt: null,
+            endsAt: null,
+            duration: 1234,
+            role: 'user',
+            email: 'very-long-email-yea-sus@extra-susy-bakka.email.domain',
+        },
+    ])
     const [error, setError] = useState<string | undefined>(undefined)
 
-    const loadInvites = async (event?: FormEvent<HTMLFormElement>) => {
-        event?.preventDefault()
+    const loadInvites = async () => {
         try {
             setError(undefined)
             setShares(undefined)
@@ -47,12 +75,11 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                                 onSubmit={e => removeInvite(e, d.guid)}
                             >
                                 <li key={d.email} className="listItem">
-                                    {d.email}
+                                    <p>{d.email}</p>
                                     <Button
                                         type="submit"
                                         style={{
-                                            margin: "1rem",
-                                            width: "160px",
+                                            padding: 8,
                                         }}
                                     >Remove</Button>
                                 </li>
@@ -67,22 +94,30 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                 : <p>Click on the button below to obtain your share holders list.</p>
             }
 
-            <form onSubmit={loadInvites}>
+            <div className='getSharedList'>
                 <Button
                     type="submit"
                     style={{ margin: "1rem" }}
+                    onClick={loadInvites}
                 >Get shared list</Button>
-            </form>
+            </div>
 
             <FormError error={error} />
 
             <style jsx>{`
                 .shareBike {
-                    display: flex;
-                    align-items: center;
-                    flex-direction: column;
                     width: 600px;
                     max-width: 100%;
+                    padding: 0 20px;
+                }
+
+                h3 {
+                    text-align: center;
+                }
+
+                .getSharedList {
+                    display: flex;
+                    justify-content: center;
                 }
 
                 .noShares {
@@ -96,9 +131,17 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
                 }
 
                 .listItem {
-                    display: flex;
-                    justify-content: space-between;
+                    display: grid;
+                    grid-template-columns: auto 120px;
                     align-items: center;
+                    grid-gap: 10px;
+                    padding: 10px;
+                }
+
+                p {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .divider {
