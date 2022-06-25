@@ -1,4 +1,4 @@
-import type { BikeCredentials } from './bike'
+import type { Bike, BikeCredentials } from './bike'
 import { createContext } from 'react'
 
 export const API_KEY = 'fcb38d47-f14b-30cf-843b-26283f6a5819'
@@ -83,14 +83,22 @@ export class Api {
         }))
     }
 
-    async createBikeSharingInvitation(shareinfo: any): Promise<void> {
+    async createBikeSharingInvitation(bike: Bike, email: string, durationInSeconds: undefined | number): Promise<void> {
+        const body: any = {
+            email,
+            bikeId: bike.id,
+            role: "user",
+        }
+        if (durationInSeconds !== undefined)
+            body['duration'] = durationInSeconds
+
         let req = await fetch(`/api/api_vanmoof-api_com/createBikeSharingInvitation`, {
             method: 'POST',
             headers: {
                 ...this.authHeader,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(shareinfo)
+            body: JSON.stringify(body)
         })
 
         return await checkErrorAndUnwrap(req)

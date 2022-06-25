@@ -10,10 +10,8 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
     const [shareSuccessfull, setShareSuccessfull] = useState(false)
     const [error, setError] = useState<string>()
     const [shareinfo, setShareinfo] = useState({
-        email: "",
-        bikeId: bike.id,
-        role: "user",
-        duration: 86400 // 86400 = 1 day but in seconds.
+        email: '',
+        duration: undefined as undefined | number,
     })
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -21,7 +19,7 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
         try {
             setError(undefined)
             setShareSuccessfull(false)
-            await api.createBikeSharingInvitation(shareinfo)
+            await api.createBikeSharingInvitation(bike, shareinfo.email, shareinfo.duration)
             setShareSuccessfull(true)
         } catch (e) {
             setError(`${e}`)
@@ -48,7 +46,10 @@ export function ShareBike({ bike, api }: { bike: Bike, api: Api }) {
 
                     <P vertical="1rem">
                         <ShareDurationSlider
-                            onChangeMinutes={e => setShareinfo(v => ({ ...v, duration: e * 60 }))}
+                            onChangeMinutes={e => setShareinfo(v => ({
+                                ...v,
+                                duration: e === undefined ? e : e * 60,
+                            }))}
                         />
                     </P>
 

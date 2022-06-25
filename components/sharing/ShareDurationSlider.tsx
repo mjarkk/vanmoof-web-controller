@@ -6,7 +6,7 @@ const day = hour * 24
 const week = day * 7
 
 interface ShareDurationSliderProps {
-    onChangeMinutes?: (minutes: number) => void
+    onChangeMinutes?: (minutes: number | undefined) => void
 }
 
 export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProps) {
@@ -24,12 +24,13 @@ export function ShareDurationSlider({ onChangeMinutes }: ShareDurationSliderProp
         { value: day * 3, label: '3 days' },
         { value: week, label: '1 week', showLabel: true },
         { value: week * 2, label: '2 weeks' },
+        { value: undefined, label: 'Unlimited' }
     ]
     const selectedOption = options[optionIdx]
 
     useEffect(() => {
         const newValue = onChangeMinutes ? selectedOption.value : undefined
-        if (onChangeMinutes && lastOnChangeValue.current !== newValue && newValue !== undefined) {
+        if (onChangeMinutes && lastOnChangeValue.current !== newValue) {
             onChangeMinutes(newValue)
         }
         lastOnChangeValue.current = newValue
