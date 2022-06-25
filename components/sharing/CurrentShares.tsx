@@ -3,38 +3,9 @@ import type { Api, BikeShareEntry } from '../../lib/api'
 import { useState, FormEvent } from 'react'
 import { FormError } from '../Form'
 import { Button } from '../Button'
-import { P } from '../Spacing'
 
 export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
-    const [shares, setShares] = useState<Array<BikeShareEntry> | undefined>([
-        {
-            guid: '1234',
-            expiresAt: '',
-            startsAt: null,
-            endsAt: null,
-            duration: 1234,
-            role: 'user',
-            email: 'sus@sus.com',
-        },
-        {
-            guid: '1234',
-            expiresAt: '',
-            startsAt: null,
-            endsAt: null,
-            duration: 1234,
-            role: 'user',
-            email: 'mkopenga@gmail.com',
-        },
-        {
-            guid: '1234',
-            expiresAt: '',
-            startsAt: null,
-            endsAt: null,
-            duration: 1234,
-            role: 'user',
-            email: 'very-long-email-yea-sus@extra-susy-bakka.email.domain',
-        },
-    ])
+    const [shares, setShares] = useState<Array<BikeShareEntry>>()
     const [error, setError] = useState<string | undefined>(undefined)
 
     const loadInvites = async () => {
