@@ -48,9 +48,9 @@ npm run dev
 
 ```sh
 cd public
-npx @squoosh/cli --max-optimizer-rounds 10 --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto logo_full.png
-npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:512,height:512}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _512 logo_full.png
-npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:256,height:256}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _256 logo_full.png
-npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:128,height:128}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _128 logo_full.png
-npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:64,height:64}' --quant '{numColors:8}' --output-dir compressed_logos --wp2 auto --webp auto --oxipng auto --suffix _64 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --quant '{numColors:8}' --output-dir compressed_logos --webp auto --oxipng auto logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:512,height:512}' --quant '{numColors:8}' --output-dir compressed_logos --webp auto --oxipng auto --suffix _512 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:256,height:256}' --quant '{numColors:8}' --output-dir compressed_logos --webp auto --oxipng auto --suffix _256 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:128,height:128}' --quant '{numColors:8}' --output-dir compressed_logos --webp auto --oxipng auto --suffix _128 logo_full.png
+npx @squoosh/cli --max-optimizer-rounds 10 --resize '{width:64,height:64}' --quant '{numColors:8}' --output-dir compressed_logos --webp auto --oxipng auto --suffix _64 logo_full.png
 ```
