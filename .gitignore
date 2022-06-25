@@ -33,3 +33,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Ignore auto generated service worker files
+public/sw.js
+public/workbox-*
