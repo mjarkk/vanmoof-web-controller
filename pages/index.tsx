@@ -69,7 +69,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <main>
-        <h1 className='title'>Moovy</h1>
+        <h1 className='title'>Mooovy</h1>
         <p>Change VanMoof S&X 3 speed limit</p>
 
         {!browserCompatible || (!bikeInstance && !credentials) ?

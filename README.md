@@ -1,4 +1,4 @@
-## [Moovy](https://vanmoof-web-controller.vercel.app/)
+## [Mooovy](https://mooovy.app/)
 
 A web app for changing the speed limit of your VanMoof S3 and X3.
 
@@ -6,7 +6,7 @@ A web app for changing the speed limit of your VanMoof S3 and X3.
 
 ![preview](public/screenshot_light.png?raw=true "preview")
 
-https://vanmoof-web-controller.vercel.app/
+https://mooovy.app/
 
 ### Current features
 
