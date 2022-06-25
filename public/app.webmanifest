@@ -1,0 +1,61 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "Mooovy",
+    "short_name": "Mooovy",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#ff0",
+    "description": "A webapp for controlling your vanmoof S3 and X3",
+    "icons": [
+        {
+            "src": "/compressed_logos/logo_full.png",
+            "sizes": "1000x1000",
+            "type": "image/png"
+        },
+        {
+            "src": "/compressed_logos/logo_full.webp",
+            "sizes": "1000x1000",
+            "type": "image/webp"
+        },
+        {
+            "src": "/compressed_logos/logo_full_512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/compressed_logos/logo_full_512.webp",
+            "sizes": "512x512",
+            "type": "image/webp"
+        },
+        {
+            "src": "/compressed_logos/logo_full_256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/compressed_logos/logo_full_256.webp",
+            "sizes": "256x256",
+            "type": "image/webp"
+        },
+        {
+            "src": "/compressed_logos/logo_full_128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "/compressed_logos/logo_full_128.webp",
+            "sizes": "128x128",
+            "type": "image/webp"
+        },
+        {
+            "src": "/compressed_logos/logo_full_64.png",
+            "sizes": "64x64",
+            "type": "image/png"
+        },
+        {
+            "src": "/compressed_logos/logo_full_64.webp",
+            "sizes": "64x64",
+            "type": "image/webp"
+        }
+    ]
+}
