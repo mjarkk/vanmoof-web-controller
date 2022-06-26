@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
@@ -43,8 +42,10 @@ closeStorage() async {
 }
 
 Box<dynamic> _apiCredentialsBox() => Hive.box("apiCredentials");
+apiCredentialsBoxListenable() => _apiCredentialsBox().listenable();
 
 Box<dynamic> _bikeCredentialsBox() => Hive.box("bikeCredentials");
+bikeCredentialsBoxListenable() => _bikeCredentialsBox().listenable();
 
 storeApiTokens(ApiClient api) async {
   final store = _apiCredentialsBox();
@@ -55,7 +56,7 @@ storeApiTokens(ApiClient api) async {
   await store.flush();
 }
 
-ApiClient? obtainApiClientFromStorage() {
+ApiClient? obtainApiClient() {
   final store = _apiCredentialsBox();
   final token = store.get('token');
   final refreshToken = store.get('refreshToken');

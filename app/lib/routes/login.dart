@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
   String _password = '';
   String? error;
 
-  submitForm() async {
+  submitForm(NavigatorState navigator) async {
     if (_formKey.currentState?.validate() != true) return;
     _formKey.currentState?.save();
     if (_email.isEmpty || _password.isEmpty) return;
@@ -32,6 +32,8 @@ class _LoginState extends State<Login> {
 
       await storeApiTokens(api);
       await storeBikes(bikes);
+
+      navigator.popAndPushNamed('/home');
     } catch (e) {
       setState(() {
         error = e.toString();
@@ -55,6 +57,13 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Login using your VanMoof account',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ),
                 TextFormField(
                   decoration: const InputDecoration(
                     icon: Icon(Icons.email),
@@ -90,7 +99,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: submitForm,
+                  onPressed: () => submitForm(Navigator.of(context)),
                   child: const Text('Login'),
                 ),
                 error != null
