@@ -1,17 +1,12 @@
 import 'dart:typed_data';
-
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:pointycastle/export.dart';
+import 'package:hex/hex.dart';
 import 'api.dart';
-import 'package:encrypt/encrypt.dart';
 
 class BikeConnection {
-  BikeConnection(this.bike)
-      : encrypter = Encrypter(AES(
-          Key.fromUtf8(bike.encryptionKey),
-          mode: AESMode.ecb,
-        ));
+  BikeConnection(this.bike);
 
-  final Encrypter encrypter;
   final BikeCredentials bike;
   BluetoothDevice? device;
 
@@ -67,21 +62,28 @@ class BikeConnection {
   BluetoothCharacteristic? lightMode;
   BluetoothCharacteristic? sensor;
 
+  BlockCipher? _chiperCache;
+  encrypt(List<int> value) {
+    final BlockCipher chiper;
+    if (_chiperCache == null) {
+      Uint8List key = Uint8List.fromList(HEX.decode(bike.encryptionKey));
+      chiper = ECBBlockCipher(AESEngine());
+      chiper.init(true, KeyParameter(key));
+      _chiperCache = chiper;
+    } else {
+      chiper = _chiperCache!;
+    }
+    Uint8List cipherText = chiper.process(Uint8List.fromList(value));
+    return cipherText.toList();
+  }
+
   authenticate() async {
     final challengeValue = await challenge!.read();
     var resp = List.generate(
         16, (i) => i < challengeValue.length ? challengeValue[i] : 0);
-
-    resp = encrypter
-        .encryptBytes(challengeValue, iv: IV(Uint8List(16)))
-        .bytes
-        .toList();
-
+    resp = encrypt(resp);
     resp.addAll([0, 0, 0, bike.userKeyId]);
-
     await keyIndex!.write(resp);
-
-    print('yays');
   }
 
   connect(BluetoothDevice device) async {
@@ -161,10 +163,7 @@ class BikeConnection {
       for (BluetoothCharacteristic char in service.characteristics) {
         final charUuid = char.uuid.toString();
         final align = alignmentChars[charUuid];
-        if (align != null) {
-          align(char);
-          print('assign $serviceUuid -> $charUuid');
-        }
+        if (align != null) align(char);
       }
     }
 
