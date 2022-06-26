@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'routes/login.dart';
 import 'local_storage.dart';
 import 'routes/home.dart';

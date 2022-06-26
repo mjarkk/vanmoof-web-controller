@@ -113,6 +113,14 @@ class BikeCredentials {
   final BikeColor? modelColor;
   @HiveField(7)
   final BikeLinks? links;
+
+  List<String> get bluetoothName {
+    final bleNameSuffix = macAddress.replaceAll(':', '');
+    return [
+      "ES3-$bleNameSuffix",
+      "EX3-$bleNameSuffix",
+    ];
+  }
 }
 
 BikeColor _bikeColorFromJson(Map<String, dynamic> json) {
