@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../bike.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../bike/bike.dart';
+import '../bike/real.dart';
 import '../local_storage.dart';
+import '../controls.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,15 +13,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Map<int, BikeConnection> connections = {};
+  _HomeState() : bikes = obtainBikes();
+
+  final List<Bike> bikes;
 
   searchForBikes() async {
-    for (var bike in obtainBikes()) {
-      connections[bike.id] = BikeConnection(bike);
-    }
-
-    setState(() {});
-
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
     final isOn = await flutterBlue.isOn;
     if (!isOn) {
@@ -34,13 +32,12 @@ class _HomeState extends State<Home> {
           continue;
         }
 
-        for (var conn in connections.values) {
-          if (conn.bike.bluetoothName.contains(r.device.name)) {
+        for (Bike bike in bikes) {
+          if (bike.bluetoothName.contains(r.device.name)) {
             tryingToConnectWith.add(r.device.name);
-            conn.connect(r.device).then((_) {
-              setState(() {});
-              flutterBlue.connectedDevices.then((value) => print(value));
-            });
+            RealBikeConnection(bike)
+                .connect(r.device)
+                .then((_) => setState(() {}));
             break;
           }
         }
@@ -64,17 +61,17 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: connections.values
-                    .map((conn) => Text(
-                          "bike: ${conn.bike.name}, connected: ${conn.device != null}",
-                          key: ValueKey(conn.bike.id),
+                children: bikes
+                    .map((bike) => Text(
+                          "bike: ${bike.name}, connected: ${bike.connection != null}",
+                          key: ValueKey(bike.id),
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headline6,
                         ))
                     .toList(),
               ),
             ),
-            Expanded(child: Container(color: Colors.pink)),
+            Controls(bikes[0]),
           ],
         ),
       ),

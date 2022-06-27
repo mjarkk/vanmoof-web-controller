@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'api.dart';
+import 'bike/bike.dart';
 
 _getEncryptionKey() async {
   const secureStorage = FlutterSecureStorage();
@@ -22,7 +23,7 @@ late final List<int> encryptionKey;
 setupLocalStorage() async {
   await Hive.initFlutter();
 
-  Hive.registerAdapter(BikeCredentialsAdapter());
+  Hive.registerAdapter(BikeAdapter());
   Hive.registerAdapter(BikeColorAdapter());
   Hive.registerAdapter(BikeLinksAdapter());
 
@@ -66,7 +67,7 @@ ApiClient? obtainApiClient() {
   return ApiClient(token: token, refreshToken: refreshToken);
 }
 
-storeBikes(List<BikeCredentials> bikes) async {
+storeBikes(List<Bike> bikes) async {
   final store = _bikeCredentialsBox();
   store.clear();
   for (var bike in bikes) {
@@ -74,6 +75,6 @@ storeBikes(List<BikeCredentials> bikes) async {
   }
 }
 
-List<BikeCredentials> obtainBikes() {
+List<Bike> obtainBikes() {
   return _bikeCredentialsBox().values.toList().cast();
 }

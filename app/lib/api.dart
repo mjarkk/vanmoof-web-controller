@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:hive/hive.dart';
-
-part 'api.g.dart';
+import 'bike/bike.dart';
+import 'bike/from_json.dart';
 
 const String _apiKey = 'fcb38d47-f14b-30cf-843b-26283f6a5819';
 
@@ -65,104 +65,6 @@ class ApiClient {
     final List<dynamic> bikes = resp.data['data']['bikeDetails'];
     if (bikes.isEmpty) throw 'You have no bikes connected to your account';
 
-    return bikes.map((b) => _bikeCredentialsFromJson(b)).toList();
+    return bikes.map((b) => bikeCredentialsFromJson(b)).toList();
   }
-}
-
-BikeCredentials _bikeCredentialsFromJson(Map<String, dynamic> json) {
-  return BikeCredentials(
-    id: json['id'],
-    macAddress: json['macAddress'],
-    encryptionKey: json['key']['encryptionKey'],
-    userKeyId: json['key']['userKeyId'],
-    name: json['name'],
-    ownerName: json['ownerName'],
-    modelColor: json['modelColor'] == null
-        ? null
-        : _bikeColorFromJson(json['modelColor']),
-    links: json['links'] == null ? null : _bikeLinksFromJson(json['links']),
-  );
-}
-
-@HiveType(typeId: 1)
-class BikeCredentials {
-  const BikeCredentials({
-    required this.id,
-    required this.macAddress,
-    required this.encryptionKey,
-    required this.userKeyId,
-    required this.name,
-    required this.ownerName,
-    this.modelColor,
-    this.links,
-  });
-
-  @HiveField(0)
-  final int id;
-  @HiveField(1)
-  final String macAddress;
-  @HiveField(2)
-  final String encryptionKey;
-  @HiveField(3)
-  final int userKeyId;
-  @HiveField(4)
-  final String name;
-  @HiveField(5)
-  final String ownerName;
-  @HiveField(6)
-  final BikeColor? modelColor;
-  @HiveField(7)
-  final BikeLinks? links;
-
-  List<String> get bluetoothName {
-    final bleNameSuffix = macAddress.replaceAll(':', '');
-    return [
-      "ES3-$bleNameSuffix",
-      "EX3-$bleNameSuffix",
-    ];
-  }
-}
-
-BikeColor _bikeColorFromJson(Map<String, dynamic> json) {
-  return BikeColor(
-    name: json['name'],
-    primary: json['primary'],
-    secondary: json['secondary'],
-  );
-}
-
-@HiveType(typeId: 2)
-class BikeColor {
-  const BikeColor({
-    required this.name,
-    required this.primary,
-    required this.secondary,
-  });
-
-  @HiveField(0)
-  final String name;
-  @HiveField(1)
-  final String primary;
-  @HiveField(2)
-  final String secondary;
-}
-
-BikeLinks _bikeLinksFromJson(Map<String, dynamic> json) {
-  return BikeLinks(
-    hash: json['hash'],
-    thumbnail: json['thumbnail'],
-  );
-}
-
-@HiveType(typeId: 3)
-class BikeLinks {
-  const BikeLinks({
-    required this.hash,
-    required this.thumbnail,
-  });
-
-  @HiveField(0)
-  final String hash;
-  @HiveField(1)
-  final String thumbnail;
 }

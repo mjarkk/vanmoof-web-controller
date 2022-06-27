@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'api.dart';
+part of 'bike.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BikeCredentialsAdapter extends TypeAdapter<BikeCredentials> {
+class BikeAdapter extends TypeAdapter<Bike> {
   @override
   final int typeId = 1;
 
   @override
-  BikeCredentials read(BinaryReader reader) {
+  Bike read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return BikeCredentials(
+    return Bike(
       id: fields[0] as int,
       macAddress: fields[1] as String,
       encryptionKey: fields[2] as String,
@@ -29,7 +29,7 @@ class BikeCredentialsAdapter extends TypeAdapter<BikeCredentials> {
   }
 
   @override
-  void write(BinaryWriter writer, BikeCredentials obj) {
+  void write(BinaryWriter writer, Bike obj) {
     writer
       ..writeByte(8)
       ..writeByte(0)
@@ -56,7 +56,44 @@ class BikeCredentialsAdapter extends TypeAdapter<BikeCredentials> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BikeCredentialsAdapter &&
+      other is BikeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class BikeLinksAdapter extends TypeAdapter<BikeLinks> {
+  @override
+  final int typeId = 3;
+
+  @override
+  BikeLinks read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return BikeLinks(
+      hash: fields[0] as String,
+      thumbnail: fields[1] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, BikeLinks obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.hash)
+      ..writeByte(1)
+      ..write(obj.thumbnail);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BikeLinksAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -97,43 +134,6 @@ class BikeColorAdapter extends TypeAdapter<BikeColor> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BikeColorAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class BikeLinksAdapter extends TypeAdapter<BikeLinks> {
-  @override
-  final int typeId = 3;
-
-  @override
-  BikeLinks read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return BikeLinks(
-      hash: fields[0] as String,
-      thumbnail: fields[1] as String,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, BikeLinks obj) {
-    writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.hash)
-      ..writeByte(1)
-      ..write(obj.thumbnail);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BikeLinksAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

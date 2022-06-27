@@ -1,14 +1,14 @@
+import 'bike.dart';
 import 'dart:typed_data';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:pointycastle/export.dart';
 import 'package:hex/hex.dart';
-import 'api.dart';
+import '../api.dart';
 
-class BikeConnection {
-  BikeConnection(this.bike);
+class RealBikeConnection implements BikeConnection {
+  RealBikeConnection(this.bike);
 
-  final BikeCredentials bike;
-  BluetoothDevice? device;
+  final Bike bike;
 
   // Security
   BluetoothCharacteristic? challenge;
@@ -169,6 +169,6 @@ class BikeConnection {
 
     await authenticate();
 
-    this.device = device;
+    bike.connection = this;
   }
 }
