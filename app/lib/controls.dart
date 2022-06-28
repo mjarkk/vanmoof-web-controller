@@ -8,25 +8,38 @@ class Controls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(10),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-        children: [
-          _Control(
-            label: 'Assistance',
-            icon: Icons.wind_power,
-            onPressed: () {},
-          ),
-          _Control(
-            label: 'Speed limit',
-            icon: Icons.speed,
-            onPressed: () {},
-          ),
-        ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 300),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: FixedGrid(
+          children: [
+            _Control(
+              label: 'Assistance',
+              icon: Icons.wind_power,
+              value: '3',
+              onPressed: () {},
+            ),
+            _Control(
+              label: 'Speed limit',
+              icon: Icons.speed,
+              value: '🇪🇺',
+              onPressed: () {},
+            ),
+            _Control(
+              label: 'Assistance',
+              icon: Icons.wind_power,
+              value: '5',
+              onPressed: () {},
+            ),
+            _Control(
+              label: 'Speed limit',
+              icon: Icons.speed,
+              value: '😎',
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -37,23 +50,90 @@ class _Control extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onPressed,
+    required this.value,
     Key? key,
   }) : super(key: key);
 
   final Function() onPressed;
   final String label;
+  final String value;
   final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      child: Column(
-        children: [
-          Icon(icon),
-          Text(label),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        onPressed: () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 50,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 3),
+                    child: Icon(icon, size: 17, color: Colors.black54),
+                  ),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class FixedGrid extends StatelessWidget {
+  const FixedGrid({
+    required this.children,
+    Key? key,
+  }) : super(key: key);
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final int l = children.length;
+    return Row(
+      children: [0, 1]
+          .map((columnIdx) => Expanded(
+                key: Key("row-$columnIdx"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (int idx = columnIdx; idx < l; idx += 2)
+                      Expanded(
+                        key: Key('widget-$idx'),
+                        child: children[idx],
+                      ),
+                  ],
+                ),
+              ))
+          .toList(),
     );
   }
 }

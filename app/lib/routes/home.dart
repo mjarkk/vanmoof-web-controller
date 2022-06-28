@@ -19,12 +19,13 @@ class _HomeState extends State<Home> {
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+    flutterBlue.startScan(timeout: const Duration(seconds: 4));
+
     final isOn = await flutterBlue.isOn;
     if (!isOn) {
       await flutterBlue.turnOn();
     }
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 4));
     Set<String> tryingToConnectWith = {};
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
