@@ -24,7 +24,7 @@ class RealBikeConnection implements BikeConnection {
   BluetoothCharacteristic? distance;
   BluetoothCharacteristic? speed;
   BluetoothCharacteristic? uintSystem;
-  BluetoothCharacteristic? powerLevel;
+  BluetoothCharacteristic? powerLevelChar;
   BluetoothCharacteristic? speedLimitChar;
   BluetoothCharacteristic? eShifterGear;
   BluetoothCharacteristic? eShifterPoints;
@@ -91,7 +91,7 @@ class RealBikeConnection implements BikeConnection {
         "6acc5531-e631-4069-944d-b8ca7598ad50": (c) => distance = c,
         "6acc5532-e631-4069-944d-b8ca7598ad50": (c) => speed = c,
         "6acc5533-e631-4069-944d-b8ca7598ad50": (c) => uintSystem = c,
-        "6acc5534-e631-4069-944d-b8ca7598ad50": (c) => powerLevel = c,
+        "6acc5534-e631-4069-944d-b8ca7598ad50": (c) => powerLevelChar = c,
         "6acc5535-e631-4069-944d-b8ca7598ad50": (c) => speedLimitChar = c,
         "6acc5536-e631-4069-944d-b8ca7598ad50": (c) => eShifterGear = c,
         "6acc5537-e631-4069-944d-b8ca7598ad50": (c) => eShifterPoints = c,
@@ -152,7 +152,8 @@ class RealBikeConnection implements BikeConnection {
 
     await authenticate();
 
-    await readSpeedLimit();
+    await bltReadSpeedLimit();
+    await bltReadPowerLvl();
 
     bike.connection = this;
   }
@@ -165,7 +166,7 @@ class RealBikeConnection implements BikeConnection {
     return decrypted;
   }
 
-  bltWriteAndEncrypt(BluetoothCharacteristic char, List<int> value) async {
+  bltWriteEncrypted(BluetoothCharacteristic char, List<int> value) async {
     final List<int> payload = [];
 
     final nonce = await challenge!.read();
@@ -183,7 +184,7 @@ class RealBikeConnection implements BikeConnection {
   }
 
   playSound(int nr) async {
-    await bltWriteAndEncrypt(playSoundChar!, [nr]);
+    await bltWriteEncrypted(playSoundChar!, [nr]);
   }
 
   int _speedLimit = 0;
@@ -195,7 +196,7 @@ class RealBikeConnection implements BikeConnection {
   }
 
   @override
-  Future<SpeedLimit> getSpeedLimit() async => _speedLimitToEnum(_speedLimit);
+  SpeedLimit getSpeedLimit() => _speedLimitToEnum(_speedLimit);
 
   @override
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
@@ -205,12 +206,41 @@ class RealBikeConnection implements BikeConnection {
       SpeedLimit.us: 0x1,
       SpeedLimit.noLimit: 0x3,
     }[speedLimit]!;
-
     _speedLimit = asNr;
 
-    await bltWriteAndEncrypt(speedLimitChar!, [asNr]);
+    await bltWriteEncrypted(speedLimitChar!, [asNr]);
     await Future.delayed(const Duration(milliseconds: 100));
     return await bltReadSpeedLimit();
+  }
+
+  PowerLevel _powerLevel = PowerLevel.fourth;
+
+  @override
+  PowerLevel getPowerLvl() => _powerLevel;
+
+  @override
+  Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
+    _powerLevel = lvl;
+
+    final asNr = {
+      PowerLevel.off: 0x0,
+      PowerLevel.first: 0x1,
+      PowerLevel.second: 0x2,
+      PowerLevel.third: 0x3,
+      PowerLevel.fourth: 0x4,
+      PowerLevel.max: 0x5,
+    }[lvl]!;
+
+    await bltWriteEncrypted(powerLevelChar!, [asNr]);
+
+    return await bltReadPowerLvl();
+  }
+
+  Future<PowerLevel> bltReadPowerLvl() async {
+    final lvlBytes = await bltReadAndDecrypt(powerLevelChar!);
+    final parsedPowerLevel = _powerLevelToEnum(lvlBytes[0]);
+    _powerLevel = parsedPowerLevel;
+    return parsedPowerLevel;
   }
 }
 
@@ -221,3 +251,13 @@ SpeedLimit _speedLimitToEnum(int nr) =>
       0x1: SpeedLimit.us,
     }[nr] ??
     SpeedLimit.noLimit;
+
+PowerLevel _powerLevelToEnum(int nr) =>
+    {
+      0x1: PowerLevel.first,
+      0x2: PowerLevel.second,
+      0x3: PowerLevel.third,
+      0x4: PowerLevel.fourth,
+      0x5: PowerLevel.max,
+    }[nr] ??
+    PowerLevel.off;

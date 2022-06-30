@@ -1,10 +1,39 @@
 import 'bike/bike.dart';
 import 'package:flutter/material.dart';
 
-class Controls extends StatelessWidget {
+class Controls extends StatefulWidget {
   const Controls(this.bike, {Key? key}) : super(key: key);
 
   final Bike bike;
+
+  @override
+  State<Controls> createState() => _ControlsState();
+}
+
+class _ControlsState extends State<Controls> {
+  setSpeedLimit() async {
+    final nextValue = {
+      SpeedLimit.jp: SpeedLimit.eu,
+      SpeedLimit.eu: SpeedLimit.us,
+      SpeedLimit.us: SpeedLimit.noLimit,
+      SpeedLimit.noLimit: SpeedLimit.jp,
+    }[widget.bike.connection?.getSpeedLimit()]!;
+    await widget.bike.connection?.setSpeedLimit(nextValue);
+    setState(() {});
+  }
+
+  setPowerLevel() async {
+    final nextValue = {
+      PowerLevel.off: PowerLevel.first,
+      PowerLevel.first: PowerLevel.second,
+      PowerLevel.second: PowerLevel.third,
+      PowerLevel.third: PowerLevel.fourth,
+      PowerLevel.fourth: PowerLevel.max,
+      PowerLevel.max: PowerLevel.off,
+    }[widget.bike.connection?.getPowerLvl()]!;
+    await widget.bike.connection?.setPowerLvl(nextValue);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,33 +44,19 @@ class Controls extends StatelessWidget {
         child: FixedGrid(
           children: [
             _Control(
-              disabled: bike.connection == null,
+              disabled: widget.bike.connection == null,
               label: 'Assistance',
               icon: Icons.wind_power,
-              value: '3',
-              onPressed: () {},
+              onPressed: setPowerLevel,
+              value: powerLevelToString(widget.bike.connection?.getPowerLvl()),
             ),
             _Control(
-              disabled: bike.connection == null,
+              disabled: widget.bike.connection == null,
               label: 'Speed limit',
               icon: Icons.speed,
-              value: '🇪🇺',
-              onPressed: () => bike.connection?.setSpeedLimit(SpeedLimit.eu),
-            ),
-            _Control(
-              disabled: bike.connection == null,
-              label: 'Assistance',
-              icon: Icons.wind_power,
-              value: '5',
-              onPressed: () {},
-            ),
-            _Control(
-              disabled: bike.connection == null,
-              label: 'Speed limit',
-              icon: Icons.speed,
-              value: '😎',
-              onPressed: () =>
-                  bike.connection?.setSpeedLimit(SpeedLimit.noLimit),
+              onPressed: setSpeedLimit,
+              value:
+                  speedLimitToString(widget.bike.connection?.getSpeedLimit()),
             ),
           ],
         ),
@@ -76,7 +91,7 @@ class _Control extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        onPressed: onPressed,
+        onPressed: disabled == true ? null : onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(

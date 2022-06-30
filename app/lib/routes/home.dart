@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../bike/bike.dart';
 import '../bike/real.dart';
+import '../bike/dummy.dart';
 import '../local_storage.dart';
 import '../controls.dart';
 
@@ -57,9 +58,18 @@ class _HomeState extends State<Home> {
     });
   }
 
+  setupDummyConnections() {
+    setState(() {
+      for (Bike bike in bikes) {
+        bike.connection = DummyBikeConnection();
+      }
+    });
+  }
+
   @override
   void didChangeDependencies() {
     searchForBikes();
+    // setupDummyConnections();
     super.didChangeDependencies();
   }
 

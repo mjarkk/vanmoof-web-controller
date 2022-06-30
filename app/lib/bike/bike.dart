@@ -73,8 +73,11 @@ class BikeColor {
 }
 
 abstract class BikeConnection {
-  Future<SpeedLimit> getSpeedLimit();
-  Future<void> setSpeedLimit(SpeedLimit speedLimit);
+  SpeedLimit getSpeedLimit();
+  Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit);
+
+  PowerLevel getPowerLvl();
+  Future<PowerLevel> setPowerLvl(PowerLevel lvl);
 }
 
 enum SpeedLimit {
@@ -92,3 +95,21 @@ enum PowerLevel {
   fourth,
   max,
 }
+
+String speedLimitToString(SpeedLimit? lvl) => {
+      null: '-',
+      SpeedLimit.jp: '🇯🇵',
+      SpeedLimit.eu: '🇪🇺',
+      SpeedLimit.us: '🇺🇸',
+      SpeedLimit.noLimit: '🚴‍♂️',
+    }[lvl]!;
+
+String powerLevelToString(PowerLevel? lvl) => {
+      null: '-',
+      PowerLevel.off: 'OFF',
+      PowerLevel.first: '1',
+      PowerLevel.second: '2',
+      PowerLevel.third: '3',
+      PowerLevel.fourth: '4',
+      PowerLevel.max: '5',
+    }[lvl]!;
