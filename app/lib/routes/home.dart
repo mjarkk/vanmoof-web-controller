@@ -19,11 +19,22 @@ class _HomeState extends State<Home> {
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
-    flutterBlue.startScan(timeout: const Duration(seconds: 4));
+    try {
+      flutterBlue.startScan(timeout: const Duration(seconds: 4));
+    } catch (e) {
+      flutterBlue = FlutterBluePlus.instance;
+      flutterBlue.startScan(timeout: const Duration(seconds: 4));
+    }
 
-    final isOn = await flutterBlue.isOn;
-    if (!isOn) {
-      await flutterBlue.turnOn();
+    for (var device in await flutterBlue.connectedDevices) {
+      for (Bike bike in bikes) {
+        if (bike.bluetoothName.contains(device.name)) {
+          RealBikeConnection(bike)
+              .connect(device, autoConnect: false)
+              .then((_) => setState(() {}));
+          break;
+        }
+      }
     }
 
     Set<String> tryingToConnectWith = {};

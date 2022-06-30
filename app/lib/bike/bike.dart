@@ -72,4 +72,23 @@ class BikeColor {
   final String secondary;
 }
 
-abstract class BikeConnection {}
+abstract class BikeConnection {
+  Future<SpeedLimit> getSpeedLimit();
+  Future<void> setSpeedLimit(SpeedLimit speedLimit);
+}
+
+enum SpeedLimit {
+  jp,
+  eu,
+  us,
+  noLimit,
+}
+
+enum PowerLevel {
+  off,
+  first,
+  second,
+  third,
+  fourth,
+  max,
+}

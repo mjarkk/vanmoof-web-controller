@@ -1,14 +1,12 @@
 import 'bike.dart';
-import 'dart:typed_data';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:pointycastle/export.dart';
-import 'package:hex/hex.dart';
-import '../api.dart';
+import 'encryption.dart';
 
 class RealBikeConnection implements BikeConnection {
-  RealBikeConnection(this.bike);
+  RealBikeConnection(this.bike) : cyrpto = AesEcb(bike.encryptionKey);
 
   final Bike bike;
+  final AesEcb cyrpto;
 
   // Security
   BluetoothCharacteristic? challenge;
@@ -27,7 +25,7 @@ class RealBikeConnection implements BikeConnection {
   BluetoothCharacteristic? speed;
   BluetoothCharacteristic? uintSystem;
   BluetoothCharacteristic? powerLevel;
-  BluetoothCharacteristic? speedLimit;
+  BluetoothCharacteristic? speedLimitChar;
   BluetoothCharacteristic? eShifterGear;
   BluetoothCharacteristic? eShifterPoints;
   BluetoothCharacteristic? eShifterMode;
@@ -54,7 +52,7 @@ class RealBikeConnection implements BikeConnection {
   BluetoothCharacteristic? clock;
 
   // Sound
-  BluetoothCharacteristic? playSound;
+  BluetoothCharacteristic? playSoundChar;
   BluetoothCharacteristic? soundVolume;
   BluetoothCharacteristic? bellSound;
 
@@ -62,31 +60,16 @@ class RealBikeConnection implements BikeConnection {
   BluetoothCharacteristic? lightMode;
   BluetoothCharacteristic? sensor;
 
-  BlockCipher? _chiperCache;
-  encrypt(List<int> value) {
-    final BlockCipher chiper;
-    if (_chiperCache == null) {
-      Uint8List key = Uint8List.fromList(HEX.decode(bike.encryptionKey));
-      chiper = ECBBlockCipher(AESEngine());
-      chiper.init(true, KeyParameter(key));
-      _chiperCache = chiper;
-    } else {
-      chiper = _chiperCache!;
-    }
-    Uint8List cipherText = chiper.process(Uint8List.fromList(value));
-    return cipherText.toList();
-  }
-
   authenticate() async {
     final challengeValue = await challenge!.read();
     var resp = List.generate(
         16, (i) => i < challengeValue.length ? challengeValue[i] : 0);
-    resp = encrypt(resp);
+    resp = cyrpto.encrypt(resp);
     resp.addAll([0, 0, 0, bike.userKeyId]);
     await keyIndex!.write(resp);
   }
 
-  connect(BluetoothDevice device) async {
+  connect(BluetoothDevice device, {bool autoConnect = true}) async {
     final Map<String, Map<String, Function(BluetoothCharacteristic)>>
         asignmentMap = {
       // securityService
@@ -109,7 +92,7 @@ class RealBikeConnection implements BikeConnection {
         "6acc5532-e631-4069-944d-b8ca7598ad50": (c) => speed = c,
         "6acc5533-e631-4069-944d-b8ca7598ad50": (c) => uintSystem = c,
         "6acc5534-e631-4069-944d-b8ca7598ad50": (c) => powerLevel = c,
-        "6acc5535-e631-4069-944d-b8ca7598ad50": (c) => speedLimit = c,
+        "6acc5535-e631-4069-944d-b8ca7598ad50": (c) => speedLimitChar = c,
         "6acc5536-e631-4069-944d-b8ca7598ad50": (c) => eShifterGear = c,
         "6acc5537-e631-4069-944d-b8ca7598ad50": (c) => eShifterPoints = c,
         "6acc5538-e631-4069-944d-b8ca7598ad50": (c) => eShifterMode = c,
@@ -139,7 +122,7 @@ class RealBikeConnection implements BikeConnection {
       },
       // soundService
       "6acc5570-e631-4069-944d-b8ca7598ad50": {
-        "6acc5571-e631-4069-944d-b8ca7598ad50": (c) => playSound = c,
+        "6acc5571-e631-4069-944d-b8ca7598ad50": (c) => playSoundChar = c,
         "6acc5572-e631-4069-944d-b8ca7598ad50": (c) => soundVolume = c,
         "6acc5574-e631-4069-944d-b8ca7598ad50": (c) => bellSound = c,
       },
@@ -151,7 +134,7 @@ class RealBikeConnection implements BikeConnection {
     };
 
     await device.connect(
-      autoConnect: true,
+      autoConnect: autoConnect,
       timeout: const Duration(seconds: 10),
     );
     final services = await device.discoverServices();
@@ -169,6 +152,72 @@ class RealBikeConnection implements BikeConnection {
 
     await authenticate();
 
+    await readSpeedLimit();
+
     bike.connection = this;
   }
+
+  bltReadAndDecrypt(BluetoothCharacteristic char) async {
+    final value = await char.read();
+    var decrypted = cyrpto.decrypt(value);
+    final lastPaddedByte = decrypted.lastIndexWhere((b) => b != 0);
+    decrypted.removeRange(lastPaddedByte + 1, decrypted.length);
+    return decrypted;
+  }
+
+  bltWriteAndEncrypt(BluetoothCharacteristic char, List<int> value) async {
+    final List<int> payload = [];
+
+    final nonce = await challenge!.read();
+    payload.addAll(nonce);
+
+    // Add value
+    payload.addAll(value);
+
+    // Make the payload align to 16 byte
+    final padding = 16 - (payload.length % 16);
+    payload.addAll(List.generate(padding, (_) => 0));
+
+    final encrypted = cyrpto.encrypt(payload);
+    await char.write(encrypted);
+  }
+
+  playSound(int nr) async {
+    await bltWriteAndEncrypt(playSoundChar!, [nr]);
+  }
+
+  int _speedLimit = 0;
+
+  Future<SpeedLimit> bltReadSpeedLimit() async {
+    final speedLimitBytes = await bltReadAndDecrypt(speedLimitChar!);
+    _speedLimit = speedLimitBytes[0];
+    return _speedLimitToEnum(speedLimitBytes[0]);
+  }
+
+  @override
+  Future<SpeedLimit> getSpeedLimit() async => _speedLimitToEnum(_speedLimit);
+
+  @override
+  Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
+    final asNr = {
+      SpeedLimit.jp: 0x2,
+      SpeedLimit.eu: 0x0,
+      SpeedLimit.us: 0x1,
+      SpeedLimit.noLimit: 0x3,
+    }[speedLimit]!;
+
+    _speedLimit = asNr;
+
+    await bltWriteAndEncrypt(speedLimitChar!, [asNr]);
+    await Future.delayed(const Duration(milliseconds: 100));
+    return await bltReadSpeedLimit();
+  }
 }
+
+SpeedLimit _speedLimitToEnum(int nr) =>
+    {
+      0x2: SpeedLimit.jp,
+      0x0: SpeedLimit.eu,
+      0x1: SpeedLimit.us,
+    }[nr] ??
+    SpeedLimit.noLimit;

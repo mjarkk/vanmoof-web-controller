@@ -15,28 +15,33 @@ class Controls extends StatelessWidget {
         child: FixedGrid(
           children: [
             _Control(
+              disabled: bike.connection == null,
               label: 'Assistance',
               icon: Icons.wind_power,
               value: '3',
               onPressed: () {},
             ),
             _Control(
+              disabled: bike.connection == null,
               label: 'Speed limit',
               icon: Icons.speed,
               value: '🇪🇺',
-              onPressed: () {},
+              onPressed: () => bike.connection?.setSpeedLimit(SpeedLimit.eu),
             ),
             _Control(
+              disabled: bike.connection == null,
               label: 'Assistance',
               icon: Icons.wind_power,
               value: '5',
               onPressed: () {},
             ),
             _Control(
+              disabled: bike.connection == null,
               label: 'Speed limit',
               icon: Icons.speed,
               value: '😎',
-              onPressed: () {},
+              onPressed: () =>
+                  bike.connection?.setSpeedLimit(SpeedLimit.noLimit),
             ),
           ],
         ),
@@ -51,6 +56,7 @@ class _Control extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     required this.value,
+    this.disabled,
     Key? key,
   }) : super(key: key);
 
@@ -58,6 +64,7 @@ class _Control extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
+  final bool? disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +76,7 @@ class _Control extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
