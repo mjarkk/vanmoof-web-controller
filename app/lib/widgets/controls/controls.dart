@@ -1,4 +1,5 @@
-import 'bike/bike.dart';
+import '../../bike/bike.dart';
+import 'control.dart';
 import 'package:flutter/material.dart';
 
 class Controls extends StatefulWidget {
@@ -43,14 +44,14 @@ class _ControlsState extends State<Controls> {
         padding: const EdgeInsets.all(8),
         child: FixedGrid(
           children: [
-            _Control(
+            Control(
               disabled: widget.bike.connection == null,
               label: 'Assistance',
               icon: Icons.wind_power,
               onPressed: setPowerLevel,
               value: powerLevelToString(widget.bike.connection?.getPowerLvl()),
             ),
-            _Control(
+            Control(
               disabled: widget.bike.connection == null,
               label: 'Speed limit',
               icon: Icons.speed,
@@ -59,70 +60,6 @@ class _ControlsState extends State<Controls> {
                   speedLimitToString(widget.bike.connection?.getSpeedLimit()),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Control extends StatelessWidget {
-  const _Control({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-    required this.value,
-    this.disabled,
-    Key? key,
-  }) : super(key: key);
-
-  final Function() onPressed;
-  final String label;
-  final String value;
-  final IconData icon;
-  final bool? disabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        onPressed: disabled == true ? null : onPressed,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 3),
-                    child: Icon(icon, size: 17, color: Colors.black54),
-                  ),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

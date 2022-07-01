@@ -4,8 +4,8 @@ import '../bike/bike.dart';
 import '../bike/real.dart';
 import '../bike/dummy.dart';
 import '../local_storage.dart';
-import '../controls.dart';
-import '../bike_view.dart';
+import '../widgets/controls/controls.dart';
+import '../widgets/home_bikes_view/bikes_view.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -80,8 +80,8 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
-    searchForBikes();
-    // setupDummyConnections();
+    // searchForBikes();
+    setupDummyConnections();
     super.didChangeDependencies();
   }
 

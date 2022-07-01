@@ -42,6 +42,7 @@ class App extends StatelessWidget {
 
     return MaterialApp(
       title: 'Mooovy',
+      debugShowCheckedModeBanner: false,
       theme: theme,
       routes: routes,
       initialRoute: initialRoute,
