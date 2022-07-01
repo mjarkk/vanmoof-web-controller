@@ -154,6 +154,7 @@ class RealBikeConnection implements BikeConnection {
 
     await bltReadSpeedLimit();
     await bltReadPowerLvl();
+    await bltReadBatteryPercentage();
 
     bike.connection = this;
   }
@@ -241,6 +242,17 @@ class RealBikeConnection implements BikeConnection {
     final parsedPowerLevel = _powerLevelToEnum(lvlBytes[0]);
     _powerLevel = parsedPowerLevel;
     return parsedPowerLevel;
+  }
+
+  int _batteryPercentage = 0;
+
+  @override
+  int batteryPercentage() => _batteryPercentage;
+
+  Future<int> bltReadBatteryPercentage() async {
+    final value = await bltReadAndDecrypt(moduleBatteryLevel!);
+    _batteryPercentage = value[0]!;
+    return _batteryPercentage;
   }
 }
 

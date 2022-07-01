@@ -21,4 +21,7 @@ class DummyBikeConnection implements BikeConnection {
 
   @override
   PowerLevel getPowerLvl() => _powerLevel;
+
+  @override
+  int batteryPercentage() => 80;
 }

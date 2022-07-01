@@ -5,6 +5,7 @@ import '../bike/real.dart';
 import '../bike/dummy.dart';
 import '../local_storage.dart';
 import '../controls.dart';
+import '../bike_view.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> {
   _HomeState() : bikes = obtainBikes();
 
   final List<Bike> bikes;
+  int selectedBikeIdx = 0;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
@@ -63,6 +65,16 @@ class _HomeState extends State<Home> {
       for (Bike bike in bikes) {
         bike.connection = DummyBikeConnection();
       }
+      bikes.add(Bike(
+        id: -1,
+        name: 'susy demo bike',
+        macAddress: 'MAC:MAC:MAC',
+        encryptionKey: '',
+        userKeyId: 6969,
+        ownerName: 'Mr sus',
+        modelColor: null,
+        links: null,
+      ));
     });
   }
 
@@ -73,27 +85,24 @@ class _HomeState extends State<Home> {
     super.didChangeDependencies();
   }
 
+  setSelectedBikeIdx(int idx) {
+    setState(() {
+      selectedBikeIdx = idx;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: bikes
-                    .map((bike) => Text(
-                          "bike: ${bike.name}, connected: ${bike.connection != null}",
-                          key: ValueKey(bike.id),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headline6,
-                        ))
-                    .toList(),
-              ),
+            BikesView(
+              bikes: bikes,
+              onBikeSelected: setSelectedBikeIdx,
+              selectedBike: selectedBikeIdx,
             ),
-            Controls(bikes[0]),
+            Controls(bikes[selectedBikeIdx]),
           ],
         ),
       ),
