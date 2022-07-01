@@ -13,7 +13,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ThemeData(
+    final lightTheme = ThemeData(
       primarySwatch: Colors.yellow,
       hintColor: Colors.black54,
       toggleableActiveColor: Colors.black,
@@ -26,6 +26,22 @@ class App extends StatelessWidget {
         labelStyle: TextStyle(color: Colors.black54),
       ),
     );
+
+    final darkTheme = ThemeData(
+        // Here the stuff for the dark theme.
+
+        // primarySwatch: Colors.yellow,
+        // hintColor: Colors.black54,
+        // toggleableActiveColor: Colors.black,
+        // inputDecorationTheme: const InputDecorationTheme(
+        //   iconColor: Colors.black,
+        //   focusedBorder: UnderlineInputBorder(
+        //     borderSide: BorderSide(color: Colors.black),
+        //   ),
+        //   border: UnderlineInputBorder(),
+        //   labelStyle: TextStyle(color: Colors.black54),
+        // ),
+        );
 
     final Map<String, WidgetBuilder> routes = {
       '/login': (context) => const Login(),
@@ -43,7 +59,12 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Mooovy',
       debugShowCheckedModeBanner: false,
-      theme: theme,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
+      // ThemeMode.system to use the system set theme mode.
+      // ThemeMode.light to use the light theme.
+      // ThemeMode.dark to use the dark theme.
       routes: routes,
       initialRoute: initialRoute,
     );
