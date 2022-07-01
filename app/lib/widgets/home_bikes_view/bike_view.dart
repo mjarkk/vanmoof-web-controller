@@ -28,12 +28,6 @@ class BikeView extends StatelessWidget {
                     charging: false,
                   ),
           ),
-          Text(
-            "connected: ${bike.connection != null}",
-            key: ValueKey(bike.id),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6,
-          ),
         ],
       ),
     );

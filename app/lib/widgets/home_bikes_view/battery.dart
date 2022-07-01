@@ -49,11 +49,17 @@ class BatteryIndicator extends StatelessWidget {
                 color: progressColor,
                 borderRadius: BorderRadius.circular(halfHeight),
               ),
-              child: const Align(
-                alignment: Alignment.centerRight,
-                child: Text('50%'),
-              ),
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(connected ? '$percentage%' : '--%'),
+              if (charging) const Icon(Icons.bolt),
+            ],
           ),
         ),
       ],
