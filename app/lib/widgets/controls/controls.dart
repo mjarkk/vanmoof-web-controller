@@ -38,30 +38,46 @@ class _ControlsState extends State<Controls> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 300),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: FixedGrid(
-          children: [
-            Control(
-              disabled: widget.bike.connection == null,
-              label: 'Assistance',
-              icon: Icons.wind_power,
-              onPressed: setPowerLevel,
-              value: powerLevelToString(widget.bike.connection?.getPowerLvl()),
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: FixedGrid(
+              children: [
+                Control(
+                  disabled: widget.bike.connection == null,
+                  label: 'Assistance',
+                  icon: Icons.wind_power,
+                  onPressed: setPowerLevel,
+                  value:
+                      powerLevelToString(widget.bike.connection?.getPowerLvl()),
+                ),
+                Control(
+                  disabled: widget.bike.connection == null,
+                  label: 'Speed limit',
+                  icon: Icons.speed,
+                  onPressed: setSpeedLimit,
+                  value: speedLimitToString(
+                      widget.bike.connection?.getSpeedLimit()),
+                ),
+              ],
             ),
-            Control(
-              disabled: widget.bike.connection == null,
-              label: 'Speed limit',
-              icon: Icons.speed,
-              onPressed: setSpeedLimit,
-              value:
-                  speedLimitToString(widget.bike.connection?.getSpeedLimit()),
-            ),
-          ],
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+          child: Control(
+            disabled: widget.bike.connection == null,
+            icon: widget.bike.connection?.locked() == true
+                ? Icons.lock
+                : Icons.lock_open,
+            onPressed: () => widget.bike.connection?.unlock(),
+            value: 'Unlock',
+          ),
+        ),
+      ],
     );
   }
 }

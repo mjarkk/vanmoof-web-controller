@@ -24,4 +24,14 @@ class DummyBikeConnection implements BikeConnection {
 
   @override
   int batteryPercentage() => 80;
+
+  bool _locked = true;
+
+  @override
+  bool locked() => _locked;
+
+  @override
+  Future<void> unlock() async {
+    _locked = false;
+  }
 }

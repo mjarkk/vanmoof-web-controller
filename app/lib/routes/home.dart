@@ -19,13 +19,18 @@ class _HomeState extends State<Home> {
 
   final List<Bike> bikes;
   int selectedBikeIdx = 0;
+  bool useDummy = false;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
     try {
+      await flutterBlue.isAvailable;
+      flutterBlue.setLogLevel(LogLevel.critical);
       flutterBlue.startScan(timeout: const Duration(seconds: 4));
     } catch (e) {
       flutterBlue = FlutterBluePlus.instance;
+      await flutterBlue.isAvailable;
+      flutterBlue.setLogLevel(LogLevel.critical);
       flutterBlue.startScan(timeout: const Duration(seconds: 4));
     }
 
@@ -80,8 +85,11 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
-    // searchForBikes();
-    setupDummyConnections();
+    if (useDummy) {
+      setupDummyConnections();
+    } else {
+      searchForBikes();
+    }
     super.didChangeDependencies();
   }
 

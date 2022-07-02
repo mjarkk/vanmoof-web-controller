@@ -155,11 +155,12 @@ class RealBikeConnection implements BikeConnection {
     await bltReadSpeedLimit();
     await bltReadPowerLvl();
     await bltReadBatteryPercentage();
+    await bltReadLocked();
 
     bike.connection = this;
   }
 
-  bltReadAndDecrypt(BluetoothCharacteristic char) async {
+  Future<List<int>> bltReadAndDecrypt(BluetoothCharacteristic char) async {
     final value = await char.read();
     var decrypted = cyrpto.decrypt(value);
     final lastPaddedByte = decrypted.lastIndexWhere((b) => b != 0);
@@ -251,8 +252,24 @@ class RealBikeConnection implements BikeConnection {
 
   Future<int> bltReadBatteryPercentage() async {
     final value = await bltReadAndDecrypt(moduleBatteryLevel!);
-    _batteryPercentage = value[0]!;
+    _batteryPercentage = value[0];
     return _batteryPercentage;
+  }
+
+  bool _locked = false;
+
+  @override
+  bool locked() => _locked;
+
+  @override
+  Future<void> unlock() async {
+    await bltWriteEncrypted(lockState!, [0x2]);
+  }
+
+  Future<bool> bltReadLocked() async {
+    final value = await bltReadAndDecrypt(lockState!);
+    _locked = value.isEmpty ? false : (value[0] == 0x1 || value[0] == 0x2);
+    return _locked;
   }
 }
 

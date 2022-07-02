@@ -80,6 +80,9 @@ abstract class BikeConnection {
   Future<PowerLevel> setPowerLvl(PowerLevel lvl);
 
   int batteryPercentage();
+
+  bool locked();
+  Future<void> unlock();
 }
 
 enum SpeedLimit {
