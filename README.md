@@ -24,6 +24,7 @@ https://mooovy.app/
 
 Here are some things you can do to help!
 
+- [Confirm v1.8.**2** still works](https://github.com/mjarkk/vanmoof-web-controller/issues/22) (v1.8.**1** has been confirmed to work already!)
 - Help reverse engineer how the refresh token works for the VanMoof API
 - Hackin support for older bikes
 - Help with finding out what is send from / to the bike over bluetooth and having a good workflow for doing this
