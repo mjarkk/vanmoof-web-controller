@@ -4,7 +4,7 @@ import '../api.dart';
 import '../local_storage.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();

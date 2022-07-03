@@ -9,8 +9,8 @@ class BikesView extends StatelessWidget {
     required this.bikes,
     required this.onBikeSelected,
     required this.selectedBike,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final List<Bike> bikes;
   final void Function(int) onBikeSelected;

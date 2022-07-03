@@ -3,7 +3,7 @@ import '../../bike/bike.dart';
 import 'battery.dart';
 
 class BikeView extends StatelessWidget {
-  const BikeView(this.bike, {Key? key}) : super(key: key);
+  const BikeView(this.bike, {super.key});
 
   final Bike bike;
 

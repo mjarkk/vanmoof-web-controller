@@ -5,15 +5,13 @@ class BatteryIndicator extends StatelessWidget {
   const BatteryIndicator({
     required this.percentage,
     required this.charging,
-    Key? key,
-  })  : connected = true,
-        super(key: key);
+    super.key,
+  }) : connected = true;
 
-  const BatteryIndicator.noConnection({Key? key})
+  const BatteryIndicator.noConnection({super.key})
       : percentage = 0,
         charging = false,
-        connected = false,
-        super(key: key);
+        connected = false;
 
   final int percentage;
   final bool charging;

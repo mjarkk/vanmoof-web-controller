@@ -1,5 +1,5 @@
-import 'bike.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'bike.dart';
 import 'encryption.dart';
 
 class RealBikeConnection implements BikeConnection {
@@ -189,40 +189,39 @@ class RealBikeConnection implements BikeConnection {
     await bltWriteEncrypted(playSoundChar!, [nr]);
   }
 
-  int _speedLimit = 0;
-
   Future<SpeedLimit> bltReadSpeedLimit() async {
     final speedLimitBytes = await bltReadAndDecrypt(speedLimitChar!);
-    _speedLimit = speedLimitBytes[0];
-    return _speedLimitToEnum(speedLimitBytes[0]);
+    final resp = _speedLimitToEnum(
+      speedLimitBytes.isEmpty ? 0x0 : speedLimitBytes[0],
+    );
+    bike.powerState.speedLimit = resp;
+    return resp;
   }
 
   @override
-  SpeedLimit getSpeedLimit() => _speedLimitToEnum(_speedLimit);
+  SpeedLimit getSpeedLimit() => bike.powerState.speedLimit;
 
   @override
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
+    bike.powerState.speedLimit = speedLimit;
     final asNr = {
       SpeedLimit.jp: 0x2,
       SpeedLimit.eu: 0x0,
       SpeedLimit.us: 0x1,
       SpeedLimit.noLimit: 0x3,
     }[speedLimit]!;
-    _speedLimit = asNr;
 
     await bltWriteEncrypted(speedLimitChar!, [asNr]);
     await Future.delayed(const Duration(milliseconds: 100));
     return await bltReadSpeedLimit();
   }
 
-  PowerLevel _powerLevel = PowerLevel.fourth;
-
   @override
-  PowerLevel getPowerLvl() => _powerLevel;
+  PowerLevel getPowerLvl() => bike.powerState.powerLevel;
 
   @override
   Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
-    _powerLevel = lvl;
+    bike.powerState.powerLevel = lvl;
 
     final asNr = {
       PowerLevel.off: 0x0,
@@ -240,26 +239,23 @@ class RealBikeConnection implements BikeConnection {
 
   Future<PowerLevel> bltReadPowerLvl() async {
     final lvlBytes = await bltReadAndDecrypt(powerLevelChar!);
-    final parsedPowerLevel = _powerLevelToEnum(lvlBytes[0]);
-    _powerLevel = parsedPowerLevel;
+    final parsedPowerLevel =
+        _powerLevelToEnum(lvlBytes.isEmpty ? 0x0 : lvlBytes[0]);
+    bike.powerState.powerLevel = parsedPowerLevel;
     return parsedPowerLevel;
   }
 
-  int _batteryPercentage = 0;
-
   @override
-  int batteryPercentage() => _batteryPercentage;
+  int batteryPercentage() => bike.batteryState.batteryPercentage;
 
   Future<int> bltReadBatteryPercentage() async {
     final value = await bltReadAndDecrypt(moduleBatteryLevel!);
-    _batteryPercentage = value[0];
-    return _batteryPercentage;
+    bike.batteryState.batteryPercentage = value[0];
+    return bike.batteryState.batteryPercentage;
   }
 
-  bool _locked = false;
-
   @override
-  bool locked() => _locked;
+  bool locked() => bike.lockState.locked;
 
   @override
   Future<void> unlock() async {
@@ -268,8 +264,9 @@ class RealBikeConnection implements BikeConnection {
 
   Future<bool> bltReadLocked() async {
     final value = await bltReadAndDecrypt(lockState!);
-    _locked = value.isEmpty ? false : (value[0] == 0x1 || value[0] == 0x2);
-    return _locked;
+    bike.lockState.locked =
+        value.isEmpty ? false : (value[0] == 0x1 || value[0] == 0x2);
+    return bike.lockState.locked;
   }
 }
 

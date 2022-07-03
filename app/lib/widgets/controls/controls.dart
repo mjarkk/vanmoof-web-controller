@@ -3,7 +3,7 @@ import 'control.dart';
 import 'package:flutter/material.dart';
 
 class Controls extends StatefulWidget {
-  const Controls(this.bike, {Key? key}) : super(key: key);
+  const Controls(this.bike, {super.key});
 
   final Bike bike;
 
@@ -85,8 +85,8 @@ class _ControlsState extends State<Controls> {
 class FixedGrid extends StatelessWidget {
   const FixedGrid({
     required this.children,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final List<Widget> children;
 

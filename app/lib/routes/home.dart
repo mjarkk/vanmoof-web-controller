@@ -8,7 +8,7 @@ import '../widgets/controls/controls.dart';
 import '../widgets/home_bikes_view/bikes_view.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
 
   final List<Bike> bikes;
   int selectedBikeIdx = 0;
-  bool useDummy = false;
+  bool useDummy = true;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
   setupDummyConnections() {
     setState(() {
       for (Bike bike in bikes) {
-        bike.connection = DummyBikeConnection();
+        bike.connection = DummyBikeConnection(bike);
       }
       bikes.add(Bike(
         id: -1,

@@ -7,8 +7,8 @@ class Control extends StatelessWidget {
     required this.value,
     this.label,
     this.disabled,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Function() onPressed;
   final String? label;

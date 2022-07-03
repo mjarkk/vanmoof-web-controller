@@ -1,3 +1,4 @@
+import 'package:app/bike/models.dart';
 import 'package:hive/hive.dart';
 
 part 'bike.g.dart';
@@ -13,7 +14,9 @@ class Bike {
     required this.ownerName,
     this.modelColor,
     this.links,
-  });
+  })  : powerState = BikePowerState(),
+        lockState = BikeLockState(),
+        batteryState = BikeBatteryState();
 
   @HiveField(0)
   final int id;
@@ -33,6 +36,11 @@ class Bike {
   final BikeLinks? links;
 
   BikeConnection? connection;
+
+  // States..
+  final BikePowerState powerState;
+  final BikeLockState lockState;
+  final BikeBatteryState batteryState;
 
   List<String> get bluetoothName {
     final bleNameSuffix = macAddress.replaceAll(':', '');
@@ -106,7 +114,7 @@ String speedLimitToString(SpeedLimit? lvl) => {
       SpeedLimit.jp: '🇯🇵',
       SpeedLimit.eu: '🇪🇺',
       SpeedLimit.us: '🇺🇸',
-      SpeedLimit.noLimit: '🚴‍♂️',
+      SpeedLimit.noLimit: '😎',
     }[lvl]!;
 
 String powerLevelToString(PowerLevel? lvl) => {

@@ -4,8 +4,8 @@ class SelectedBikeIndicator extends StatelessWidget {
   const SelectedBikeIndicator({
     required this.total,
     required this.selected,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final int total;
   final int selected;

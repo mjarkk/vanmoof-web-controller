@@ -42,6 +42,7 @@ dependencies:
   pointycastle: ^3.6.0
   hex: ^0.2.0
   animated_fractionally_sized_box: ^2.0.1
+  provider: ^6.0.3
 
 dev_dependencies:
   flutter_test:

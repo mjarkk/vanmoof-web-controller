@@ -1,37 +1,34 @@
 import 'bike.dart';
 
 class DummyBikeConnection implements BikeConnection {
-  SpeedLimit _speedLimit = SpeedLimit.eu;
-  PowerLevel _powerLevel = PowerLevel.fourth;
+  DummyBikeConnection(this.bike);
+
+  final Bike bike;
 
   @override
-  SpeedLimit getSpeedLimit() => _speedLimit;
+  SpeedLimit getSpeedLimit() => bike.powerState.speedLimit;
 
   @override
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
-    _speedLimit = speedLimit;
+    bike.powerState.speedLimit = speedLimit;
     return getSpeedLimit();
   }
 
   @override
-  Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
-    _powerLevel = lvl;
-    return _powerLevel;
-  }
+  PowerLevel getPowerLvl() => bike.powerState.powerLevel;
 
   @override
-  PowerLevel getPowerLvl() => _powerLevel;
+  Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
+    bike.powerState.powerLevel = lvl;
+    return getPowerLvl();
+  }
 
   @override
   int batteryPercentage() => 80;
 
-  bool _locked = true;
+  @override
+  bool locked() => bike.lockState.locked;
 
   @override
-  bool locked() => _locked;
-
-  @override
-  Future<void> unlock() async {
-    _locked = false;
-  }
+  Future<void> unlock() async => bike.lockState.locked = false;
 }
