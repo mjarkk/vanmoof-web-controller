@@ -10,7 +10,7 @@ https://mooovy.app/
 
 ### Current features
 
-- Change your speed limit to JP (24 km/h), EU (25 km/h), US (32 km/h) or 😎 (37 km/h)
+- Change your speed limit to JP (24 km/h), EU (25 km/h), US (32 km/h) or 😎 (37 km/h).
 - Set your power level, this also unlocks a new power level 5.
 - A sound board with the following sounds:
 
@@ -18,7 +18,8 @@ https://mooovy.app/
 | ----- | ------------------- | -------- | ---------------- | -------------- | ------------- | ------------------- | -------------------- | ---------- | ------- | -------- | ------------------- |
 | Long  | 🔋 Charding noise.. | 🚨 Alarm | 🚨 Alarm stage 2 | 🔋 Charging..  | 🆕 Updating.. | 🎉 Update complete  | 💥 Make wired noises |
 
-- You can share your bike to someone using their email
+- Share your bike to someone using their email.
+- Show a list of people you are currently sharing your bike with and a button to stop sharing.
 
 ### Want to help?
 
