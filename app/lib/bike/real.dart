@@ -199,9 +199,6 @@ class RealBikeConnection implements BikeConnection {
   }
 
   @override
-  SpeedLimit getSpeedLimit() => bike.powerState.speedLimit;
-
-  @override
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
     bike.powerState.speedLimit = speedLimit;
     final asNr = {
@@ -215,9 +212,6 @@ class RealBikeConnection implements BikeConnection {
     await Future.delayed(const Duration(milliseconds: 100));
     return await bltReadSpeedLimit();
   }
-
-  @override
-  PowerLevel getPowerLvl() => bike.powerState.powerLevel;
 
   @override
   Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
@@ -245,17 +239,11 @@ class RealBikeConnection implements BikeConnection {
     return parsedPowerLevel;
   }
 
-  @override
-  int batteryPercentage() => bike.batteryState.batteryPercentage;
-
   Future<int> bltReadBatteryPercentage() async {
     final value = await bltReadAndDecrypt(moduleBatteryLevel!);
     bike.batteryState.batteryPercentage = value[0];
     return bike.batteryState.batteryPercentage;
   }
-
-  @override
-  bool locked() => bike.lockState.locked;
 
   @override
   Future<void> unlock() async {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:provider/provider.dart';
 import '../bike/bike.dart';
+import '../bike/models.dart';
 import '../bike/real.dart';
 import '../bike/dummy.dart';
 import '../local_storage.dart';
@@ -101,17 +103,28 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final Bike selectedBike = bikes[selectedBikeIdx];
+
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            BikesView(
-              bikes: bikes,
-              onBikeSelected: setSelectedBikeIdx,
-              selectedBike: selectedBikeIdx,
+        child: ChangeNotifierProvider.value(
+          value: selectedBike.powerState,
+          child: ChangeNotifierProvider.value(
+            value: selectedBike.lockState,
+            child: ChangeNotifierProvider.value(
+              value: selectedBike.batteryState,
+              child: Column(
+                children: [
+                  BikesView(
+                    bikes: bikes,
+                    onBikeSelected: setSelectedBikeIdx,
+                    selectedBike: selectedBikeIdx,
+                  ),
+                  Controls(selectedBike),
+                ],
+              ),
             ),
-            Controls(bikes[selectedBikeIdx]),
-          ],
+          ),
         ),
       ),
     );

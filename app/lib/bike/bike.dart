@@ -37,6 +37,9 @@ class Bike {
 
   BikeConnection? connection;
 
+  bool get connected => connection != null;
+  bool get disconnected => connection == null;
+
   // States..
   final BikePowerState powerState;
   final BikeLockState lockState;
@@ -81,15 +84,8 @@ class BikeColor {
 }
 
 abstract class BikeConnection {
-  SpeedLimit getSpeedLimit();
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit);
-
-  PowerLevel getPowerLvl();
   Future<PowerLevel> setPowerLvl(PowerLevel lvl);
-
-  int batteryPercentage();
-
-  bool locked();
   Future<void> unlock();
 }
 

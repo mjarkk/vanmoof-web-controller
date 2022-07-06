@@ -1,29 +1,25 @@
-import '../../bike/bike.dart';
-import 'control.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'control.dart';
+import '../../bike/bike.dart';
+import '../../bike/models.dart';
 
-class Controls extends StatefulWidget {
+class Controls extends StatelessWidget {
   const Controls(this.bike, {super.key});
 
   final Bike bike;
 
-  @override
-  State<Controls> createState() => _ControlsState();
-}
-
-class _ControlsState extends State<Controls> {
-  setSpeedLimit() async {
+  setSpeedLimit(BikePowerState powerState) async {
     final nextValue = {
       SpeedLimit.jp: SpeedLimit.eu,
       SpeedLimit.eu: SpeedLimit.us,
       SpeedLimit.us: SpeedLimit.noLimit,
       SpeedLimit.noLimit: SpeedLimit.jp,
-    }[widget.bike.connection?.getSpeedLimit()]!;
-    await widget.bike.connection?.setSpeedLimit(nextValue);
-    setState(() {});
+    }[powerState.speedLimit]!;
+    await bike.connection?.setSpeedLimit(nextValue);
   }
 
-  setPowerLevel() async {
+  setPowerLevel(BikePowerState powerState) async {
     final nextValue = {
       PowerLevel.off: PowerLevel.first,
       PowerLevel.first: PowerLevel.second,
@@ -31,13 +27,14 @@ class _ControlsState extends State<Controls> {
       PowerLevel.third: PowerLevel.fourth,
       PowerLevel.fourth: PowerLevel.max,
       PowerLevel.max: PowerLevel.off,
-    }[widget.bike.connection?.getPowerLvl()]!;
-    await widget.bike.connection?.setPowerLvl(nextValue);
-    setState(() {});
+    }[powerState.powerLevel]!;
+    await bike.connection?.setPowerLvl(nextValue);
   }
 
   @override
   Widget build(BuildContext context) {
+    final powerState = context.watch<BikePowerState>();
+
     return Column(
       children: [
         ConstrainedBox(
@@ -47,37 +44,46 @@ class _ControlsState extends State<Controls> {
             child: FixedGrid(
               children: [
                 Control(
-                  disabled: widget.bike.connection == null,
+                  disabled: bike.connection == null,
                   label: 'Assistance',
                   icon: Icons.wind_power,
-                  onPressed: setPowerLevel,
-                  value:
-                      powerLevelToString(widget.bike.connection?.getPowerLvl()),
+                  onPressed: () => setPowerLevel(powerState),
+                  value: powerLevelToString(powerState.powerLevel),
                 ),
                 Control(
-                  disabled: widget.bike.connection == null,
+                  disabled: bike.connection == null,
                   label: 'Speed limit',
                   icon: Icons.speed,
-                  onPressed: setSpeedLimit,
-                  value: speedLimitToString(
-                      widget.bike.connection?.getSpeedLimit()),
+                  onPressed: () => setSpeedLimit(powerState),
+                  value: speedLimitToString(powerState.speedLimit),
                 ),
               ],
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-          child: Control(
-            disabled: widget.bike.connection == null,
-            icon: widget.bike.connection?.locked() == true
-                ? Icons.lock
-                : Icons.lock_open,
-            onPressed: () => widget.bike.connection?.unlock(),
-            value: 'Unlock',
-          ),
-        ),
+        UnlockButton(bike),
       ],
+    );
+  }
+}
+
+class UnlockButton extends StatelessWidget {
+  const UnlockButton(this.bike);
+
+  final Bike bike;
+
+  @override
+  Widget build(BuildContext context) {
+    final bikeLockState = context.watch<BikeLockState>();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+      child: Control(
+        disabled: bike.connection == null,
+        icon: bikeLockState.locked == true ? Icons.lock : Icons.lock_open,
+        onPressed: () => bike.connection?.unlock(),
+        value: 'Unlock',
+      ),
     );
   }
 }
