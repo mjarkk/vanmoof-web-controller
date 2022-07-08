@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../bike/bike.dart';
 import '../bike/models.dart';
@@ -105,23 +107,26 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final Bike selectedBike = bikes[selectedBikeIdx];
 
-    return Scaffold(
-      body: SafeArea(
-        child: ChangeNotifierProvider.value(
-          value: selectedBike.powerState,
+    return CupertinoScaffold(
+      overlayStyle: SystemUiOverlayStyle.dark,
+      body: Scaffold(
+        body: SafeArea(
           child: ChangeNotifierProvider.value(
-            value: selectedBike.lockState,
+            value: selectedBike.powerState,
             child: ChangeNotifierProvider.value(
-              value: selectedBike.batteryState,
-              child: Column(
-                children: [
-                  BikesView(
-                    bikes: bikes,
-                    onBikeSelected: setSelectedBikeIdx,
-                    selectedBike: selectedBikeIdx,
-                  ),
-                  Controls(selectedBike),
-                ],
+              value: selectedBike.lockState,
+              child: ChangeNotifierProvider.value(
+                value: selectedBike.batteryState,
+                child: Column(
+                  children: [
+                    BikesView(
+                      bikes: bikes,
+                      onBikeSelected: setSelectedBikeIdx,
+                      selectedBike: selectedBikeIdx,
+                    ),
+                    Controls(selectedBike),
+                  ],
+                ),
               ),
             ),
           ),

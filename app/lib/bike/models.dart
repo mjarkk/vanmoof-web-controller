@@ -34,4 +34,11 @@ class BikeBatteryState extends ChangeNotifier {
     _batteryPercentage = value;
     notifyListeners();
   }
+
+  bool _charging = false;
+  bool get charging => _charging;
+  set charging(bool value) {
+    _charging = value;
+    notifyListeners();
+  }
 }
