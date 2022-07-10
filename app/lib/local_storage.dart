@@ -57,6 +57,12 @@ storeApiTokens(ApiClient api) async {
   await store.flush();
 }
 
+removeApiTokens() async {
+  final store = _apiCredentialsBox();
+  await store.deleteAll(['token', 'refreshToken']);
+  await store.flush();
+}
+
 ApiClient? obtainApiClient() {
   final store = _apiCredentialsBox();
   final token = store.get('token');
