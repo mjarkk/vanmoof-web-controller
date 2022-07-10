@@ -70,8 +70,21 @@ function BikeStats({ bike }: { bike: Bike }) {
     )
 }
 
+function isNewerFirmwareVersion (newVer: string, oldVer: string) {
+    const oldParts = oldVer.split('.')
+    const newParts = newVer.split('.')
+    for (var i = 0; i < newParts.length; i++) {
+        const a = ~~newParts[i] // parse int
+        const b = ~~oldParts[i] // parse int
+        if (a > b) return true
+        if (a < b) return false
+    }
+    return false
+}
+
 function SpeedLimit({ bike }: { bike: Bike }) {
     const [currentSpeedLimit, setCurrentSpeedLimit] = useState<SpeedLimitEnum | undefined>(undefined)
+    const [firmwareVersion, setFirmwareVersion] = useState<string | undefined>(undefined)
 
     const obtainFromBike = () => bike.getSpeedLimit().then(setCurrentSpeedLimit)
     useEffect(() => { obtainFromBike() }, [])
@@ -81,12 +94,22 @@ function SpeedLimit({ bike }: { bike: Bike }) {
         setCurrentSpeedLimit(await bike.setSpeedLimit(id))
     }
 
-    const options: Array<[string, number, SpeedLimitEnum]> = [
+    const loadInfo = async () => { setFirmwareVersion(await bike.bikeFirmwareVersion()) }
+    useEffect(() => { loadInfo() }, [])
+
+    var options: Array<[string, number, SpeedLimitEnum]> = [
         ['🇯🇵', 24, SpeedLimitEnum.JP],
         ['🇪🇺', 25, SpeedLimitEnum.EU],
         ['🇺🇸', 32, SpeedLimitEnum.US],
         ['😎', 37, SpeedLimitEnum.NO_LIMIT],
     ]
+
+    if(firmwareVersion !== undefined) {
+        if(isNewerFirmwareVersion(firmwareVersion, "1.8.0")) {
+            console.log("Old firmware, removing no limit speed limit")
+            options = options.filter(x => x[2] !== SpeedLimitEnum.NO_LIMIT)
+        }
+    }
 
     return (
         <>
@@ -132,6 +155,7 @@ function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLi
 
 function PowerLevel({ bike }: { bike: Bike }) {
     const [currentLevel, setCurrentLevel] = useState<PowerLevelEnum | undefined>(undefined)
+    const [firmwareVersion, setFirmwareVersion] = useState<string | undefined>(undefined)
 
     const obtainFromBike = () => bike.getPowerLvl().then(setCurrentLevel)
     useEffect(() => { obtainFromBike() }, [])
@@ -141,7 +165,10 @@ function PowerLevel({ bike }: { bike: Bike }) {
         setCurrentLevel(await bike.setPowerLvl(id))
     }
 
-    const levels: Array<[string, PowerLevelEnum]> = [
+    const loadInfo = async () => { setFirmwareVersion(await bike.bikeFirmwareVersion()) }
+    useEffect(() => { loadInfo() }, [])
+
+    var levels: Array<[string, PowerLevelEnum]> = [
         ['0', PowerLevelEnum.Off],
         ['1', PowerLevelEnum.First],
         ['2', PowerLevelEnum.Second],
@@ -149,6 +176,12 @@ function PowerLevel({ bike }: { bike: Bike }) {
         ['4', PowerLevelEnum.Fourth],
         ['5', PowerLevelEnum.Max],
     ]
+
+    if(firmwareVersion !== undefined) {
+        if(isNewerFirmwareVersion(firmwareVersion, "1.8.0")) {
+            levels = levels.filter(x => x[1] !== PowerLevelEnum.Max)
+        }
+    }
 
     return (
         <>
