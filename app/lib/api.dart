@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'package:hive/hive.dart';
-import 'bike/bike.dart';
 import 'bike/from_json.dart';
 
 const String _apiKey = 'fcb38d47-f14b-30cf-843b-26283f6a5819';
