@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'bike.dart';
 import 'encryption.dart';
@@ -152,10 +153,13 @@ class RealBikeConnection implements BikeConnection {
 
     await authenticate();
 
-    await bltReadSpeedLimit();
-    await bltReadPowerLvl();
-    await bltReadBatteryPercentage();
-    await bltReadLocked();
+    await Future.wait([
+      bltReadSpeedLimit(),
+      bltReadPowerLvl(),
+      bltReadBatteryPercentage(),
+      bltReadLocked(),
+      bltReadFWVersion(),
+    ]);
 
     bike.connection = this;
   }
@@ -185,7 +189,7 @@ class RealBikeConnection implements BikeConnection {
     await char.write(encrypted);
   }
 
-  playSound(int nr) async {
+  bltPlaySound(int nr) async {
     await bltWriteEncrypted(playSoundChar!, [nr]);
   }
 
@@ -255,6 +259,14 @@ class RealBikeConnection implements BikeConnection {
     bike.lockState.locked =
         value.isEmpty ? false : (value[0] == 0x1 || value[0] == 0x2);
     return bike.lockState.locked;
+  }
+
+  Future<List<int>> bltReadFWVersion() async {
+    final value = await bltReadAndDecrypt(bikeFWVersion!);
+    final List<int> decodedValue =
+        utf8.decode(value).split('.').map((v) => int.tryParse(v) ?? 0).toList();
+    bike.bikeInfo.version = decodedValue;
+    return decodedValue;
   }
 }
 

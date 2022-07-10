@@ -4,7 +4,6 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../bike/bike.dart';
-import '../bike/models.dart';
 import '../bike/real.dart';
 import '../bike/dummy.dart';
 import '../local_storage.dart';

@@ -42,3 +42,15 @@ class BikeBatteryState extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class BikeInfo extends ChangeNotifier {
+  List<int> _version = [1, 8, 0];
+  List<int> get version => _version;
+  set version(List<int> value) {
+    assert(value.length >= 2);
+    _version = value;
+    notifyListeners();
+  }
+
+  get debugPowerLevelsAvailable => _version[0] < 2 && _version[1] < 8;
+}

@@ -79,6 +79,7 @@ storeBikes(List<Bike> bikes) async {
   for (var bike in bikes) {
     await store.put(bike.id.toString(), bike);
   }
+  await store.flush();
 }
 
 List<Bike> obtainBikes() {
