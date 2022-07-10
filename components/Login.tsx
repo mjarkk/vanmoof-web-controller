@@ -27,7 +27,7 @@ export default function Login({ setCredentials }: LoginArgs) {
         event.preventDefault()
         try {
             setLoading(true)
-            let req = await fetch('/api/my_vanmoof_com/authenticate', {
+            let req = await fetch('/api/api_vanmoof-api_com/authenticate', {
                 method: 'POST',
                 headers: {
                     'Api-Key': API_KEY,

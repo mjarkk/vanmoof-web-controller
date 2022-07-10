@@ -60,7 +60,7 @@ export class Api {
     }
 
     async getBikeCredentials(): Promise<Array<BikeCredentials>> {
-        const req = await fetch(`/api/my_vanmoof_com/getCustomerData?includeBikeDetails`, {
+        const req = await fetch(`/api/api_vanmoof-api_com/getCustomerData?includeBikeDetails`, {
             headers: this.authHeader,
         })
         const resp = await checkErrorAndUnwrap(req)
