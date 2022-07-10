@@ -1,10 +1,9 @@
 import BikeControls from '../components/Controls'
 import { SpeedLimit, PowerLevel, BikeCredentials } from '../lib/bike'
-import { ApiContext, Api } from '../lib/api'
+import { Api } from '../lib/api'
 import { useEffect, useState } from 'react'
 import { BikeSelector } from '../components/BikeSelector'
 import type { BikeAndApiCredentials } from '../components/Login'
-import { P } from '../components/Spacing'
 
 class FakeBike {
     id: string
@@ -18,7 +17,7 @@ class FakeBike {
     }
 
     async bikeFirmwareVersion() {
-        return '1.1.1'
+        return '1.8.1'
     }
     async bikeDistance() {
         return 100
