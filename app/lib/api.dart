@@ -17,7 +17,7 @@ Future<ApiClient> authenticate(String email, String password) async {
       responseType: ResponseType.json,
       receiveDataWhenStatusError: true,
     ));
-    resp = await client.get('https://my.vanmoof.com/api/v8/authenticate');
+    resp = await client.get('https://api.vanmoof-api.com/v8/authenticate');
   } catch (e) {
     if (e is DioError && e.response != null) {
       throw 'Authentication failed, error: ${e.response!.data.toString()}';
@@ -52,7 +52,7 @@ class ApiClient {
         receiveDataWhenStatusError: true,
       ));
       resp = await client.get(
-          'https://my.vanmoof.com/api/v8/getCustomerData?includeBikeDetails');
+          'https://api.vanmoof-api.com/v8/getCustomerData?includeBikeDetails');
     } catch (e) {
       if (e is DioError && e.response != null) {
         throw 'Unable to obtain bikes, error: ${e.response!.data.toString()}';

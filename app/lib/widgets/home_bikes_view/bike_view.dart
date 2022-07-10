@@ -56,6 +56,11 @@ class BikeView extends StatelessWidget {
                 ),
               ],
             ),
+            Image.network(
+              bike.links!.thumbnail,
+              fit: BoxFit.cover,
+              height: 200,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: bike.disconnected

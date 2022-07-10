@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
 
   final List<Bike> bikes;
   int selectedBikeIdx = 0;
-  bool useDummy = true;
+  bool useDummy = false;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
@@ -74,14 +74,14 @@ class _HomeState extends State<Home> {
         bike.connection = DummyBikeConnection(bike);
       }
       bikes.add(Bike(
-        id: -1,
-        name: 'susy demo bike',
-        macAddress: 'MAC:MAC:MAC',
-        encryptionKey: '',
+        id: 69420,
+        name: 'Susy bike',
+        macAddress: '69:69:69:69:69:69',
+        encryptionKey: '69696969696969696969696969696969',
         userKeyId: 6969,
         ownerName: 'Mr sus',
         modelColor: null,
-        links: null,
+        links: const BikeLinks(hash: "http://my.vanmoof.com/v8/getBikeDataHash/69420", thumbnail: "https://my.vanmoof.com/image/model/14"),
       ));
     });
   }
