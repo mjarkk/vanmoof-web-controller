@@ -74,8 +74,8 @@ function isNewerFirmwareVersion (newVer: string, oldVer: string) {
     const oldParts = oldVer.split('.')
     const newParts = newVer.split('.')
     for (var i = 0; i < newParts.length; i++) {
-        const a = ~~newParts[i] // parse int
-        const b = ~~oldParts[i] // parse int
+        const a = Number(newParts[i])
+        const b = Number(oldParts[i])
         if (a > b) return true
         if (a < b) return false
     }
