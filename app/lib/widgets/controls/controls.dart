@@ -13,7 +13,9 @@ class Controls extends StatelessWidget {
     final nextValue = {
       SpeedLimit.jp: SpeedLimit.eu,
       SpeedLimit.eu: SpeedLimit.us,
-      SpeedLimit.us: SpeedLimit.noLimit,
+      SpeedLimit.us: bike.bikeInfoState.debugPowerLevelsAvailable
+          ? SpeedLimit.noLimit
+          : SpeedLimit.jp,
       SpeedLimit.noLimit: SpeedLimit.jp,
     }[powerState.speedLimit]!;
     await bike.connection?.setSpeedLimit(nextValue);
@@ -25,7 +27,9 @@ class Controls extends StatelessWidget {
       PowerLevel.first: PowerLevel.second,
       PowerLevel.second: PowerLevel.third,
       PowerLevel.third: PowerLevel.fourth,
-      PowerLevel.fourth: PowerLevel.max,
+      PowerLevel.fourth: bike.bikeInfoState.debugPowerLevelsAvailable
+          ? PowerLevel.max
+          : PowerLevel.off,
       PowerLevel.max: PowerLevel.off,
     }[powerState.powerLevel]!;
     await bike.connection?.setPowerLvl(nextValue);

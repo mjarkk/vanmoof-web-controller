@@ -17,7 +17,7 @@ class Bike {
   })  : powerState = BikePowerState(),
         lockState = BikeLockState(),
         batteryState = BikeBatteryState(),
-        bikeInfo = BikeInfo();
+        bikeInfoState = BikeInfo();
 
   @HiveField(0)
   final int id;
@@ -45,7 +45,7 @@ class Bike {
   final BikePowerState powerState;
   final BikeLockState lockState;
   final BikeBatteryState batteryState;
-  final BikeInfo bikeInfo;
+  final BikeInfo bikeInfoState;
 
   List<String> get bluetoothName {
     final bleNameSuffix = macAddress.replaceAll(':', '');

@@ -265,7 +265,7 @@ class RealBikeConnection implements BikeConnection {
     final value = await bltReadAndDecrypt(bikeFWVersion!);
     final List<int> decodedValue =
         utf8.decode(value).split('.').map((v) => int.tryParse(v) ?? 0).toList();
-    bike.bikeInfo.version = decodedValue;
+    bike.bikeInfoState.version = decodedValue;
     return decodedValue;
   }
 }
