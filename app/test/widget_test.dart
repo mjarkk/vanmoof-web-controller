@@ -8,12 +8,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app/main.dart';
+import 'package:mooovy/main.dart';
 
 void main() {
   // testWidgets('Bla bla test name', (WidgetTester tester) async {
   //   Build our app and trigger a frame.
-  //   await tester.pumpWidget(const App());
+  //   await tester.pumpWidget(const Mooovy());
 
   // You can do things like "expect(find.text('0'), findsNothing);"
   // });

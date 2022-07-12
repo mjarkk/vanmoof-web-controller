@@ -1,4 +1,4 @@
-import 'package:app/bike/bike.dart';
+import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/foundation.dart';
 
 class BikePowerState extends ChangeNotifier {

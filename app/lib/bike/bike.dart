@@ -1,4 +1,4 @@
-import 'package:app/bike/models.dart';
+import 'package:mooovy/bike/models.dart';
 import 'package:hive/hive.dart';
 
 part 'bike.g.dart';
