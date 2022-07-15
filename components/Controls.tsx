@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLimitEnum } from '../lib/bike'
+import { BikeContext, Bike, PowerLevel as PowerLevelEnum, SpeedLimit as SpeedLimitEnum, BellTone as BellToneEnum } from '../lib/bike'
 import { SoundBoard } from './SoundBoard'
 import { ShareBike } from './sharing/ShareBike'
 import { Button } from './Button'
@@ -19,6 +19,7 @@ export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs
                 <BikeStats bike={bike} />
                 <SpeedLimit bike={bike} />
                 <PowerLevel bike={bike} />
+                <BellTone bike={bike} />
                 <SoundBoard />
                 <ShareBike bike={bike} api={api} />
                 <CurrentShares bike={bike} api={api} />
@@ -153,6 +154,36 @@ function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLi
     )
 }
 
+function BellTone({ bike }: { bike: Bike}) {
+    const [currentTone, setCurrentTone] = useState<number | undefined>(undefined)
+
+    var tones: Array<[string, BellToneEnum]> = [
+        ['🚣', BellToneEnum.Boat],
+        ['🎉', BellToneEnum.Party],
+        ['🔔', BellToneEnum.Bell],
+    ]
+
+    const setNewTone = async (tone: number) => {
+        await bike.setBellTone(tone)
+    }
+
+    return (
+        <>
+            <h3>Bell tone</h3>
+            <div style={{ display: 'inline-block' }}>
+                {tones.map(([label, id]) =>
+                    <SetBellToneButton
+                        key={id}
+                        tone={label}
+                        selected={currentTone === id}
+                        onSelect={() => setNewTone(id)}
+                    />
+                )}
+            </div>
+        </>
+    )
+}
+
 function PowerLevel({ bike }: { bike: Bike }) {
     const [currentLevel, setCurrentLevel] = useState<PowerLevelEnum | undefined>(undefined)
     const [firmwareVersion, setFirmwareVersion] = useState<string | undefined>(undefined)
@@ -223,3 +254,25 @@ function SetPowerLevelButton({ level, selected, onSelect }: SetPowerLevelButtonA
     )
 }
 
+interface SetBellToneButtonArgs {
+    tone: string
+    selected: boolean
+    onSelect(): void
+}
+
+function SetBellToneButton({ tone, selected, onSelect }: SetBellToneButtonArgs) {
+    return (
+        <Button
+            onClick={onSelect}
+            style={{
+                margin: 4,
+                padding: '6px 10px',
+                width: 50,
+                height: 50,
+                backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
+            }}
+        >
+            <h1 style={{ margin: 0 }}>{tone}</h1>
+        </Button>
+    )
+}

@@ -13,6 +13,12 @@ export enum PowerLevel {
     Max = 5,
 }
 
+export enum BellTone {
+    Boat = 0x18,
+    Party = 0x17,
+    Bell = 0x16,
+}
+
 export enum SpeedLimit {
     JP = 2,
     EU = 0,
@@ -160,6 +166,10 @@ export class Bike {
     async setPowerLvl(lvl: PowerLevel): Promise<PowerLevel> {
         const result = await this.bluetoothReadWrite(POWER_LEVEL, new Uint8Array([lvl, 0x1]), {})
         return result[0] as PowerLevel
+    }
+
+    async setBellTone(bell: number) {
+        await this.bluetoothWrite(BELL_SOUND, new Uint8Array([bell, 0x1]))
     }
 
     async getSpeedLimit(): Promise<SpeedLimit> {
