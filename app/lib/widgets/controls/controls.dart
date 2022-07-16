@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_native_select/flutter_native_select.dart';
 import 'control.dart';
 import '../../bike/bike.dart';
 import '../../bike/models.dart';
@@ -9,19 +10,34 @@ class Controls extends StatelessWidget {
 
   final Bike bike;
 
-  setSpeedLimit(BikePowerState powerState) async {
-    final nextValue = {
-      SpeedLimit.jp: SpeedLimit.eu,
-      SpeedLimit.eu: SpeedLimit.us,
-      SpeedLimit.us: bike.bikeInfoState.debugPowerLevelsAvailable
-          ? SpeedLimit.noLimit
-          : SpeedLimit.jp,
-      SpeedLimit.noLimit: SpeedLimit.jp,
-    }[powerState.speedLimit]!;
-    await bike.connection?.setSpeedLimit(nextValue);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: FixedGrid(
+              children: [
+                PowerLevelButton(bike),
+                SpeedLimitButton(bike),
+              ],
+            ),
+          ),
+        ),
+        UnlockButton(bike),
+      ],
+    );
   }
+}
 
-  setPowerLevel(BikePowerState powerState) async {
+class PowerLevelButton extends StatelessWidget {
+  const PowerLevelButton(this.bike, {super.key});
+
+  final Bike bike;
+
+  onPressed(PowerLevel powerLevel) async {
     final nextValue = {
       PowerLevel.off: PowerLevel.first,
       PowerLevel.first: PowerLevel.second,
@@ -31,42 +47,123 @@ class Controls extends StatelessWidget {
           ? PowerLevel.max
           : PowerLevel.off,
       PowerLevel.max: PowerLevel.off,
-    }[powerState.powerLevel]!;
+    }[powerLevel]!;
     await bike.connection?.setPowerLvl(nextValue);
+  }
+
+  onLongPress(PowerLevel powerLevel) async {
+    final List<PowerLevel> allPowerLevels =
+        powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable);
+
+    final options = allPowerLevels
+        .map((lvl) => NativeSelectItem(
+              value: powerLevelToString(lvl),
+              label: powerLevelToString(lvl),
+            ))
+        .toList();
+
+    final value = await FlutterNativeSelect.openSelect(
+      items: options,
+      defaultValue: powerLevelToString(powerLevel),
+    );
+    if (value == null) return;
+
+    for (var pl in allPowerLevels) {
+      if (powerLevelToString(pl) == value) {
+        await bike.connection?.setPowerLvl(pl);
+        return;
+      }
+    }
+  }
+
+  onDoubleTap(PowerLevel currentPowerLevel) async {
+    var primary = PowerLevel.fourth;
+    var secondary = bike.bikeInfoState.debugPowerLevelsAvailable
+        ? PowerLevel.max
+        : PowerLevel.third;
+
+    await bike.connection
+        ?.setPowerLvl(currentPowerLevel == primary ? secondary : primary);
   }
 
   @override
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
 
-    return Column(
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 300),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: FixedGrid(
-              children: [
-                Control(
-                  disabled: bike.connection == null,
-                  label: 'Assistance',
-                  icon: Icons.wind_power,
-                  onPressed: () => setPowerLevel(powerState),
-                  value: powerLevelToString(powerState.powerLevel),
-                ),
-                Control(
-                  disabled: bike.connection == null,
-                  label: 'Speed limit',
-                  icon: Icons.speed,
-                  onPressed: () => setSpeedLimit(powerState),
-                  value: speedLimitToString(powerState.speedLimit),
-                ),
-              ],
-            ),
-          ),
-        ),
-        UnlockButton(bike),
-      ],
+    return Control(
+      disabled: bike.connection == null,
+      label: 'Assistance',
+      icon: Icons.wind_power,
+      onPressed: () => onPressed(powerState.powerLevel),
+      onLongPress: () => onLongPress(),
+      onDoubleTap: () => onDoubleTap(powerState.powerLevel),
+      value: powerLevelToString(powerState.powerLevel),
+    );
+  }
+}
+
+class SpeedLimitButton extends StatelessWidget {
+  const SpeedLimitButton(this.bike, {super.key});
+
+  final Bike bike;
+
+  onPressed(SpeedLimit speedLimit) async {
+    final nextValue = {
+      SpeedLimit.jp: SpeedLimit.eu,
+      SpeedLimit.eu: SpeedLimit.us,
+      SpeedLimit.us: bike.bikeInfoState.debugPowerLevelsAvailable
+          ? SpeedLimit.noLimit
+          : SpeedLimit.jp,
+      SpeedLimit.noLimit: SpeedLimit.jp,
+    }[speedLimit]!;
+    await bike.connection?.setSpeedLimit(nextValue);
+  }
+
+  onLongPress(SpeedLimit speedLimit) async {
+    final List<SpeedLimit> allPowerLevels =
+        speedLimits(bike.bikeInfoState.debugPowerLevelsAvailable);
+
+    final options = allPowerLevels
+        .map((lvl) => NativeSelectItem(
+              value: speedLimitToString(lvl),
+              label: speedLimitToString(lvl),
+            ))
+        .toList();
+
+    final value = await FlutterNativeSelect.openSelect(
+        items: options, defaultValue: speedLimitToString(speedLimit));
+    if (value == null) return;
+
+    for (var pl in allPowerLevels) {
+      if (speedLimitToString(pl) == value) {
+        await bike.connection?.setSpeedLimit(pl);
+        return;
+      }
+    }
+  }
+
+  onDoubleTap(SpeedLimit currentSpeedLimit) async {
+    var primary = SpeedLimit.us;
+    var secondary = SpeedLimit.eu;
+
+    await bike.connection
+        ?.setSpeedLimit(currentSpeedLimit == primary ? secondary : primary);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final powerState = context.watch<BikePowerState>();
+
+    final speedLimit = powerState.speedLimit;
+
+    return Control(
+      disabled: bike.connection == null,
+      label: 'Speed limit',
+      icon: Icons.speed,
+      onPressed: () => onPressed(speedLimit),
+      onLongPress: () => onLongPress(speedLimit),
+      onDoubleTap: () => onDoubleTap(speedLimit),
+      value: speedLimitToString(speedLimit),
     );
   }
 }

@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
 
   final List<Bike> bikes;
   int selectedBikeIdx = 0;
-  bool useDummy = false;
+  bool useDummy = true;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
@@ -81,7 +81,10 @@ class _HomeState extends State<Home> {
         userKeyId: 6969,
         ownerName: 'Mr sus',
         modelColor: null,
-        links: const BikeLinks(hash: "http://my.vanmoof.com/v8/getBikeDataHash/69420", thumbnail: "https://my.vanmoof.com/image/model/14"),
+        links: const BikeLinks(
+          hash: "http://my.vanmoof.com/v8/getBikeDataHash/69420",
+          thumbnail: "https://my.vanmoof.com/image/model/14",
+        ),
       ));
     });
   }

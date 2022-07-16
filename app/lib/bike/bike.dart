@@ -98,6 +98,18 @@ enum SpeedLimit {
   noLimit,
 }
 
+List<SpeedLimit> speedLimits(bool debugPowerLevelAvailable) {
+  final resp = [
+    SpeedLimit.jp,
+    SpeedLimit.eu,
+    SpeedLimit.us,
+  ];
+  if (debugPowerLevelAvailable) {
+    resp.add(SpeedLimit.noLimit);
+  }
+  return resp;
+}
+
 enum PowerLevel {
   off,
   first,
@@ -105,6 +117,20 @@ enum PowerLevel {
   third,
   fourth,
   max,
+}
+
+List<PowerLevel> powerLevels(bool debugPowerLevelsAvailable) {
+  final resp = [
+    PowerLevel.off,
+    PowerLevel.first,
+    PowerLevel.second,
+    PowerLevel.third,
+    PowerLevel.fourth,
+  ];
+  if (debugPowerLevelsAvailable) {
+    resp.add(PowerLevel.max);
+  }
+  return resp;
 }
 
 String speedLimitToString(SpeedLimit? lvl) => {

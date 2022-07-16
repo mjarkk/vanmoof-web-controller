@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Control extends StatelessWidget {
-  const Control({
+  Control({
     required this.icon,
     required this.onPressed,
+    this.onLongPress,
+    this.onDoubleTap,
     required this.value,
     this.label,
     this.disabled,
@@ -11,6 +13,8 @@ class Control extends StatelessWidget {
   });
 
   final Function() onPressed;
+  final Function()? onLongPress;
+  final Function()? onDoubleTap;
   final String? label;
   final String value;
   final IconData icon;
@@ -20,14 +24,15 @@ class Control extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        onPressed: disabled == true ? null : onPressed,
-        child: Padding(
+      child: GestureDetector(
+        onTap: disabled == true ? null : onPressed,
+        onDoubleTap: disabled == true ? null : onDoubleTap,
+        onLongPress: disabled == true ? null : onLongPress,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.yellow,
+          ),
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
