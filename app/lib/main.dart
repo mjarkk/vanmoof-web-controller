@@ -6,11 +6,11 @@ import 'routes/settings.dart';
 
 void main() async {
   await setupLocalStorage();
-  runApp(const App());
+  runApp(const Mooovy());
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class Mooovy extends StatelessWidget {
+  const Mooovy({super.key});
 
   @override
   Widget build(BuildContext context) {
