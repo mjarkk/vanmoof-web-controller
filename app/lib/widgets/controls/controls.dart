@@ -90,14 +90,16 @@ class PowerLevelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
 
+    final powerLevel = powerState.powerLevel;
+
     return Control(
       disabled: bike.connection == null,
       label: 'Assistance',
       icon: Icons.wind_power,
-      onPressed: () => onPressed(powerState.powerLevel),
-      onLongPress: () => onLongPress(),
-      onDoubleTap: () => onDoubleTap(powerState.powerLevel),
-      value: powerLevelToString(powerState.powerLevel),
+      onPressed: () => onPressed(powerLevel),
+      onLongPress: () => onLongPress(powerLevel),
+      onDoubleTap: () => onDoubleTap(powerLevel),
+      value: powerLevelToString(powerLevel),
     );
   }
 }
