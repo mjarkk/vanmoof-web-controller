@@ -239,10 +239,10 @@ function SetBellToneButton({ icon, label, selected, onSelect }: SetBellToneButto
         <Button
             onClick={onSelect}
             style={{
-                margin: '4px',
+                margin: 4,
                 padding: '6px 10px',
-                width: '120px',
-                minHeight: '100px',
+                width: '140px',
+                height: '85px',
                 backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
             }}
         >
