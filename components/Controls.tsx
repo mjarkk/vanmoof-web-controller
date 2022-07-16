@@ -131,27 +131,33 @@ function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLi
     )
 }
 
-function BellTone({ bike }: { bike: Bike}) {
-    const [currentTone, setCurrentTone] = useState<number | undefined>(undefined)
+function BellTone({ bike }: { bike: Bike }) {
+    const [currentTone, setCurrentTone] = useState<BellToneEnum | undefined>(undefined)
 
-    var tones: Array<[string, BellToneEnum]> = [
-        ['🚣', BellToneEnum.Boat],
-        ['🎉', BellToneEnum.Party],
-        ['🔔', BellToneEnum.Bell],
+    // I will try to implement this later.
+    // const obtainFromBike = () => bike.getBellTone().then(setCurrentTone)
+    // useEffect(() => { obtainFromBike() }, [])
+
+    var tones: Array<[string, string, BellToneEnum]> = [
+        ['🔔', 'Bicycle Bell', BellToneEnum.Bell],
+        ['⚓️', 'Submarine Sonar', BellToneEnum.Submarine],
+        ['🎉', 'Party Horn', BellToneEnum.Party],
+        ['🛳', 'Foghorn', BellToneEnum.Foghorn],
     ]
 
     const setNewTone = async (tone: number) => {
-        await bike.setBellTone(tone)
+        setCurrentTone(await bike.setBellTone(tone))
     }
 
     return (
         <>
             <h3>Bell tone</h3>
             <div style={{ display: 'inline-block' }}>
-                {tones.map(([label, id]) =>
+                {tones.map(([icon, label, id]) =>
                     <SetBellToneButton
                         key={id}
-                        tone={label}
+                        icon={icon}
+                        label={label}
                         selected={currentTone === id}
                         onSelect={() => setNewTone(id)}
                     />
@@ -222,24 +228,26 @@ function SetPowerLevelButton({ level, selected, onSelect }: SetPowerLevelButtonA
 }
 
 interface SetBellToneButtonArgs {
-    tone: string
+    icon: string
+    label: string
     selected: boolean
     onSelect(): void
 }
 
-function SetBellToneButton({ tone, selected, onSelect }: SetBellToneButtonArgs) {
+function SetBellToneButton({ icon, label, selected, onSelect }: SetBellToneButtonArgs) {
     return (
         <Button
             onClick={onSelect}
             style={{
-                margin: 4,
+                margin: '4px',
                 padding: '6px 10px',
-                width: 50,
-                height: 50,
+                width: '120px',
+                minHeight: '100px',
                 backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
             }}
         >
-            <h1 style={{ margin: 0 }}>{tone}</h1>
+            <h1 style={{ margin: 0 }}>{icon}</h1>
+            <span style={{ color: 'var(--secondary-border-color)' }}>{label}</span>
         </Button>
     )
 }
