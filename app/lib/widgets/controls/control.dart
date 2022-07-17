@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
 
+class ControlButtonLabel extends StatelessWidget {
+  const ControlButtonLabel(this.icon, [this.label]);
+
+  final IconData icon;
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 3),
+          child: Icon(icon, size: 17, color: Colors.black54),
+        ),
+        if (label != null)
+          Text(
+            label!,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
+              color: Colors.black54,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class DraggableControl extends StatefulWidget {
   const DraggableControl({
-    required this.label,
-    required this.labelIcon,
     required this.valueLabelForIndex,
+    this.label,
     required this.levels,
     required this.selectedLevel,
     this.onSelectLevel,
@@ -14,15 +42,14 @@ class DraggableControl extends StatefulWidget {
     super.key,
   });
 
-  final String label; // TODO implement me
-  final IconData labelIcon; // TODO implement me
   final Function(int idx) valueLabelForIndex;
+  final Widget? label;
   final int levels;
   final int selectedLevel;
-  final Function(int level)? onSelectLevel;
+  final Function(int idx)? onSelectLevel;
   final Function()? onTap;
   final Function()? onDoubleTap;
-  final bool? disabled; // TODO implement me
+  final bool? disabled;
 
   @override
   State<DraggableControl> createState() => _DraggableControlState();
@@ -31,6 +58,8 @@ class DraggableControl extends StatefulWidget {
 class _DraggableControlState extends State<DraggableControl> {
   double? dragStartY;
   int? dragingNewLevel;
+
+  get disabled => widget.disabled ?? false;
 
   dragUpdate(
       DragUpdateDetails detials, double totalHeight, double sectionHeight) {
@@ -61,8 +90,8 @@ class _DraggableControlState extends State<DraggableControl> {
     dragStartY = null;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget selectorWidgetBuilder(
+      BuildContext context, BoxConstraints constraints) {
     final List<Widget> options = [];
 
     final highLightFromIdx =
@@ -70,53 +99,75 @@ class _DraggableControlState extends State<DraggableControl> {
 
     for (var i = 0; i < widget.levels; i++) {
       if (i != 0) options.add(Container(height: 1, color: Colors.black38));
-      options.add(Expanded(
-        key: Key(i.toString()),
-        child: Container(
-          color: i < highLightFromIdx ? Colors.transparent : Colors.yellow,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: i != highLightFromIdx
-              ? null
-              : Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    widget.valueLabelForIndex(i),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black45,
-                    ),
-                  ),
+
+      options.add(
+        Expanded(
+          key: Key(i.toString()),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 50),
+            color: disabled
+                ? Colors.transparent
+                : Colors.yellow.withAlpha(i < highLightFromIdx ? 0 : 255),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: FittedBox(
+              fit: BoxFit.contain,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.valueLabelForIndex(widget.levels - i - 1),
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: i == highLightFromIdx && !disabled
+                      ? Colors.black87
+                      : Colors.black12,
                 ),
+              ),
+            ),
+          ),
         ),
-      ));
+      );
     }
 
+    final double height = constraints.maxHeight;
+    final double sectionHeight = height / widget.levels;
+
+    final visableContent = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.yellow.shade100,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: options,
+      ),
+    );
+
+    if (widget.disabled == true) return visableContent;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      onDoubleTap: widget.onDoubleTap,
+      onVerticalDragStart: (start) => dragStartY = start.localPosition.dy,
+      onVerticalDragUpdate: (v) => dragUpdate(v, height, sectionHeight),
+      onVerticalDragEnd: (_) => dragEnd(),
+      onVerticalDragCancel: dragEnd,
+      child: visableContent,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final double height = constraints.maxHeight;
-          final double sectionHeight = height / widget.levels;
-
-          return GestureDetector(
-            onTap: widget.onTap,
-            onDoubleTap: widget.onDoubleTap,
-            onVerticalDragStart: (start) => dragStartY = start.localPosition.dy,
-            onVerticalDragUpdate: (v) => dragUpdate(v, height, sectionHeight),
-            onVerticalDragEnd: (_) => dragEnd(),
-            onVerticalDragCancel: dragEnd,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.yellow.shade100,
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(children: options),
-            ),
-          );
-        },
-      ),
+      child: Column(children: [
+        Expanded(child: LayoutBuilder(builder: selectorWidgetBuilder)),
+        if (widget.label != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: widget.label!,
+          ),
+      ]),
     );
   }
 }
@@ -152,7 +203,7 @@ class Control extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: Colors.yellow,
+            color: disabled == true ? Colors.yellow.shade100 : Colors.yellow,
           ),
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
@@ -160,9 +211,10 @@ class Control extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 50,
+                  color: disabled == true ? Colors.black45 : Colors.black,
                 ),
               ),
               Row(
@@ -170,15 +222,19 @@ class Control extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 3),
-                    child: Icon(icon, size: 17, color: Colors.black54),
+                    child: Icon(icon,
+                        size: 17,
+                        color:
+                            disabled == true ? Colors.black45 : Colors.black54),
                   ),
                   if (label != null)
                     Text(
                       label!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
-                        color: Colors.black54,
+                        color:
+                            disabled == true ? Colors.black45 : Colors.black54,
                       ),
                     ),
                 ],

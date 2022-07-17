@@ -48,19 +48,14 @@ class PowerLevelButton extends StatelessWidget {
         ?.setPowerLvl(currentPowerLevel == primary ? secondary : primary);
   }
 
-  onSelectNewLevel(int level) async {
-    print(level);
-    bike.connection?.setPowerLvl(
-        powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable)[level]);
-  }
+  onSelectNewLevel(PowerLevel level) => bike.connection?.setPowerLvl(level);
 
   @override
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
-
     final powerLevel = powerState.powerLevel;
-    late final int powerLevelIndex;
 
+    late final int powerLevelIndex;
     final allLevels = powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable);
     for (var idx = 0; idx < allLevels.length; idx++) {
       if (allLevels[idx] == powerLevel) {
@@ -69,12 +64,11 @@ class PowerLevelButton extends StatelessWidget {
     }
 
     return DraggableControl(
-      label: 'Power Level',
-      labelIcon: Icons.wind_power,
+      label: const ControlButtonLabel(Icons.wind_power, 'Power Level'),
       valueLabelForIndex: (int idx) => powerLevelToString(allLevels[idx]),
       levels: allLevels.length,
       selectedLevel: powerLevelIndex,
-      onSelectLevel: (l) => onSelectNewLevel(l),
+      onSelectLevel: (l) => onSelectNewLevel(allLevels[l]),
       onDoubleTap: () => onDoubleTap(powerLevel),
       disabled: bike.connection == null,
     );
@@ -86,61 +80,35 @@ class SpeedLimitButton extends StatelessWidget {
 
   final Bike bike;
 
-  onPressed(SpeedLimit speedLimit) async {
-    final nextValue = {
-      SpeedLimit.jp: SpeedLimit.eu,
-      SpeedLimit.eu: SpeedLimit.us,
-      SpeedLimit.us: bike.bikeInfoState.debugPowerLevelsAvailable
-          ? SpeedLimit.noLimit
-          : SpeedLimit.jp,
-      SpeedLimit.noLimit: SpeedLimit.jp,
-    }[speedLimit]!;
-    await bike.connection?.setSpeedLimit(nextValue);
-  }
-
-  onLongPress(SpeedLimit speedLimit) async {
-    final List<SpeedLimit> allPowerLevels =
-        speedLimits(bike.bikeInfoState.debugPowerLevelsAvailable);
-
-    final options = allPowerLevels
-        .map((lvl) => NativeSelectItem(
-              value: speedLimitToString(lvl),
-              label: speedLimitToString(lvl),
-            ))
-        .toList();
-
-    final value = await FlutterNativeSelect.openSelect(
-        items: options, defaultValue: speedLimitToString(speedLimit));
-    if (value == null) return;
-
-    for (var pl in allPowerLevels) {
-      if (speedLimitToString(pl) == value) {
-        await bike.connection?.setSpeedLimit(pl);
-        return;
-      }
-    }
-  }
-
   onDoubleTap(SpeedLimit currentSpeedLimit) async {
     var primary = SpeedLimit.us;
     await bike.connection
         ?.setSpeedLimit(currentSpeedLimit == primary ? SpeedLimit.eu : primary);
   }
 
+  onSelectNewLevel(SpeedLimit limit) => bike.connection?.setSpeedLimit(limit);
+
   @override
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
-
     final speedLimit = powerState.speedLimit;
 
-    return Control(
+    late final int speedLimitIndex;
+    final allLevels = speedLimits(bike.bikeInfoState.debugPowerLevelsAvailable);
+    for (var idx = 0; idx < allLevels.length; idx++) {
+      if (allLevels[idx] == speedLimit) {
+        speedLimitIndex = idx;
+      }
+    }
+
+    return DraggableControl(
+      valueLabelForIndex: (int idx) => speedLimitToString(allLevels[idx]),
+      label: const ControlButtonLabel(Icons.speed, 'Speed limit'),
+      levels: allLevels.length,
+      selectedLevel: speedLimitIndex,
+      onSelectLevel: (l) => onSelectNewLevel(allLevels[l]),
       disabled: bike.connection == null,
-      label: 'Speed limit',
-      icon: Icons.speed,
-      onPressed: () => onPressed(speedLimit),
-      onLongPress: () => onLongPress(speedLimit),
       onDoubleTap: () => onDoubleTap(speedLimit),
-      value: speedLimitToString(speedLimit),
     );
   }
 }
