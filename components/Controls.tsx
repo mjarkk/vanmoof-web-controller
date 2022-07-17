@@ -151,18 +151,54 @@ function BellTone({ bike }: { bike: Bike }) {
 
     return (
         <>
-            <h3>Bell tone</h3>
-            <div style={{ display: 'inline-block' }}>
-                {tones.map(([icon, label, id]) =>
-                    <SetBellToneButton
-                        key={id}
-                        icon={icon}
-                        label={label}
-                        selected={currentTone === id}
-                        onSelect={() => setNewTone(id)}
-                    />
-                )}
+            <div className='toneList'>
+                <h3>Bell tone</h3>
+                <div className='tone'>
+                    {tones.map(([icon, label, id]) =>
+                        <SetBellToneButton
+                            key={id}
+                            icon={icon}
+                            label={label}
+                            selected={currentTone === id}
+                            onSelect={() => setNewTone(id)}
+                        />
+                    )}
+                </div>
             </div>
+
+            <style jsx>{`
+                .toneList {
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
+                }
+
+                .tone {
+                     display: grid;
+                     grid-template-columns: repeat(4, auto);
+                     justify-content: center;
+                     grid-gap: 10px;
+                     margin: 10px 0;
+                }
+
+                @media screen and (max-width: 900px) {
+                     .tone {
+                         grid-template-columns: repeat(3, auto);
+                     }
+                 }
+
+                 @media screen and (max-width: 500px) {
+                     .tone {
+                         grid-template-columns: repeat(2, auto);
+                     }
+                 }
+
+                 @media screen and (max-width: 200px) {
+                     .tone {
+                         grid-template-columns: repeat(1, auto);
+                     }
+                 }
+            `}</style>
         </>
     )
 }
