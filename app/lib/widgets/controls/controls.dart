@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_native_select/flutter_native_select.dart';
 import 'control.dart';
@@ -37,45 +38,6 @@ class PowerLevelButton extends StatelessWidget {
 
   final Bike bike;
 
-  onPressed(PowerLevel powerLevel) async {
-    final nextValue = {
-      PowerLevel.off: PowerLevel.first,
-      PowerLevel.first: PowerLevel.second,
-      PowerLevel.second: PowerLevel.third,
-      PowerLevel.third: PowerLevel.fourth,
-      PowerLevel.fourth: bike.bikeInfoState.debugPowerLevelsAvailable
-          ? PowerLevel.max
-          : PowerLevel.off,
-      PowerLevel.max: PowerLevel.off,
-    }[powerLevel]!;
-    await bike.connection?.setPowerLvl(nextValue);
-  }
-
-  onLongPress(PowerLevel powerLevel) async {
-    final List<PowerLevel> allPowerLevels =
-        powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable);
-
-    final options = allPowerLevels
-        .map((lvl) => NativeSelectItem(
-              value: powerLevelToString(lvl),
-              label: powerLevelToString(lvl),
-            ))
-        .toList();
-
-    final value = await FlutterNativeSelect.openSelect(
-      items: options,
-      defaultValue: powerLevelToString(powerLevel),
-    );
-    if (value == null) return;
-
-    for (var pl in allPowerLevels) {
-      if (powerLevelToString(pl) == value) {
-        await bike.connection?.setPowerLvl(pl);
-        return;
-      }
-    }
-  }
-
   onDoubleTap(PowerLevel currentPowerLevel) async {
     var primary = PowerLevel.fourth;
     var secondary = bike.bikeInfoState.debugPowerLevelsAvailable
@@ -86,20 +48,35 @@ class PowerLevelButton extends StatelessWidget {
         ?.setPowerLvl(currentPowerLevel == primary ? secondary : primary);
   }
 
+  onSelectNewLevel(int level) async {
+    print(level);
+    bike.connection?.setPowerLvl(
+        powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable)[level]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
 
     final powerLevel = powerState.powerLevel;
+    late final int powerLevelIndex;
 
-    return Control(
-      disabled: bike.connection == null,
-      label: 'Assistance',
-      icon: Icons.wind_power,
-      onPressed: () => onPressed(powerLevel),
-      onLongPress: () => onLongPress(powerLevel),
+    final allLevels = powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable);
+    for (var idx = 0; idx < allLevels.length; idx++) {
+      if (allLevels[idx] == powerLevel) {
+        powerLevelIndex = idx;
+      }
+    }
+
+    return DraggableControl(
+      label: 'Power Level',
+      labelIcon: Icons.wind_power,
+      valueLabelForIndex: (int idx) => powerLevelToString(allLevels[idx]),
+      levels: allLevels.length,
+      selectedLevel: powerLevelIndex,
+      onSelectLevel: (l) => onSelectNewLevel(l),
       onDoubleTap: () => onDoubleTap(powerLevel),
-      value: powerLevelToString(powerLevel),
+      disabled: bike.connection == null,
     );
   }
 }
@@ -146,10 +123,8 @@ class SpeedLimitButton extends StatelessWidget {
 
   onDoubleTap(SpeedLimit currentSpeedLimit) async {
     var primary = SpeedLimit.us;
-    var secondary = SpeedLimit.eu;
-
     await bike.connection
-        ?.setSpeedLimit(currentSpeedLimit == primary ? secondary : primary);
+        ?.setSpeedLimit(currentSpeedLimit == primary ? SpeedLimit.eu : primary);
   }
 
   @override
