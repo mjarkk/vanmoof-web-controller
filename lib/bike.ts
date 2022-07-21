@@ -15,7 +15,7 @@ export enum PowerLevel {
 
 export enum BellTone {
     Bell = 0x16,
-    Submarine = 0x0a,
+    Sonar = 0x0a,
     Party = 0x17,
     Foghorn = 0x18,
 }

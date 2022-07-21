@@ -139,9 +139,9 @@ function BellTone({ bike }: { bike: Bike }) {
     // useEffect(() => { obtainFromBike() }, [])
 
     var tones: Array<[string, string, BellToneEnum]> = [
-        ['🔔', 'Bicycle Bell', BellToneEnum.Bell],
-        ['⚓️', 'Submarine Sonar', BellToneEnum.Submarine],
-        ['🎉', 'Party Horn', BellToneEnum.Party],
+        ['🔔', 'Bell', BellToneEnum.Bell],
+        ['⚓️', 'Sonar', BellToneEnum.Sonar],
+        ['🎉', 'Party', BellToneEnum.Party],
         ['🛳', 'Foghorn', BellToneEnum.Foghorn],
     ]
 
@@ -277,8 +277,8 @@ function SetBellToneButton({ icon, label, selected, onSelect }: SetBellToneButto
             style={{
                 margin: 4,
                 padding: '6px 10px',
-                width: '140px',
-                height: '85px',
+                width: '75px',
+                height: '75px',
                 backgroundColor: selected ? 'var(--active-button-bg-color)' : undefined,
             }}
         >
