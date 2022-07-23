@@ -11,6 +11,7 @@ class FakeBike {
     private speedLimit = SpeedLimit.EU
     private powerLevel = PowerLevel.Fourth
     private bellTone = BellTone.Foghorn
+    private firmwareVersion = '1.8.1'
 
     constructor(credentials: BikeCredentials) {
         this.id = credentials.id
@@ -18,7 +19,7 @@ class FakeBike {
     }
 
     async bikeFirmwareVersion() {
-        return '1.8.1'
+        return this.firmwareVersion
     }
 
     async bikeDistance() {

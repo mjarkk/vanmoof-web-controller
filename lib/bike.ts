@@ -169,13 +169,10 @@ export class Bike {
         return result[0] as PowerLevel
     }
 
-    // // Not 100% sure if this works I wil check when I am at my bike and I will implement it.
-    // async getBellTone(): Promise<BellTone> {
-    //     const result = await this.bluetoothRead(BELL_SOUND)
-    //     // not really sure what the result is yet but should be simular to the speedlimit/powerlvl
-    //     return result[0] as BellTone // for now I will check this later.
-        
-    // }
+    async getBellTone(): Promise<BellTone> {
+        const result = await this.bluetoothRead(BELL_SOUND)
+        return result[0] as BellTone
+    }
 
     async setBellTone(bell: number): Promise<BellTone> {
         await this.bluetoothWrite(BELL_SOUND, new Uint8Array([bell, 0x1]))
