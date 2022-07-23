@@ -1,16 +1,16 @@
 import BikeControls from '../components/Controls'
-import { SpeedLimit, PowerLevel, BikeCredentials } from '../lib/bike'
-import { ApiContext, Api } from '../lib/api'
+import { SpeedLimit, PowerLevel, BellTone, BikeCredentials } from '../lib/bike'
+import { Api } from '../lib/api'
 import { useEffect, useState } from 'react'
 import { BikeSelector } from '../components/BikeSelector'
 import type { BikeAndApiCredentials } from '../components/Login'
-import { P } from '../components/Spacing'
 
 class FakeBike {
     id: string
     mac: string
     private speedLimit = SpeedLimit.EU
     private powerLevel = PowerLevel.Fourth
+    private bellTone = BellTone.Foghorn
 
     constructor(credentials: BikeCredentials) {
         this.id = credentials.id
@@ -18,8 +18,9 @@ class FakeBike {
     }
 
     async bikeFirmwareVersion() {
-        return '1.1.1'
+        return '1.8.1'
     }
+
     async bikeDistance() {
         return 100
     }
@@ -28,6 +29,7 @@ class FakeBike {
         this.speedLimit = l
         return l
     }
+
     async getSpeedLimit(): Promise<SpeedLimit> {
         return this.speedLimit
     }
@@ -38,6 +40,15 @@ class FakeBike {
     }
     async getPowerLvl(): Promise<PowerLevel> {
         return this.powerLevel
+    }
+
+    async getBellTone(): Promise<BellTone> {
+        return this.bellTone
+    }
+
+    async setBellTone(t: BellTone): Promise<BellTone> {
+        this.bellTone = t
+        return t
     }
 
     async playSound(id: number) {

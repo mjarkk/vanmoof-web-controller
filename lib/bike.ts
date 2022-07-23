@@ -13,6 +13,13 @@ export enum PowerLevel {
     Max = 5,
 }
 
+export enum BellTone {
+    Bell = 0x16,
+    Sonar = 0x0a,
+    Party = 0x17,
+    Foghorn = 0x18,
+}
+
 export enum SpeedLimit {
     JP = 2,
     EU = 0,
@@ -160,6 +167,19 @@ export class Bike {
     async setPowerLvl(lvl: PowerLevel): Promise<PowerLevel> {
         const result = await this.bluetoothReadWrite(POWER_LEVEL, new Uint8Array([lvl, 0x1]), {})
         return result[0] as PowerLevel
+    }
+
+    // // Not 100% sure if this works I wil check when I am at my bike and I will implement it.
+    // async getBellTone(): Promise<BellTone> {
+    //     const result = await this.bluetoothRead(BELL_SOUND)
+    //     // not really sure what the result is yet but should be simular to the speedlimit/powerlvl
+    //     return result[0] as BellTone // for now I will check this later.
+        
+    // }
+
+    async setBellTone(bell: number): Promise<BellTone> {
+        await this.bluetoothWrite(BELL_SOUND, new Uint8Array([bell, 0x1]))
+        return bell
     }
 
     async getSpeedLimit(): Promise<SpeedLimit> {
