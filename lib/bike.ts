@@ -172,7 +172,6 @@ export class Bike {
     async getBellTone(): Promise<BellTone> {
         const result = await this.bluetoothRead(BELL_SOUND)
         return result[0] as BellTone
-
     }
 
     async setBellTone(bell: number): Promise<BellTone> {
