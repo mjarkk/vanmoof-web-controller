@@ -134,8 +134,7 @@ function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLi
 function BellTone({ bike }: { bike: Bike }) {
     const [currentTone, setCurrentTone] = useState<BellToneEnum | undefined>(undefined)
 
-    const obtainFromBike = () => bike.getBellTone().then(setCurrentTone)
-    useEffect(() => { obtainFromBike() }, [])
+    useEffect(() => { bike.getBellTone().then(setCurrentTone) }, [])
 
     var tones: Array<[string, string, BellToneEnum]> = [
         ['🔔', 'Bell', BellToneEnum.Bell],
