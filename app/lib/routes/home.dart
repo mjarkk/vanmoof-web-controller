@@ -114,11 +114,11 @@ class _HomeState extends State<Home> {
       body: Scaffold(
         body: SafeArea(
           child: ChangeNotifierProvider.value(
-            value: selectedBike.powerState,
+            value: selectedBike.power,
             child: ChangeNotifierProvider.value(
-              value: selectedBike.lockState,
+              value: selectedBike.lock,
               child: ChangeNotifierProvider.value(
-                value: selectedBike.batteryState,
+                value: selectedBike.battery,
                 child: Column(
                   children: [
                     BikesView(

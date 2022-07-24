@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_native_select/flutter_native_select.dart';
 import 'control.dart';
 import '../../bike/bike.dart';
 import '../../bike/models.dart';
@@ -40,9 +38,8 @@ class PowerLevelButton extends StatelessWidget {
 
   onDoubleTap(PowerLevel currentPowerLevel) async {
     var primary = PowerLevel.fourth;
-    var secondary = bike.bikeInfoState.debugPowerLevelsAvailable
-        ? PowerLevel.max
-        : PowerLevel.third;
+    var secondary =
+        bike.info.debugPowerLevelsAvailable ? PowerLevel.max : PowerLevel.third;
 
     await bike.connection
         ?.setPowerLvl(currentPowerLevel == primary ? secondary : primary);
@@ -56,7 +53,7 @@ class PowerLevelButton extends StatelessWidget {
     final powerLevel = powerState.powerLevel;
 
     late final int powerLevelIndex;
-    final allLevels = powerLevels(bike.bikeInfoState.debugPowerLevelsAvailable);
+    final allLevels = powerLevels(bike.info.debugPowerLevelsAvailable);
     for (var idx = 0; idx < allLevels.length; idx++) {
       if (allLevels[idx] == powerLevel) {
         powerLevelIndex = idx;
@@ -94,7 +91,7 @@ class SpeedLimitButton extends StatelessWidget {
     final speedLimit = powerState.speedLimit;
 
     late final int speedLimitIndex;
-    final allLevels = speedLimits(bike.bikeInfoState.debugPowerLevelsAvailable);
+    final allLevels = speedLimits(bike.info.debugPowerLevelsAvailable);
     for (var idx = 0; idx < allLevels.length; idx++) {
       if (allLevels[idx] == speedLimit) {
         speedLimitIndex = idx;

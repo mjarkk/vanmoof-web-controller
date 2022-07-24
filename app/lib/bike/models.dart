@@ -43,6 +43,15 @@ class BikeBatteryState extends ChangeNotifier {
   }
 }
 
+class BikeBellState extends ChangeNotifier {
+  BellSound _bellSound = BellSound.bell;
+  BellSound get bellSound => _bellSound;
+  set bellSound(BellSound value) {
+    _bellSound = value;
+    notifyListeners();
+  }
+}
+
 class BikeInfo extends ChangeNotifier {
   List<int> _version = [1, 8, 0];
   List<int> get version => _version;

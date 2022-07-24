@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../local_storage.dart';
+import '../bike/models.dart';
+import '../bike/bike.dart';
 
 class Settings extends StatelessWidget {
   const Settings({this.ios, super.key});
@@ -39,16 +41,66 @@ class Settings extends StatelessWidget {
       body: Scaffold(
         appBar: buildAppBar(context),
         body: SafeArea(
-          child: _Section(
-            title: 'Account',
+          child: Column(
             children: [
-              ElevatedButton(
-                  onPressed: () => logout(context),
-                  child: const Text('Logout')),
+              const _Section(
+                title: 'Bike',
+                children: [
+                  BellSoundControl(),
+                ],
+              ),
+              _Section(
+                title: 'Account',
+                children: [
+                  ElevatedButton(
+                      onPressed: () => logout(context),
+                      child: const Text('Logout')),
+                ],
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class BellSoundControl extends StatelessWidget {
+  const BellSoundControl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(6),
+          child: Text(
+            'Bell sound',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        CupertinoSlidingSegmentedControl(
+          onValueChanged: (BellSound? value) => print(value),
+          groupValue: BellSound.bell,
+          children: bellSoundsToString.map((key, value) => MapEntry(
+                key,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Icon(
+                        bellIcon(key),
+                        size: 18,
+                      ),
+                    ),
+                    Text(value)
+                  ],
+                ),
+              )),
+        ),
+      ],
     );
   }
 }
@@ -105,6 +157,7 @@ class _Section extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: children,
           ),
         ],

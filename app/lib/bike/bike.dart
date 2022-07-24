@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mooovy/bike/models.dart';
 import 'package:hive/hive.dart';
 
@@ -14,10 +15,11 @@ class Bike {
     required this.ownerName,
     this.modelColor,
     this.links,
-  })  : powerState = BikePowerState(),
-        lockState = BikeLockState(),
-        batteryState = BikeBatteryState(),
-        bikeInfoState = BikeInfo();
+  })  : power = BikePowerState(),
+        lock = BikeLockState(),
+        battery = BikeBatteryState(),
+        info = BikeInfo(),
+        bell = BikeBellState();
 
   @HiveField(0)
   final int id;
@@ -42,10 +44,11 @@ class Bike {
   bool get disconnected => connection == null;
 
   // States..
-  final BikePowerState powerState;
-  final BikeLockState lockState;
-  final BikeBatteryState batteryState;
-  final BikeInfo bikeInfoState;
+  final BikePowerState power;
+  final BikeLockState lock;
+  final BikeBatteryState battery;
+  final BikeInfo info;
+  final BikeBellState bell;
 
   List<String> get bluetoothName {
     final bleNameSuffix = macAddress.replaceAll(':', '');
@@ -88,15 +91,15 @@ class BikeColor {
 abstract class BikeConnection {
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit);
   Future<PowerLevel> setPowerLvl(PowerLevel lvl);
+  Future<BellSound> setBellSound(BellSound sound);
   Future<void> unlock();
 }
 
-enum SpeedLimit {
-  jp,
-  eu,
-  us,
-  noLimit,
-}
+enum SpeedLimit { jp, eu, us, noLimit }
+
+enum PowerLevel { off, first, second, third, fourth, max }
+
+enum BellSound { bell, sonar, party, foghorn }
 
 List<SpeedLimit> speedLimits(bool debugPowerLevelAvailable) {
   final resp = [
@@ -110,14 +113,13 @@ List<SpeedLimit> speedLimits(bool debugPowerLevelAvailable) {
   return resp;
 }
 
-enum PowerLevel {
-  off,
-  first,
-  second,
-  third,
-  fourth,
-  max,
-}
+String speedLimitToString(SpeedLimit? lvl) => {
+      null: '-',
+      SpeedLimit.jp: '🇯🇵',
+      SpeedLimit.eu: '🇪🇺',
+      SpeedLimit.us: '🇺🇸',
+      SpeedLimit.noLimit: '😎',
+    }[lvl]!;
 
 List<PowerLevel> powerLevels(bool debugPowerLevelsAvailable) {
   final resp = [
@@ -133,14 +135,6 @@ List<PowerLevel> powerLevels(bool debugPowerLevelsAvailable) {
   return resp;
 }
 
-String speedLimitToString(SpeedLimit? lvl) => {
-      null: '-',
-      SpeedLimit.jp: '🇯🇵',
-      SpeedLimit.eu: '🇪🇺',
-      SpeedLimit.us: '🇺🇸',
-      SpeedLimit.noLimit: '😎',
-    }[lvl]!;
-
 String powerLevelToString(PowerLevel? lvl) => {
       null: '-',
       PowerLevel.off: 'OFF',
@@ -150,3 +144,17 @@ String powerLevelToString(PowerLevel? lvl) => {
       PowerLevel.fourth: '4',
       PowerLevel.max: '5',
     }[lvl]!;
+
+Map<BellSound, String> bellSoundsToString = {
+  BellSound.bell: 'Bell',
+  BellSound.sonar: 'Sonar',
+  BellSound.party: 'Party',
+  BellSound.foghorn: 'Foghorn',
+};
+
+IconData bellIcon(BellSound sound) => <BellSound, IconData>{
+      BellSound.bell: Icons.notifications,
+      BellSound.sonar: Icons.sensors,
+      BellSound.party: Icons.celebration,
+      BellSound.foghorn: Icons.directions_boat,
+    }[sound]!;

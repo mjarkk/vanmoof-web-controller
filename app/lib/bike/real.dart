@@ -198,13 +198,13 @@ class RealBikeConnection implements BikeConnection {
     final resp = _speedLimitToEnum(
       speedLimitBytes.isEmpty ? 0x0 : speedLimitBytes[0],
     );
-    bike.powerState.speedLimit = resp;
+    bike.power.speedLimit = resp;
     return resp;
   }
 
   @override
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit) async {
-    bike.powerState.speedLimit = speedLimit;
+    bike.power.speedLimit = speedLimit;
     final asNr = {
       SpeedLimit.jp: 0x2,
       SpeedLimit.eu: 0x0,
@@ -219,7 +219,7 @@ class RealBikeConnection implements BikeConnection {
 
   @override
   Future<PowerLevel> setPowerLvl(PowerLevel lvl) async {
-    bike.powerState.powerLevel = lvl;
+    bike.power.powerLevel = lvl;
 
     final asNr = {
       PowerLevel.off: 0x0,
@@ -239,14 +239,14 @@ class RealBikeConnection implements BikeConnection {
     final lvlBytes = await bltReadAndDecrypt(powerLevelChar!);
     final parsedPowerLevel =
         _powerLevelToEnum(lvlBytes.isEmpty ? 0x0 : lvlBytes[0]);
-    bike.powerState.powerLevel = parsedPowerLevel;
+    bike.power.powerLevel = parsedPowerLevel;
     return parsedPowerLevel;
   }
 
   Future<int> bltReadBatteryPercentage() async {
     final value = await bltReadAndDecrypt(moduleBatteryLevel!);
-    bike.batteryState.batteryPercentage = value[0];
-    return bike.batteryState.batteryPercentage;
+    bike.battery.batteryPercentage = value[0];
+    return bike.battery.batteryPercentage;
   }
 
   @override
@@ -256,17 +256,23 @@ class RealBikeConnection implements BikeConnection {
 
   Future<bool> bltReadLocked() async {
     final value = await bltReadAndDecrypt(lockState!);
-    bike.lockState.locked =
+    bike.lock.locked =
         value.isEmpty ? false : (value[0] == 0x1 || value[0] == 0x2);
-    return bike.lockState.locked;
+    return bike.lock.locked;
   }
 
   Future<List<int>> bltReadFWVersion() async {
     final value = await bltReadAndDecrypt(bikeFWVersion!);
     final List<int> decodedValue =
         utf8.decode(value).split('.').map((v) => int.tryParse(v) ?? 0).toList();
-    bike.bikeInfoState.version = decodedValue;
+    bike.info.version = decodedValue;
     return decodedValue;
+  }
+
+  @override
+  Future<BellSound> setBellSound(BellSound sound) async {
+    // TODO
+    return sound;
   }
 }
 
