@@ -74,6 +74,15 @@ class BikeBellState extends ChangeNotifier {
   }
 }
 
+class BikeLightState extends ChangeNotifier {
+  LightState _lightState = LightState.off;
+  LightState get lightState => _lightState;
+  set lightState(LightState value) {
+    _lightState = value;
+    notifyListeners();
+  }
+}
+
 class BikeInfo extends ChangeNotifier {
   List<int> _version = [1, 8, 0];
   List<int> get version => _version;

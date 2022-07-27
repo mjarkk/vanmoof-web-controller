@@ -51,6 +51,7 @@ class Settings extends StatelessWidget {
                   title: 'Bike',
                   children: [
                     BellSoundControl(bike),
+                    LightStateControl(bike),
                   ],
                 ),
                 _Section(
@@ -106,6 +107,54 @@ class BellSoundControl extends StatelessWidget {
                       child: Icon(
                         bellIcon(key),
                         size: 18,
+                      ),
+                    ),
+                    Text(value)
+                  ],
+                ),
+              )),
+        ),
+      ],
+    );
+  }
+}
+
+class LightStateControl extends StatelessWidget {
+  const LightStateControl(this.bike, {super.key});
+
+  final Bike bike;
+
+  mightSetNewLightState(LightState? value) {
+    if (value != null) bike.connection?.setLightState(value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lightState = context.watch<BikeLightState>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(6),
+          child: Text(
+            'Light control',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        CupertinoSlidingSegmentedControl(
+          onValueChanged: mightSetNewLightState,
+          groupValue: lightState.lightState,
+          children: lightStatesToString.map((key, value) => MapEntry(
+                key,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Icon(
+                        lightIcon(key),
+                        size: 1,
                       ),
                     ),
                     Text(value)

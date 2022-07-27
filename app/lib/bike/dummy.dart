@@ -27,4 +27,10 @@ class DummyBikeConnection implements BikeConnection {
     bike.bell.bellSound = sound;
     return sound;
   }
+
+  @override
+  Future<LightState> setLightState(LightState state) async {
+    bike.light.lightState = state;
+    return state;
+  }
 }
