@@ -271,8 +271,23 @@ class RealBikeConnection implements BikeConnection {
 
   @override
   Future<BellSound> setBellSound(BellSound sound) async {
-    // TODO
-    return sound;
+    final asNr = {
+      BellSound.bell: 0x16,
+      BellSound.sonar: 0x0a,
+      BellSound.party: 0x17,
+      BellSound.foghorn: 0x18,
+    }[sound]!;
+
+    await bltWriteEncrypted(bellSound!, [asNr, 0x1]);
+
+    return await bltReadBellSound();
+  }
+
+  Future<BellSound> bltReadBellSound() async {
+    final value = await bltReadAndDecrypt(bellSound!);
+    final parsedSound = _bellSoundToEnum(value.isEmpty ? 0x0 : value[0]);
+    bike.bell.bellSound = parsedSound;
+    return parsedSound;
   }
 }
 
@@ -293,3 +308,12 @@ PowerLevel _powerLevelToEnum(int nr) =>
       0x5: PowerLevel.max,
     }[nr] ??
     PowerLevel.off;
+
+BellSound _bellSoundToEnum(int nr) =>
+    {
+      0x16: BellSound.bell,
+      0x0a: BellSound.sonar,
+      0x17: BellSound.party,
+      0x18: BellSound.foghorn,
+    }[nr] ??
+    BellSound.sonar;

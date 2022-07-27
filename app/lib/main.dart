@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'local_storage.dart';
 import 'routes/login.dart';
 import 'routes/home.dart';
-import 'routes/settings.dart';
 
 void main() async {
   await setupLocalStorage();
@@ -31,7 +30,6 @@ class Mooovy extends StatelessWidget {
     final Map<String, WidgetBuilder> routes = {
       '/login': (context) => const Login(),
       '/home': (context) => const Home(),
-      '/settings': (context) => const Settings(),
     };
 
     String initialRoute = '/login';

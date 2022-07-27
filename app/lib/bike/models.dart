@@ -1,5 +1,27 @@
-import 'package:mooovy/bike/bike.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'bike.dart';
+
+class ListenToBikeState extends StatelessWidget {
+  const ListenToBikeState({required this.bike, required this.child, super.key});
+
+  final Bike bike;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+        value: bike.power,
+        child: ChangeNotifierProvider.value(
+            value: bike.lock,
+            child: ChangeNotifierProvider.value(
+                value: bike.battery,
+                child: ChangeNotifierProvider.value(
+                  value: bike.bell,
+                  child: child,
+                ))));
+  }
+}
 
 class BikePowerState extends ChangeNotifier {
   SpeedLimit _speedLimit = SpeedLimit.eu;

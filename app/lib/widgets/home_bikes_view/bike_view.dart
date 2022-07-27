@@ -18,12 +18,13 @@ class BikeView extends StatelessWidget {
       CupertinoScaffold.showCupertinoModalBottomSheet(
         context: context,
         expand: true,
-        builder: (context) => const Settings(ios: true),
+        builder: (context) => Settings(ios: true, bike: bike),
       );
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const Settings()),
+        MaterialPageRoute(
+            builder: (context) => Settings(ios: false, bike: bike)),
       );
     }
   }

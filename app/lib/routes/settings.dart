@@ -2,16 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import '../local_storage.dart';
 import '../bike/models.dart';
 import '../bike/bike.dart';
 
 class Settings extends StatelessWidget {
-  const Settings({this.ios, super.key});
+  const Settings({required this.ios, required this.bike, super.key});
 
-  final bool? ios;
+  final bool ios;
+  final Bike bike;
 
-  PreferredSizeWidget buildAppBar(BuildContext context) => ios == true
+  PreferredSizeWidget buildAppBar(BuildContext context) => ios
       ? CupertinoNavigationBar(
           backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
           leading: Container(),
@@ -40,24 +42,27 @@ class Settings extends StatelessWidget {
       overlayStyle: SystemUiOverlayStyle.dark,
       body: Scaffold(
         appBar: buildAppBar(context),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const _Section(
-                title: 'Bike',
-                children: [
-                  BellSoundControl(),
-                ],
-              ),
-              _Section(
-                title: 'Account',
-                children: [
-                  ElevatedButton(
-                      onPressed: () => logout(context),
-                      child: const Text('Logout')),
-                ],
-              ),
-            ],
+        body: ListenToBikeState(
+          bike: bike,
+          child: SafeArea(
+            child: Column(
+              children: [
+                _Section(
+                  title: 'Bike',
+                  children: [
+                    BellSoundControl(bike),
+                  ],
+                ),
+                _Section(
+                  title: 'Account',
+                  children: [
+                    ElevatedButton(
+                        onPressed: () => logout(context),
+                        child: const Text('Logout')),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -66,10 +71,18 @@ class Settings extends StatelessWidget {
 }
 
 class BellSoundControl extends StatelessWidget {
-  const BellSoundControl({super.key});
+  const BellSoundControl(this.bike, {super.key});
+
+  final Bike bike;
+
+  mightSetNewBellSound(BellSound? value) {
+    if (value != null) bike.connection?.setBellSound(value);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bikeBell = context.watch<BikeBellState>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -81,8 +94,8 @@ class BellSoundControl extends StatelessWidget {
           ),
         ),
         CupertinoSlidingSegmentedControl(
-          onValueChanged: (BellSound? value) => print(value),
-          groupValue: BellSound.bell,
+          onValueChanged: mightSetNewBellSound,
+          groupValue: bikeBell.bellSound,
           children: bellSoundsToString.map((key, value) => MapEntry(
                 key,
                 Row(
