@@ -171,10 +171,7 @@ IconData bellIcon(BellSound sound) => <BellSound, IconData>{
     }[sound]!;
 
 IconData lightIcon(LightState state) => <LightState, IconData>{
-      // LightState.off: Icons.lightbulb_outline,
-      // LightState.on: Icons.lightbulb_on,
-      // LightState.auto: Icons.lightbulb_outline,
-      LightState.off: Icons.notifications,
-      LightState.on: Icons.sensors,
-      LightState.auto: Icons.celebration,
+      LightState.off: Icons.flashlight_off,
+      LightState.on: Icons.flashlight_on,
+      LightState.auto: Icons.sunny,
     }[state]!;
