@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
                 TextFormField(
                   decoration: const InputDecoration(
                     icon: Icon(Icons.email),
-                    hintText: 'VanMoof accout email',
+                    hintText: 'VanMoof account email',
                     labelText: 'Email',
                   ),
                   onSaved: (value) {
@@ -85,7 +85,7 @@ class _LoginState extends State<Login> {
                     obscureText: true,
                     decoration: const InputDecoration(
                       icon: Icon(Icons.password),
-                      hintText: 'VanMoof accout password',
+                      hintText: 'VanMoof account password',
                       labelText: 'Password',
                     ),
                     onSaved: (value) {
