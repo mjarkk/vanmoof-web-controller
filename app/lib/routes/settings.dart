@@ -154,7 +154,7 @@ class LightStateControl extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 4),
                       child: Icon(
                         lightIcon(key),
-                        size: 1,
+                        size: 18,
                       ),
                     ),
                     Text(value)
