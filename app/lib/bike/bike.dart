@@ -19,7 +19,8 @@ class Bike {
         lock = BikeLockState(),
         battery = BikeBatteryState(),
         info = BikeInfo(),
-        bell = BikeBellState();
+        bell = BikeBellState(),
+        light = BikeLightState();
 
   @HiveField(0)
   final int id;
@@ -49,6 +50,7 @@ class Bike {
   final BikeBatteryState battery;
   final BikeInfo info;
   final BikeBellState bell;
+  final BikeLightState light;
 
   List<String> get bluetoothName {
     final bleNameSuffix = macAddress.replaceAll(':', '');
@@ -92,6 +94,7 @@ abstract class BikeConnection {
   Future<SpeedLimit> setSpeedLimit(SpeedLimit speedLimit);
   Future<PowerLevel> setPowerLvl(PowerLevel lvl);
   Future<BellSound> setBellSound(BellSound sound);
+  Future<LightState> setLightState(LightState state);
   Future<void> unlock();
 }
 
@@ -100,6 +103,8 @@ enum SpeedLimit { jp, eu, us, noLimit }
 enum PowerLevel { off, first, second, third, fourth, max }
 
 enum BellSound { bell, sonar, party, foghorn }
+
+enum LightState { off, on, auto }
 
 List<SpeedLimit> speedLimits(bool debugPowerLevelAvailable) {
   final resp = [
@@ -152,9 +157,21 @@ Map<BellSound, String> bellSoundsToString = {
   BellSound.foghorn: 'Foghorn',
 };
 
+Map<LightState, String> lightStatesToString = {
+  LightState.off: 'OFF',
+  LightState.on: 'ON',
+  LightState.auto: 'AUTO',
+};
+
 IconData bellIcon(BellSound sound) => <BellSound, IconData>{
       BellSound.bell: Icons.notifications,
       BellSound.sonar: Icons.sensors,
       BellSound.party: Icons.celebration,
       BellSound.foghorn: Icons.directions_boat,
     }[sound]!;
+
+IconData lightIcon(LightState state) => <LightState, IconData>{
+      LightState.off: Icons.flashlight_off,
+      LightState.on: Icons.flashlight_on,
+      LightState.auto: Icons.sunny,
+    }[state]!;

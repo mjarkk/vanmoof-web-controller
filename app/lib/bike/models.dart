@@ -17,9 +17,11 @@ class ListenToBikeState extends StatelessWidget {
             child: ChangeNotifierProvider.value(
                 value: bike.battery,
                 child: ChangeNotifierProvider.value(
-                  value: bike.bell,
-                  child: child,
-                ))));
+                    value: bike.bell,
+                    child: ChangeNotifierProvider.value(
+                      value: bike.light,
+                      child: child,
+                    )))));
   }
 }
 
@@ -70,6 +72,15 @@ class BikeBellState extends ChangeNotifier {
   BellSound get bellSound => _bellSound;
   set bellSound(BellSound value) {
     _bellSound = value;
+    notifyListeners();
+  }
+}
+
+class BikeLightState extends ChangeNotifier {
+  LightState _lightState = LightState.off;
+  LightState get lightState => _lightState;
+  set lightState(LightState value) {
+    _lightState = value;
     notifyListeners();
   }
 }

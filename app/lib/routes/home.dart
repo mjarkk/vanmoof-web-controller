@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../bike/bike.dart';
@@ -22,7 +23,7 @@ class _HomeState extends State<Home> {
 
   final List<Bike> bikes;
   int selectedBikeIdx = 0;
-  bool useDummy = true;
+  bool useDummy = kDebugMode;
 
   searchForBikes() async {
     FlutterBluePlus flutterBlue = FlutterBluePlus.instance;

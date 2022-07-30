@@ -6,6 +6,8 @@ PODS:
   - flutter_blue_plus/Protos (0.0.1):
     - Flutter
     - Protobuf (~> 3.11)
+  - flutter_native_select (0.0.1):
+    - Flutter
   - flutter_secure_storage (3.3.1):
     - Flutter
   - path_provider_ios (0.0.1):
@@ -15,6 +17,7 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_blue_plus (from `.symlinks/plugins/flutter_blue_plus/ios`)
+  - flutter_native_select (from `.symlinks/plugins/flutter_native_select/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
 
@@ -27,6 +30,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_blue_plus:
     :path: ".symlinks/plugins/flutter_blue_plus/ios"
+  flutter_native_select:
+    :path: ".symlinks/plugins/flutter_native_select/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   path_provider_ios:
@@ -35,6 +40,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_blue_plus: 6787777145d615de01828f3a9fa423c3c702f0b3
+  flutter_native_select: 59d7efde2076c605731f9279109e91ed97249ea8
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   Protobuf: 818c6a87e44193a77f56b87c6a1c106efda7e062
