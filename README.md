@@ -20,6 +20,7 @@ https://mooovy.app/
 
 - Share your bike to someone using their email.
 - Show a list of people you are currently sharing your bike with and a button to stop sharing.
+- Set your bell tone (Bell, Submarine, Sonar, Party & Foghorn)
 
 ### Want to help?
 
