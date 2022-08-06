@@ -6,7 +6,8 @@ A web app for changing the speed limit of your VanMoof S3 and X3.
 
 ![preview](public/screenshot_light.png?raw=true "preview")
 
-https://mooovy.app/
+- **[Web app: mooovy.app](https://mooovy.app/)**
+- [Discord server](https://discord.gg/gQFC2n7Tc9)
 
 ### Current features
 
