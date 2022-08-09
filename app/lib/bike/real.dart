@@ -194,12 +194,12 @@ class RealBikeConnection implements BikeConnection {
   }
 
   Future<SpeedLimit> bltReadSpeedLimit() async {
+    await bltReadAndDecrypt(speedLimitChar!);
     final speedLimitBytes = await bltReadAndDecrypt(speedLimitChar!);
-    final resp = _speedLimitToEnum(
-      speedLimitBytes.isEmpty ? 0x0 : speedLimitBytes[0],
-    );
-    bike.power.speedLimit = resp;
-    return resp;
+    final parsedSpeedLimit =
+        _speedLimitToEnum(speedLimitBytes.isEmpty ? 0x0 : speedLimitBytes[0]);
+    bike.power.speedLimit = parsedSpeedLimit;
+    return parsedSpeedLimit;
   }
 
   @override
@@ -309,7 +309,6 @@ class RealBikeConnection implements BikeConnection {
     bike.light.lightState = parsedState;
     return parsedState;
   }
-
 }
 
 SpeedLimit _speedLimitToEnum(int nr) =>
