@@ -293,17 +293,18 @@ class RealBikeConnection implements BikeConnection {
   @override
   Future<LightState> setLightState(LightState state) async {
     final asNr = {
-      LightState.off: 0x0,
+      LightState.off: 0x2,
       LightState.on: 0x1,
-      LightState.auto: 0x2,
+      LightState.auto: 0x0,
     }[state]!;
 
-    await bltWriteEncrypted(lightMode!, [asNr, 0x1]);
+    await bltWriteEncrypted(lightMode!, [asNr]);
 
     return await bltReadLightState();
   }
 
   Future<LightState> bltReadLightState() async {
+    await bltReadAndDecrypt(lightMode!);
     final value = await bltReadAndDecrypt(lightMode!);
     final parsedState = _lightStateToEnum(value.isEmpty ? 0x0 : value[0]);
     bike.light.lightState = parsedState;
@@ -340,8 +341,8 @@ BellSound _bellSoundToEnum(int nr) =>
 
 LightState _lightStateToEnum(int nr) =>
     {
-      0x0: LightState.off,
+      0x2: LightState.off,
       0x1: LightState.on,
-      0x2: LightState.auto,
+      0x0: LightState.auto,
     }[nr] ??
     LightState.off;
