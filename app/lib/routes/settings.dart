@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -107,10 +108,12 @@ class ShareSettings extends StatelessWidget {
                           labelText: 'Email',
                         ),
                         onChanged: (value) {
+                          log(value);
                         },
                       )),
                       ElevatedButton(
                         onPressed: () {
+                          log('Share bike pressed');
                         },
                         child: const Text('Share bike'),
                       ),
@@ -121,30 +124,47 @@ class ShareSettings extends StatelessWidget {
               _Section(
                 title: 'Manage share holders',
                 children: [
+                  // Share holder 1
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Share holder 1'),
-                      Icon(
-                        Icons.remove_circle_outline,
+                    children: [
+                      const Expanded(
+                        child: Text('Share holder 1'),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          log('Removed share holder 1');
+                        },
                       ),
                     ],
                   ),
+
+                  // Share holder 2
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Share holder 1'),
-                      Icon(
-                        Icons.remove_circle_outline,
+                    children: [
+                      const Expanded(
+                        child: Text('Share holder 2'),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          log('Removed share holder 2');
+                        },
                       ),
                     ],
                   ),
+
+                  // Share holder 3
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Share holder 1'),
-                      Icon(
-                        Icons.remove_circle_outline,
+                    children: [
+                      const Expanded(
+                        child: Text('Share holder 3'),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          log('Removed share holder 3');
+                        },
                       ),
                     ],
                   ),
