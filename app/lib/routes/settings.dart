@@ -90,7 +90,7 @@ class ShareSettings extends StatelessWidget {
         appBar: CupertinoNavigationBar(
           backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
           leading: Container(),
-          middle: const Text('Share Settings'),
+          middle: const Text('Manage sharing'),
           trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
         ),
         body: SafeArea(
@@ -130,6 +130,7 @@ class ShareSettings extends StatelessWidget {
                       const Expanded(
                         child: Text('Share holder 1'),
                       ),
+                      const Text("1 day"),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
@@ -145,6 +146,7 @@ class ShareSettings extends StatelessWidget {
                       const Expanded(
                         child: Text('Share holder 2'),
                       ),
+                      const Text("Forever"),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
@@ -160,6 +162,7 @@ class ShareSettings extends StatelessWidget {
                       const Expanded(
                         child: Text('Share holder 3'),
                       ),
+                      const Text("1 week"),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
