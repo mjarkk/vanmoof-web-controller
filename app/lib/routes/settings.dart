@@ -92,72 +92,65 @@ class ShareSettings extends StatelessWidget {
           middle: const Text('Share Settings'),
           trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
         ),
-        body: ListenToBikeState(
-          bike: bike,
-          child: SafeArea(
-            child: Column(
-              children: [
-                _Section(
-                  title: 'Share bike',
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Form(
-                            child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                          ),
-                          onChanged: (value) {
-                            log(value);
-                          },
-                        )),
-                        ElevatedButton(
-                          onPressed: () {
-                            log('Share bike pressed');
-                          },
-                          child: const Text('Share bike'),
+        body: SafeArea(
+          child: Column(
+            children: [
+              _Section(
+                title: 'Share bike',
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Form(
+                          child: TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                _Section(
-                  title: 'Manage share holders',
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text('Share holder 1'),
-                        Icon(
-                          Icons.remove_circle_outline,
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text('Share holder 1'),
-                        Icon(
-                          Icons.remove_circle_outline,
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text('Share holder 1'),
-                        Icon(
-                          Icons.remove_circle_outline,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                        onChanged: (value) {
+                        },
+                      )),
+                      ElevatedButton(
+                        onPressed: () {
+                        },
+                        child: const Text('Share bike'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              _Section(
+                title: 'Manage share holders',
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('Share holder 1'),
+                      Icon(
+                        Icons.remove_circle_outline,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('Share holder 1'),
+                      Icon(
+                        Icons.remove_circle_outline,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('Share holder 1'),
+                      Icon(
+                        Icons.remove_circle_outline,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
