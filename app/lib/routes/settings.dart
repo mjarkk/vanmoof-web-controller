@@ -55,11 +55,105 @@ class Settings extends StatelessWidget {
                   ],
                 ),
                 _Section(
+                  title: 'Share bike',
+                  children: [
+                    ShareBikeControl(bike),
+                  ],
+                ),
+                _Section(
                   title: 'Account',
                   children: [
                     ElevatedButton(
                         onPressed: () => logout(context),
                         child: const Text('Logout')),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ShareSettings extends StatelessWidget {
+  const ShareSettings({required this.bike, super.key});
+  final Bike bike;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoScaffold(
+      overlayStyle: SystemUiOverlayStyle.dark,
+      body: Scaffold(
+        appBar: CupertinoNavigationBar(
+          backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+          leading: Container(),
+          middle: const Text('Share Settings'),
+          trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
+        ),
+        body: ListenToBikeState(
+          bike: bike,
+          child: SafeArea(
+            child: Column(
+              children: [
+                _Section(
+                  title: 'Share bike',
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Form(
+                            child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                          ),
+                          onChanged: (value) {
+                            log(value);
+                          },
+                        )),
+                        ElevatedButton(
+                          onPressed: () {
+                            log('Share bike pressed');
+                          },
+                          child: const Text('Share bike'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                _Section(
+                  title: 'Manage share holders',
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Share holder 1'),
+                        Icon(
+                          Icons.remove_circle_outline,
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Share holder 1'),
+                        Icon(
+                          Icons.remove_circle_outline,
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Share holder 1'),
+                        Icon(
+                          Icons.remove_circle_outline,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -115,6 +209,25 @@ class BellSoundControl extends StatelessWidget {
               )),
         ),
       ],
+    );
+  }
+}
+
+class ShareBikeControl extends StatelessWidget {
+  const ShareBikeControl(this.bike, {super.key});
+
+  final Bike bike;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => ShareSettings(bike: bike),
+        );
+      },
+      child: const Text('Manage sharing'),
     );
   }
 }
