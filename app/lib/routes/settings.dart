@@ -115,7 +115,7 @@ class ShareSettings extends StatelessWidget {
                         onPressed: () {
                           log('Share bike pressed');
                         },
-                        child: const Text('Share bike'),
+                        child: const Text('Share'),
                       ),
                     ],
                   ),
