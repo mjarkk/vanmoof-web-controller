@@ -40,6 +40,30 @@ class ApiClient {
   final String token;
   final String refreshToken;
 
+  getCurrentShares(int bikeid) async {
+    final Response<dynamic> resp;
+
+    try {
+      final client = Dio(BaseOptions(
+        headers: {
+          'Api-Key': _apiKey,
+          'Authorization': 'Bearer $token',
+        },
+        responseType: ResponseType.json,
+        receiveDataWhenStatusError: true,
+      ));
+      resp = await client.get(
+          'https://api.vanmoof-api.com/v8/getBikeSharingInvitationsForBike/$bikeid');
+    } catch (e) {
+      if (e is DioError && e.response != null) {
+        throw 'Unable to obtain shares, error: ${e.response!.data.toString()}';
+      }
+      throw 'Unable to obtain bikes';
+    }
+
+    return resp.data['invitations'] as List<dynamic>;
+  }
+
   getBikes() async {
     final Response<dynamic> resp;
     try {

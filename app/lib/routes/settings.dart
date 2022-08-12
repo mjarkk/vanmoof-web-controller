@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:mooovy/api.dart';
 import 'package:provider/provider.dart';
-import '../local_storage.dart';
-import '../bike/models.dart';
-import '../bike/bike.dart';
+import 'package:mooovy/local_storage.dart';
+import 'package:mooovy/bike/models.dart';
+import 'package:mooovy/bike/bike.dart';
 
 class Settings extends StatelessWidget {
   const Settings({required this.ios, required this.bike, super.key});
@@ -97,7 +98,7 @@ class ShareSettings extends StatelessWidget {
           child: Column(
             children: [
               _Section(
-                title: 'Share bike',
+                title: 'Share ${bike.name}',
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +126,6 @@ class ShareSettings extends StatelessWidget {
               _Section(
                 title: 'Manage share holders',
                 children: [
-                  // Share holder 1
                   Row(
                     children: [
                       const Expanded(
@@ -134,14 +134,16 @@ class ShareSettings extends StatelessWidget {
                       const Text("1 day"),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed: () {
+                        onPressed: () async {
+                          var api = obtainApiClient();
+                          var list = await api?.getCurrentShares(bike.id);
+                          log(list[0]["email"].toString());
+
                           log('Removed share holder 1');
                         },
                       ),
                     ],
                   ),
-
-                  // Share holder 2
                   Row(
                     children: [
                       const Expanded(
@@ -156,8 +158,6 @@ class ShareSettings extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  // Share holder 3
                   Row(
                     children: [
                       const Expanded(
