@@ -103,14 +103,15 @@ class ShareSettings extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Form(
-                          child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                          ),
+                          onChanged: (value) {
+                            log(value);
+                          },
                         ),
-                        onChanged: (value) {
-                          log(value);
-                        },
-                      )),
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           log('Share bike pressed');
@@ -237,12 +238,18 @@ class ShareBikeControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () =>
-        showModalBottomSheet(
-          context: context,
-          builder: (context) => ShareSettings(bike: bike),
-        ),
-      child: const Text('Manage sharing'),
+      onPressed: () => showModalBottomSheet(
+        context: context,
+        builder: (context) => ShareSettings(bike: bike),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(Icons.share),
+          SizedBox(width: 5),
+          Text('Manage sharing'),
+        ],
+      ),
     );
   }
 }
