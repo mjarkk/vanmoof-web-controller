@@ -237,12 +237,11 @@ class ShareBikeControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () =>
         showModalBottomSheet(
           context: context,
           builder: (context) => ShareSettings(bike: bike),
-        );
-      },
+        ),
       child: const Text('Manage sharing'),
     );
   }
