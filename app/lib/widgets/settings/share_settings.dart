@@ -164,7 +164,7 @@ class _ShareHolderList extends State<ShareSettings> {
                                 ? "${snapshot.data[index]["duration"] / 3600} hours"
                                 : "${snapshot.data[index]["duration"] / 60} minutes"),
                     trailing: IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(Icons.remove_circle_outline),
                       onPressed: () {
                         api?.removeShare(snapshot.data[index]["guid"]);
                       },
@@ -229,27 +229,6 @@ class _Section extends StatelessWidget {
             children: children,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onPressed, super.key});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.black12,
-        ),
-        padding: const EdgeInsets.all(2),
-        child: const Icon(Icons.close_rounded, size: 22),
       ),
     );
   }
