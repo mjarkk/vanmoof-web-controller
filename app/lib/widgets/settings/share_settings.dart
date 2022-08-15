@@ -1,112 +1,108 @@
 import 'package:mooovy/bike/bike.dart';
-import 'dart:developer';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:mooovy/local_storage.dart';
 
-class ShareSettings extends StatelessWidget {
-  const ShareSettings({required this.bike, super.key});
+class ShareWith extends StatelessWidget {
+  const ShareWith({required this.bike, super.key});
   final Bike bike;
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoScaffold(
-      overlayStyle: SystemUiOverlayStyle.dark,
-      body: Scaffold(
-        appBar: CupertinoNavigationBar(
-          backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
-          leading: Container(),
-          middle: const Text('Manage sharing'),
-          trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
-        ),
-        body: SafeArea(
-          child: Column(
+    return SafeArea(
+      child: Column(
+        children: [
+          _Section(
+            title: 'Share ${bike.name}',
             children: [
-              _Section(
-                title: 'Share ${bike.name}',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Form(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                          ),
-                          onChanged: (value) {
-                            log(value);
-                          },
-                        ),
+                  Form(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          log('Share bike pressed');
-                        },
-                        child: const Text('Share'),
-                      ),
-                    ],
+                    ),
                   ),
-                ],
-              ),
-              _Section(
-                title: 'Manage share holders',
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('Share holder 1'),
-                      ),
-                      const Text("1 day"),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () async {
-                          var api = obtainApiClient();
-                          var list = await api?.getCurrentShares(bike.id);
-                          log(list[0]["email"].toString());
-
-                          log('Removed share holder 1');
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('Share holder 2'),
-                      ),
-                      const Text("Forever"),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          log('Removed share holder 2');
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('Share holder 3'),
-                      ),
-                      const Text("1 week"),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          log('Removed share holder 3');
-                        },
-                      ),
-                    ],
+                  ElevatedButton(
+                    onPressed: () {
+                      // TODO:
+                      // Make the Share button functional.
+                      // Add a time slider like the web app.
+                    },
+                    child: const Text('Share'),
                   ),
                 ],
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ShareHolderList extends State<ShareSettings> {
+  final api = obtainApiClient();
+  late Future _shareHolders;
+
+  @override
+  void initState() {
+    super.initState();
+    _shareHolders = api?.getCurrentShares(widget.bike.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FutureBuilder(
+        future: _shareHolders,
+        builder: (BuildContext context, AsyncSnapshot snapshot) =>
+            StatefulBuilder(
+          builder: (context, setState) {
+            if (snapshot.hasData) {
+              if (snapshot.data.length == 0) {
+                return const Text('No share holders');
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(snapshot.data[index]["email"]),
+                      subtitle: Text(snapshot.data[index]["duration"] == null
+                          ? "Forever"
+                          : (snapshot.data[index]["duration"] ~/ 86400) > 1
+                              ? "${snapshot.data[index]["duration"] / 86400} days"
+                              : (snapshot.data[index]["duration"] ~/ 3600) > 1
+                                  ? "${snapshot.data[index]["duration"] / 3600} hours"
+                                  : "${snapshot.data[index]["duration"] / 60} minutes"),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () async {
+                          // TODO: Remove share holder
+                          // By using the data from snapshot.data[index]["guid"]
+                        },
+                      ),
+                    );
+                  },
+                );
+              }
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
         ),
       ),
     );
   }
+}
+
+class ShareSettings extends StatefulWidget {
+  const ShareSettings({required this.bike, super.key});
+  final Bike bike;
+
+  @override
+  State<ShareSettings> createState() => _ShareHolderList();
 }
 
 class _Section extends StatelessWidget {

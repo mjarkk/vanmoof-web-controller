@@ -136,7 +136,26 @@ class ShareBikeControl extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (context) => ShareSettings(bike: bike),
+        builder: (context) => Scaffold(
+          appBar: CupertinoNavigationBar(
+            backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+            leading: Container(),
+            middle: const Text('Manage sharing'),
+            trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
+          ),
+          body: SafeArea(
+              child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(6),
+                child: ShareWith(bike: bike),
+              ),
+              Expanded(
+                child: ShareSettings(bike: bike),
+              ),
+            ],
+          )),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
