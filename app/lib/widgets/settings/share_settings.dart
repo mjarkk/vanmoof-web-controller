@@ -134,46 +134,53 @@ class _ShareHolderList extends State<ShareSettings> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder(
-        future: _shareHolders,
-        builder: (BuildContext context, AsyncSnapshot snapshot) =>
-            StatefulBuilder(
-          builder: (context, setState) {
-            if (snapshot.hasData) {
-              if (snapshot.data.length == 0) {
-                return const Text('No share holders');
-              } else {
-                return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data[index]["email"]),
-                      subtitle: Text(snapshot.data[index]["duration"] == null
-                          ? "Forever"
-                          : (snapshot.data[index]["duration"] ~/ 86400) > 1
-                              ? "${snapshot.data[index]["duration"] / 86400} days"
-                              : (snapshot.data[index]["duration"] ~/ 3600) > 1
-                                  ? "${snapshot.data[index]["duration"] / 3600} hours"
-                                  : "${snapshot.data[index]["duration"] / 60} minutes"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () async {
-                          // TODO: Remove share holder
-                          // By using the data from snapshot.data[index]["guid"]
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
+    return FutureBuilder(
+      future: _shareHolders,
+      builder: (BuildContext context, AsyncSnapshot snapshot) =>
+          StatefulBuilder(
+        builder: (context, setState) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+                child: Column(children: const [
+              CircularProgressIndicator(),
+              Text("Loading shares"),
+            ]));
+          }
+
+          if (snapshot.hasData) {
+            if (snapshot.data.length == 0) {
+              return const Text('No share holders');
             } else {
-              return const CircularProgressIndicator();
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(snapshot.data[index]["email"]),
+                    subtitle: Text(snapshot.data[index]["duration"] == null
+                        ? "Forever"
+                        : (snapshot.data[index]["duration"] ~/ 86400) > 1
+                            ? "${snapshot.data[index]["duration"] / 86400} days"
+                            : (snapshot.data[index]["duration"] ~/ 3600) > 1
+                                ? "${snapshot.data[index]["duration"] / 3600} hours"
+                                : "${snapshot.data[index]["duration"] / 60} minutes"),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        api?.removeShare(snapshot.data[index]["guid"]);
+                      },
+                    ),
+                  );
+                },
+              );
             }
-          },
-        ),
+          }
+
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }

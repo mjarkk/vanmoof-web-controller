@@ -95,6 +95,31 @@ class ApiClient {
     return resp.data["result"] as Map<String, dynamic>;
   }
 
+  removeShare(String guid) async {
+    final Response<dynamic> resp;
+
+    try {
+      final client = Dio(BaseOptions(
+        headers: {
+          'Api-Key': _apiKey,
+          'Authorization': 'Bearer $token',
+        },
+        responseType: ResponseType.json,
+        receiveDataWhenStatusError: true,
+      ));
+
+      resp = await client.post(
+          'https://api.vanmoof-api.com/v8/revokeBikeSharingInvitation/$guid');
+    } catch (e) {
+      if (e is DioError && e.response != null) {
+        throw 'Unable to remove share holder, error: ${e.response!.data.toString()}';
+      }
+      throw 'Failed to remove the share holder.';
+    }
+
+    return resp.data as Map<String, dynamic>;
+  }
+
   getBikes() async {
     final Response<dynamic> resp;
     try {
