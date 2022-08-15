@@ -148,7 +148,7 @@ class ShareBikeControl extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(6),
-                child: ShareWith(bike: bike),
+                child: ShareBike(bike: bike),
               ),
               Expanded(
                 child: ShareSettings(bike: bike),

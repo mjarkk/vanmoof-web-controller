@@ -1,10 +1,50 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/material.dart';
 import 'package:mooovy/local_storage.dart';
+import 'package:email_validator/email_validator.dart';
 
-class ShareWith extends StatelessWidget {
-  const ShareWith({required this.bike, super.key});
+class ShareBike extends StatefulWidget {
+  const ShareBike({required this.bike, super.key});
   final Bike bike;
+
+  @override
+  State<ShareBike> createState() => _ShareWith();
+}
+
+class _ShareWith extends State<ShareBike> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final api = obtainApiClient();
+
+  double _duration = 14;
+  String _email = '';
+  String? error;
+  String? success;
+
+  submitForm(NavigatorState navigator) async {
+    if (_formKey.currentState?.validate() != true) return;
+    _formKey.currentState?.save();
+    if (_email.isEmpty) return;
+
+    setState(() {
+      error = null;
+      success = null;
+    });
+
+    try {
+      int dur = (_duration.toInt() * 86400);
+
+      var res = await api?.shareCurrentBike(widget.bike.id, _email, dur);
+
+      setState(() {
+        success = 'Shared with ${res["email"]}';
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,27 +52,67 @@ class ShareWith extends StatelessWidget {
       child: Column(
         children: [
           _Section(
-            title: 'Share ${bike.name}',
+            title: 'Share ${widget.bike.name}',
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Form(
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                      ),
+              Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.always,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            icon: Icon(Icons.email),
+                            hintText: 'VanMoof account email',
+                            labelText: 'Email',
+                          ),
+                          onSaved: (value) {
+                            _email = value ?? '';
+                          },
+                          validator: (String? value) {
+                            return (value != null &&
+                                    !EmailValidator.validate(value))
+                                ? 'Not a valid email address'
+                                : null;
+                          },
+                        ),
+                        Text("${_duration.round()} days"),
+                        CupertinoSlider(
+                          value: _duration,
+                          min: 1.0,
+                          max: 365.0,
+                          onChanged: (newDuration) {
+                            setState(() => _duration = newDuration);
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: ElevatedButton(
+                            onPressed: () => submitForm(Navigator.of(context)),
+                            child: const Text('Share'),
+                          ),
+                        ),
+                        error != null
+                            ? Text(
+                                error!,
+                                style: TextStyle(
+                                    color: Theme.of(context).errorColor),
+                              )
+                            : Container(),
+                        success != null
+                            ? Text(
+                                success!,
+                                style: const TextStyle(color: Colors.green),
+                              )
+                            : Container(),
+                      ],
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // TODO:
-                      // Make the Share button functional.
-                      // Add a time slider like the web app.
-                    },
-                    child: const Text('Share'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -87,6 +167,8 @@ class _ShareHolderList extends State<ShareSettings> {
                   },
                 );
               }
+            } else if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
             } else {
               return const CircularProgressIndicator();
             }

@@ -58,10 +58,41 @@ class ApiClient {
       if (e is DioError && e.response != null) {
         throw 'Unable to obtain shares, error: ${e.response!.data.toString()}';
       }
-      throw 'Unable to obtain bikes';
+      throw 'Unable to obtain shares, check your connection.';
     }
 
     return resp.data['invitations'] as List<dynamic>;
+  }
+
+  shareCurrentBike(int bikeid, String email, int duration) async {
+    final Response<dynamic> resp;
+
+    try {
+      final client = Dio(BaseOptions(
+        headers: {
+          'Api-Key': _apiKey,
+          'Authorization': 'Bearer $token',
+        },
+        responseType: ResponseType.json,
+        receiveDataWhenStatusError: true,
+      ));
+      var data = {
+        'bikeId': bikeid,
+        'email': email,
+        'duration': duration,
+      };
+
+      resp = await client.post(
+          'https://api.vanmoof-api.com/v8/createBikeSharingInvitation',
+          data: data);
+    } catch (e) {
+      if (e is DioError && e.response != null) {
+        throw 'Unable to obtain shares, error: ${e.response!.data.toString()}';
+      }
+      throw 'Failed to share the bike.';
+    }
+
+    return resp.data["result"] as Map<String, dynamic>;
   }
 
   getBikes() async {
