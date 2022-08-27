@@ -85,14 +85,14 @@ class ApiClient {
       resp = await client.post(
           'https://api.vanmoof-api.com/v8/createBikeSharingInvitation',
           data: data);
+
+      return resp.data["result"] as Map<String, dynamic>;
     } catch (e) {
       if (e is DioError && e.response != null) {
-        throw 'Unable to obtain shares, error: ${e.response!.data.toString()}';
+        throw 'Unable to share the bike, error: ${e.response!.data.toString()}';
       }
       throw 'Failed to share the bike.';
     }
-
-    return resp.data["result"] as Map<String, dynamic>;
   }
 
   removeShare(String guid) async {
