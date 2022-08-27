@@ -80,7 +80,13 @@ class _ShareWith extends State<ShareBike> {
                                 : null;
                           },
                         ),
-                        Text("${_duration.round()} days"),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Text("${_duration.round()} days"),
+                          ),
+                        ),
                         CupertinoSlider(
                           value: _duration,
                           min: 1.0,
