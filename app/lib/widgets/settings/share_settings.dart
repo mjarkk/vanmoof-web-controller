@@ -3,6 +3,7 @@ import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/material.dart';
 import 'package:mooovy/local_storage.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:mooovy/widgets/settings/section.dart';
 
 class ShareBike extends StatefulWidget {
   const ShareBike({required this.bike, super.key});
@@ -51,7 +52,7 @@ class _ShareWith extends State<ShareBike> {
     return SafeArea(
       child: Column(
         children: [
-          _Section(
+          Section(
             title: 'Share ${widget.bike.name}',
             children: [
               Form(
@@ -84,20 +85,20 @@ class _ShareWith extends State<ShareBike> {
                           padding: const EdgeInsets.only(top: 16.0),
                           child: SizedBox(
                             width: double.infinity,
-                            child: Text("${_duration.round()} days"),
+                            child: CupertinoSlider(
+                              value: _duration,
+                              min: 1.0,
+                              max: 365.0,
+                              onChanged: (newDuration) =>
+                                  setState(() => _duration = newDuration),
+                            ),
                           ),
-                        ),
-                        CupertinoSlider(
-                          value: _duration,
-                          min: 1.0,
-                          max: 365.0,
-                          onChanged: (newDuration) => setState(() => _duration = newDuration),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: ElevatedButton(
                             onPressed: () => submitForm(Navigator.of(context)),
-                            child: const Text('Share'),
+                            child: Text('Share ${_duration.round()} days'),
                           ),
                         ),
                         error != null
@@ -158,15 +159,16 @@ class _ShareHolderList extends State<ShareSettings> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
+                  final duration = snapshot.data[index]["duration"];
                   return ListTile(
                     title: Text(snapshot.data[index]["email"]),
-                    subtitle: Text(snapshot.data[index]["duration"] == null
+                    subtitle: Text(duration == null
                         ? "Forever"
-                        : (snapshot.data[index]["duration"] ~/ 86400) > 1
-                            ? "${snapshot.data[index]["duration"] / 86400} days"
-                            : (snapshot.data[index]["duration"] ~/ 3600) > 1
-                                ? "${snapshot.data[index]["duration"] / 3600} hours"
-                                : "${snapshot.data[index]["duration"] / 60} minutes"),
+                        : (duration ~/ 86400) > 1
+                            ? "${duration / 86400} days"
+                            : (duration ~/ 3600) > 1
+                                ? "${duration / 3600} hours"
+                                : "${duration / 60} minutes"),
                     trailing: IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
                       onPressed: () {
@@ -196,44 +198,4 @@ class ShareSettings extends StatefulWidget {
 
   @override
   State<ShareSettings> createState() => _ShareHolderList();
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.children, super.key});
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  height: 1,
-                  color: Colors.black26,
-                  width: double.infinity,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ],
-      ),
-    );
-  }
 }

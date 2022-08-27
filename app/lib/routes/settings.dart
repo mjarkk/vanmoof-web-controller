@@ -7,6 +7,7 @@ import 'package:mooovy/local_storage.dart';
 import 'package:mooovy/bike/models.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:mooovy/widgets/settings/share_settings.dart';
+import 'package:mooovy/widgets/settings/section.dart';
 
 class Settings extends StatelessWidget {
   const Settings({required this.ios, required this.bike, super.key});
@@ -48,20 +49,20 @@ class Settings extends StatelessWidget {
           child: SafeArea(
             child: Column(
               children: [
-                _Section(
+                Section(
                   title: 'Bike',
                   children: [
                     BellSoundControl(bike),
                     LightStateControl(bike),
                   ],
                 ),
-                _Section(
+                Section(
                   title: 'Share bike',
                   children: [
                     ShareBikeControl(bike),
                   ],
                 ),
-                _Section(
+                Section(
                   title: 'Account',
                   children: [
                     ElevatedButton(
@@ -233,46 +234,6 @@ class _CloseButton extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(2),
         child: const Icon(Icons.close_rounded, size: 22),
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.children, super.key});
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  height: 1,
-                  color: Colors.black26,
-                  width: double.infinity,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ],
       ),
     );
   }

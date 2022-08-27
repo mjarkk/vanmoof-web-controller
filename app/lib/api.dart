@@ -65,9 +65,9 @@ class ApiClient {
   }
 
   shareCurrentBike(int bikeid, String email, int duration) async {
-    final Response<dynamic> resp;
-
     try {
+      final Response<dynamic> resp;
+
       final client = Dio(BaseOptions(
         headers: {
           'Api-Key': _apiKey,
