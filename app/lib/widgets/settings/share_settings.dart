@@ -127,7 +127,7 @@ class _ShareWith extends State<ShareBike> {
 }
 
 class _ShareHolderList extends State<ShareSettings> {
-  final api = obtainApiClient();
+  get api => obtainApiClient()!;
   late Future _shareHolders;
 
   @override
