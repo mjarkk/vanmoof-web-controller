@@ -91,9 +91,7 @@ class _ShareWith extends State<ShareBike> {
                           value: _duration,
                           min: 1.0,
                           max: 365.0,
-                          onChanged: (newDuration) {
-                            setState(() => _duration = newDuration);
-                          },
+                          onChanged: (newDuration) => setState(() => _duration = newDuration),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
