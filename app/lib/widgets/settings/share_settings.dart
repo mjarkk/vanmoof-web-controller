@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/material.dart';

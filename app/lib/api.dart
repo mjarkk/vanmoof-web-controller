@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'bike/from_json.dart';
+import 'package:mooovy/bike/from_json.dart';
 
 const String _apiKey = 'fcb38d47-f14b-30cf-843b-26283f6a5819';
 

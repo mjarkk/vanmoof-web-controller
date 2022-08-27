@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import '../../bike/bike.dart';
-import '../../bike/models.dart';
-import '../../routes/settings.dart';
+import 'package:mooovy/bike/bike.dart';
+import 'package:mooovy/bike/models.dart';
+import 'package:mooovy/routes/settings.dart';
 import 'battery.dart';
 
 class BikeView extends StatelessWidget {

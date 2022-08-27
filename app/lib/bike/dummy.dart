@@ -1,4 +1,4 @@
-import 'bike.dart';
+import 'package:mooovy/bike/bike.dart';
 
 class DummyBikeConnection implements BikeConnection {
   DummyBikeConnection(this.bike) {

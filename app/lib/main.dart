@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'local_storage.dart';
-import 'routes/login.dart';
-import 'routes/home.dart';
+import 'package:mooovy/local_storage.dart';
+import 'package:mooovy/routes/login.dart';
+import 'package:mooovy/routes/home.dart';
 
 void main() async {
   await setupLocalStorage();

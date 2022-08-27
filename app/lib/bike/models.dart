@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'bike.dart';
+import 'package:mooovy/bike/bike.dart';
 
 class ListenToBikeState extends StatelessWidget {
   const ListenToBikeState({required this.bike, required this.child, super.key});

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'bike.dart';
-import 'encryption.dart';
+import 'package:mooovy/bike/bike.dart';
+import 'package:mooovy/bike/encryption.dart';
 
 class RealBikeConnection implements BikeConnection {
   RealBikeConnection(this.bike) : cyrpto = AesEcb(bike.encryptionKey);

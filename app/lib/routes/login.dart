@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-import '../api.dart';
-import '../local_storage.dart';
+import 'package:mooovy/api.dart';
+import 'package:mooovy/local_storage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
