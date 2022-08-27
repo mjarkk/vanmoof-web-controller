@@ -155,36 +155,36 @@ class _ShareHolderList extends State<ShareSettings> {
           if (snapshot.hasData) {
             if (snapshot.data.length == 0) {
               return const Text('No share holders');
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  final duration = snapshot.data[index]["duration"];
-                  return ListTile(
-                    title: Text(snapshot.data[index]["email"]),
-                    subtitle: Text(duration == null
-                        ? "Forever"
-                        : (duration ~/ 29030400) > 1
-                            ? "${(duration / 29030400).round()} years"
-                            : (duration ~/ 2419200) > 1
-                                ? "${(duration / 2419200).round()} months"
-                                : (duration ~/ 604800) > 1
-                                    ? "${(duration / 604800).round()} weeks"
-                                    : (duration ~/ 86400) > 1
-                                        ? "${(duration / 86400).round()} days"
-                                        : (duration ~/ 3600) > 1
-                                            ? "${(duration / 3600).round()} hours"
-                                            : "${(duration / 60).round()} minutes"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () {
-                        api?.removeShare(snapshot.data[index]["guid"]);
-                      },
-                    ),
-                  );
-                },
-              );
             }
+            
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                final duration = snapshot.data[index]["duration"];
+                return ListTile(
+                  title: Text(snapshot.data[index]["email"]),
+                  subtitle: Text(duration == null
+                      ? "Forever"
+                      : (duration ~/ 29030400) > 1
+                          ? "${(duration / 29030400).round()} years"
+                          : (duration ~/ 2419200) > 1
+                              ? "${(duration / 2419200).round()} months"
+                              : (duration ~/ 604800) > 1
+                                  ? "${(duration / 604800).round()} weeks"
+                                  : (duration ~/ 86400) > 1
+                                      ? "${(duration / 86400).round()} days"
+                                      : (duration ~/ 3600) > 1
+                                          ? "${(duration / 3600).round()} hours"
+                                          : "${(duration / 60).round()} minutes"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () {
+                      api?.removeShare(snapshot.data[index]["guid"]);
+                    },
+                  ),
+                );
+              },
+            );
           }
 
           if (snapshot.hasError) {
