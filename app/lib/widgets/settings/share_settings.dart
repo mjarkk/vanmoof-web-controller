@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/material.dart';
@@ -129,71 +131,63 @@ class _ShareWith extends State<ShareBike> {
 
 class _ShareHolderList extends State<ShareSettings> {
   get api => obtainApiClient()!;
-  late Future _shareHolders;
+  dynamic _shareHolders;
+
+  obtainShareHolders() async {
+    _shareHolders = await api?.getCurrentShares(widget.bike.id);
+    log("Updated?");
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    _shareHolders = api?.getCurrentShares(widget.bike.id);
+    obtainShareHolders();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _shareHolders,
-      builder: (BuildContext context, AsyncSnapshot snapshot) =>
-          StatefulBuilder(
-        builder: (context, setState) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Center(
-                child: Column(children: const [
-              CircularProgressIndicator(),
-              Text("Loading shares"),
-            ]));
-          }
+    if (_shareHolders == null) {
+      return Center(
+          child: Column(children: const [
+        CircularProgressIndicator(),
+        Text("Loading shares"),
+      ]));
+    }
 
-          if (snapshot.hasData) {
-            if (snapshot.data.length == 0) {
-              return const Text('No share holders');
-            }
-            
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                final duration = snapshot.data[index]["duration"];
-                return ListTile(
-                  title: Text(snapshot.data[index]["email"]),
-                  subtitle: Text(duration == null
-                      ? "Forever"
-                      : (duration ~/ 29030400) > 1
-                          ? "${(duration / 29030400).round()} years"
-                          : (duration ~/ 2419200) > 1
-                              ? "${(duration / 2419200).round()} months"
-                              : (duration ~/ 604800) > 1
-                                  ? "${(duration / 604800).round()} weeks"
-                                  : (duration ~/ 86400) > 1
-                                      ? "${(duration / 86400).round()} days"
-                                      : (duration ~/ 3600) > 1
-                                          ? "${(duration / 3600).round()} hours"
-                                          : "${(duration / 60).round()} minutes"),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.remove_circle_outline),
-                    onPressed: () {
-                      api?.removeShare(snapshot.data[index]["guid"]);
-                    },
-                  ),
-                );
-              },
-            );
-          }
+    if (_shareHolders.length == 0) {
+      return const Text('No share holders');
+    }
 
-          if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
+    return ListView.builder(
+      itemCount: _shareHolders.length,
+      itemBuilder: (context, index) {
+        var shareHolder = _shareHolders[index];
+        var duration = shareHolder["duration"];
+        return ListTile(
+          title: Text(shareHolder["email"].toString()),
+          subtitle: Text(duration == null
+              ? "Forever"
+              : (duration ~/ 29030400) > 1
+                  ? "${duration ~/ 29030400} years"
+                  : (duration ~/ 2419200) > 1
+                      ? "${duration ~/ 2419200} months"
+                      : (duration ~/ 604800) > 1
+                          ? "${duration ~/ 604800} weeks"
+                          : (duration ~/ 86400) > 1
+                              ? "${duration ~/ 86400} days"
+                              : (duration ~/ 3600) > 1
+                                  ? "${duration ~/ 3600} hours"
+                                  : "${duration ~/ 60} minutes"),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              api?.removeShare(shareHolder["guid"]);
+              obtainShareHolders();
+            },
+          ),
+        );
+      },
     );
   }
 }
