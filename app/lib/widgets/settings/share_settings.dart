@@ -164,11 +164,17 @@ class _ShareHolderList extends State<ShareSettings> {
                     title: Text(snapshot.data[index]["email"]),
                     subtitle: Text(duration == null
                         ? "Forever"
-                        : (duration ~/ 86400) > 1
-                            ? "${duration / 86400} days"
-                            : (duration ~/ 3600) > 1
-                                ? "${duration / 3600} hours"
-                                : "${duration / 60} minutes"),
+                        : (duration ~/ 29030400) > 1
+                            ? "${(duration / 29030400).round()} years"
+                            : (duration ~/ 2419200) > 1
+                                ? "${(duration / 2419200).round()} months"
+                                : (duration ~/ 604800) > 1
+                                    ? "${(duration / 604800).round()} weeks"
+                                    : (duration ~/ 86400) > 1
+                                        ? "${(duration / 86400).round()} days"
+                                        : (duration ~/ 3600) > 1
+                                            ? "${(duration / 3600).round()} hours"
+                                            : "${(duration / 60).round()} minutes"),
                     trailing: IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
                       onPressed: () {
