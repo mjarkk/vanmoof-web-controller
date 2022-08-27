@@ -32,7 +32,7 @@ class _ShareWith extends State<ShareBike> {
     });
 
     try {
-      int dur = (_duration.toInt() * 86400);
+      int dur = _duration.toInt() * 86400;
 
       var res = await api?.shareCurrentBike(widget.bike.id, _email, dur);
 
@@ -127,7 +127,7 @@ class _ShareWith extends State<ShareBike> {
 }
 
 class _ShareHolderList extends State<ShareSettings> {
-  final api = obtainApiClient();
+  get api => obtainApiClient()!;
   late Future _shareHolders;
 
   @override
