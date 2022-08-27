@@ -77,7 +77,7 @@ class _ShareWith extends State<ShareBike> {
                           validator: (String? value) {
                             return (value != null &&
                                     !EmailValidator.validate(value))
-                                ? 'Not a valid email address'
+                                ? 'Invalid email address'
                                 : null;
                           },
                         ),
