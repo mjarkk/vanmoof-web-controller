@@ -129,8 +129,9 @@ class _ShareWith extends State<ShareBike> {
 }
 
 class _ShareHolderList extends State<ShareSettings> {
-  get api => obtainApiClient()!;
   dynamic _shareHolders;
+
+  get api => obtainApiClient()!;
 
   obtainShareHolders() async {
     _shareHolders = await api?.getCurrentShares(widget.bike.id);
