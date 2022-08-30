@@ -135,7 +135,6 @@ class _ShareHolderList extends State<ShareSettings> {
 
   obtainShareHolders() async {
     _shareHolders = await api?.getCurrentShares(widget.bike.id);
-    log("Updated?");
     setState(() {});
   }
 
