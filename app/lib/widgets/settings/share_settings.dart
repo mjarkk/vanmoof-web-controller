@@ -1,20 +1,26 @@
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:flutter/material.dart';
 import 'package:mooovy/local_storage.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:mooovy/widgets/settings/close_button.dart';
 import 'package:mooovy/widgets/settings/section.dart';
 
-class ShareBike extends StatefulWidget {
-  const ShareBike({required this.bike, super.key});
+class ShareBikeForm extends StatefulWidget {
+  const ShareBikeForm({
+    required this.bike,
+    required this.refreshList,
+    super.key,
+  });
+
   final Bike bike;
+  final Function() refreshList;
 
   @override
-  State<ShareBike> createState() => _ShareWith();
+  State<ShareBikeForm> createState() => _ShareBikeFormState();
 }
 
-class _ShareWith extends State<ShareBike> {
+class _ShareBikeFormState extends State<ShareBikeForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final api = obtainApiClient();
 
@@ -35,16 +41,14 @@ class _ShareWith extends State<ShareBike> {
 
     try {
       int dur = _duration.toInt() * 86400;
+      final res = await api?.shareCurrentBike(widget.bike.id, _email, dur);
 
-      var res = await api?.shareCurrentBike(widget.bike.id, _email, dur);
-
-      setState(() {
-        success = 'Shared with ${res["email"]}';
-      });
+      success = 'Shared with ${res["email"]}';
     } catch (e) {
-      setState(() {
-        error = e.toString();
-      });
+      error = e.toString();
+    } finally {
+      setState(() {});
+      widget.refreshList();
     }
   }
 
@@ -128,25 +132,21 @@ class _ShareWith extends State<ShareBike> {
   }
 }
 
-class _ShareHolderList extends State<ShareSettings> {
-  dynamic _shareHolders;
+class _ShareHolderList extends StatelessWidget {
+  const _ShareHolderList({
+    required this.shareHolders,
+    required this.refreshList,
+    super.key,
+  });
 
   get api => obtainApiClient()!;
 
-  obtainShareHolders() async {
-    _shareHolders = await api?.getCurrentShares(widget.bike.id);
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    obtainShareHolders();
-  }
+  final dynamic shareHolders;
+  final Function() refreshList;
 
   @override
   Widget build(BuildContext context) {
-    if (_shareHolders == null) {
+    if (shareHolders == null) {
       return Center(
           child: Column(children: const [
         CircularProgressIndicator(),
@@ -154,14 +154,14 @@ class _ShareHolderList extends State<ShareSettings> {
       ]));
     }
 
-    if (_shareHolders.length == 0) {
+    if (shareHolders.length == 0) {
       return const Text('No share holders');
     }
 
     return ListView.builder(
-      itemCount: _shareHolders.length,
+      itemCount: shareHolders.length,
       itemBuilder: (context, index) {
-        var shareHolder = _shareHolders[index];
+        var shareHolder = shareHolders[index];
         var duration = shareHolder["duration"];
         return ListTile(
           title: Text(shareHolder["email"].toString()),
@@ -181,8 +181,8 @@ class _ShareHolderList extends State<ShareSettings> {
           trailing: IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
-              api?.removeShare(shareHolder["guid"]);
-              obtainShareHolders();
+              await api?.removeShare(shareHolder["guid"]);
+              refreshList();
             },
           ),
         );
@@ -193,8 +193,56 @@ class _ShareHolderList extends State<ShareSettings> {
 
 class ShareSettings extends StatefulWidget {
   const ShareSettings({required this.bike, super.key});
+
   final Bike bike;
 
   @override
-  State<ShareSettings> createState() => _ShareHolderList();
+  State<ShareSettings> createState() => _ShareSettingsState();
+}
+
+class _ShareSettingsState extends State<ShareSettings> {
+  dynamic _shareHolders;
+
+  get api => obtainApiClient()!;
+
+  obtainShareHolders() async {
+    _shareHolders = await api?.getCurrentShares(widget.bike.id);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    obtainShareHolders();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+        leading: Container(),
+        middle: const Text('Manage sharing'),
+        trailing: SettingsCloseButton(onPressed: () => Navigator.pop(context)),
+      ),
+      body: SafeArea(
+          child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(6),
+            child: ShareBikeForm(
+              bike: widget.bike,
+              refreshList: obtainShareHolders,
+            ),
+          ),
+          Expanded(
+            child: _ShareHolderList(
+              shareHolders: _shareHolders,
+              refreshList: obtainShareHolders,
+            ),
+          ),
+        ],
+      )),
+    );
+  }
 }

@@ -8,6 +8,7 @@ import 'package:mooovy/bike/models.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:mooovy/widgets/settings/share_settings.dart';
 import 'package:mooovy/widgets/settings/section.dart';
+import 'package:mooovy/widgets/settings/close_button.dart';
 
 class Settings extends StatelessWidget {
   const Settings({required this.ios, required this.bike, super.key});
@@ -20,7 +21,8 @@ class Settings extends StatelessWidget {
           backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
           leading: Container(),
           middle: const Text('Settings'),
-          trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
+          trailing:
+              SettingsCloseButton(onPressed: () => Navigator.pop(context)),
         ) as PreferredSizeWidget
       : AppBar(
           title: const Text('Settings'),
@@ -137,26 +139,7 @@ class ShareBikeControl extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (context) => Scaffold(
-          appBar: CupertinoNavigationBar(
-            backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
-            leading: Container(),
-            middle: const Text('Manage sharing'),
-            trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
-          ),
-          body: SafeArea(
-              child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(6),
-                child: ShareBike(bike: bike),
-              ),
-              Expanded(
-                child: ShareSettings(bike: bike),
-              ),
-            ],
-          )),
-        ),
+        builder: (context) => ShareSettings(bike: bike),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -214,27 +197,6 @@ class LightStateControl extends StatelessWidget {
               )),
         ),
       ],
-    );
-  }
-}
-
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onPressed, super.key});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.black12,
-        ),
-        padding: const EdgeInsets.all(2),
-        child: const Icon(Icons.close_rounded, size: 22),
-      ),
     );
   }
 }
