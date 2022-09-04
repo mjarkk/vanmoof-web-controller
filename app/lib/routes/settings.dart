@@ -94,25 +94,28 @@ class BellSoundControl extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        CupertinoSlidingSegmentedControl(
-          onValueChanged: mightSetNewBellSound,
-          groupValue: bikeBell.bellSound,
-          children: bellSoundsToString.map((key, value) => MapEntry(
-                key,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Icon(
-                        bellIcon(key),
-                        size: 18,
+        SizedBox(
+          width: double.infinity,
+          child: CupertinoSlidingSegmentedControl(
+            onValueChanged: mightSetNewBellSound,
+            groupValue: bikeBell.bellSound,
+            children: bellSoundsToString.map((key, value) => MapEntry(
+                  key,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(
+                          bellIcon(key),
+                          size: 18,
+                        ),
                       ),
-                    ),
-                    Text(value)
-                  ],
-                ),
-              )),
+                      Text(value)
+                    ],
+                  ),
+                )),
+          ),
         ),
       ],
     );
@@ -142,25 +145,28 @@ class LightStateControl extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        CupertinoSlidingSegmentedControl(
-          onValueChanged: mightSetNewLightState,
-          groupValue: lightState.lightState,
-          children: lightStatesToString.map((key, value) => MapEntry(
-                key,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Icon(
-                        lightIcon(key),
-                        size: 18,
+        SizedBox(
+          width: double.infinity,
+          child: CupertinoSlidingSegmentedControl(
+            onValueChanged: mightSetNewLightState,
+            groupValue: lightState.lightState,
+            children: lightStatesToString.map((key, value) => MapEntry(
+                  key,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(
+                          lightIcon(key),
+                          size: 18,
+                        ),
                       ),
-                    ),
-                    Text(value)
-                  ],
-                ),
-              )),
+                      Text(value)
+                    ],
+                  ),
+                )),
+          ),
         ),
       ],
     );
