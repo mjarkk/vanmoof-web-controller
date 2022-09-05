@@ -132,21 +132,28 @@ class _ShareBikeFormState extends State<ShareBikeForm> {
   }
 }
 
-class _ShareHolderList extends StatelessWidget {
+class _ShareHolderList extends StatefulWidget {
   const _ShareHolderList({
     required this.shareHolders,
     required this.refreshList,
     super.key,
   });
 
-  get api => obtainApiClient()!;
-
   final dynamic shareHolders;
   final Function() refreshList;
 
   @override
+  State<_ShareHolderList> createState() => _ShareHolderListState();
+}
+
+class _ShareHolderListState extends State<_ShareHolderList> {
+  get api => obtainApiClient()!;
+  String? error;
+  String? success;
+
+  @override
   Widget build(BuildContext context) {
-    if (shareHolders == null) {
+    if (widget.shareHolders == null) {
       return Center(
           child: Column(children: const [
         CircularProgressIndicator(),
@@ -154,39 +161,71 @@ class _ShareHolderList extends StatelessWidget {
       ]));
     }
 
-    if (shareHolders.length == 0) {
+    if (widget.shareHolders.length == 0) {
       return const Text('No share holders');
     }
 
-    return ListView.builder(
-      itemCount: shareHolders.length,
-      itemBuilder: (context, index) {
-        var shareHolder = shareHolders[index];
-        var duration = shareHolder["duration"];
-        return ListTile(
-          title: Text(shareHolder["email"].toString()),
-          subtitle: Text(duration == null
-              ? "Forever"
-              : (duration ~/ 29030400) > 1
-                  ? "${duration ~/ 29030400} years"
-                  : (duration ~/ 2419200) > 1
-                      ? "${duration ~/ 2419200} months"
-                      : (duration ~/ 604800) > 1
-                          ? "${duration ~/ 604800} weeks"
-                          : (duration ~/ 86400) > 1
-                              ? "${duration ~/ 86400} days"
-                              : (duration ~/ 3600) > 1
-                                  ? "${duration ~/ 3600} hours"
-                                  : "${duration ~/ 60} minutes"),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              await api?.removeShare(shareHolder["guid"]);
-              refreshList();
-            },
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          error != null
+              ? Text(
+                  error!,
+                  style: TextStyle(color: Theme.of(context).errorColor),
+                )
+              : Container(),
+          success != null
+              ? Text(
+                  success!,
+                  style: const TextStyle(color: Colors.green),
+                )
+              : Container(),
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.shareHolders.length,
+              itemBuilder: (context, index) {
+                var shareHolder = widget.shareHolders[index];
+                var duration = shareHolder["duration"];
+                return ListTile(
+                  title: Text(shareHolder["email"]),
+                  subtitle: Text(duration == null
+                      ? "Forever"
+                      : (duration ~/ 29030400) > 1
+                          ? "${duration ~/ 29030400} years"
+                          : (duration ~/ 2419200) > 1
+                              ? "${duration ~/ 2419200} months"
+                              : (duration ~/ 604800) > 1
+                                  ? "${duration ~/ 604800} weeks"
+                                  : (duration ~/ 86400) > 1
+                                      ? "${duration ~/ 86400} days"
+                                      : (duration ~/ 3600) > 1
+                                          ? "${duration ~/ 3600} hours"
+                                          : "${duration ~/ 60} minutes"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      setState(() {
+                        error = null;
+                        success = null;
+                      });
+
+                      try {
+                        await api?.removeShare(shareHolder["guid"]);
+                        success = 'Successfully removed shareholder';
+                      } catch (e) {
+                        error = e.toString();
+                      } finally {
+                        widget.refreshList();
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
