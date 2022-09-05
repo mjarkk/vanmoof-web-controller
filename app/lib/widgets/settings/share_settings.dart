@@ -151,6 +151,22 @@ class _ShareHolderListState extends State<_ShareHolderList> {
   String? error;
   String? success;
 
+  removeShareHolder(String guid) async {
+    setState(() {
+      error = null;
+      success = null;
+    });
+
+    try {
+      await api?.removeShare(guid);
+      success = 'Successfully removed shareholder';
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      widget.refreshList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.shareHolders == null) {
@@ -203,21 +219,7 @@ class _ShareHolderListState extends State<_ShareHolderList> {
                                         : "${duration ~/ 60} minutes"),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    setState(() {
-                      error = null;
-                      success = null;
-                    });
-
-                    try {
-                      await api?.removeShare(shareHolder["guid"]);
-                      success = 'Successfully removed shareholder';
-                    } catch (e) {
-                      error = e.toString();
-                    } finally {
-                      widget.refreshList();
-                    }
-                  },
+                  onPressed: () => removeShareHolder(shareHolder["guid"]),
                 ),
               );
             },
