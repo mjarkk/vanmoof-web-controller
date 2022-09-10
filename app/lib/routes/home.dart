@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import '../bike/bike.dart';
-import '../bike/real.dart';
-import '../bike/dummy.dart';
-import '../bike/models.dart';
-import '../local_storage.dart';
-import '../widgets/controls/controls.dart';
-import '../widgets/home_bikes_view/bikes_view.dart';
+import 'package:mooovy/bike/bike.dart';
+import 'package:mooovy/bike/real.dart';
+import 'package:mooovy/bike/dummy.dart';
+import 'package:mooovy/bike/models.dart';
+import 'package:mooovy/local_storage.dart';
+import 'package:mooovy/widgets/controls/controls.dart';
+import 'package:mooovy/widgets/home_bikes_view/bikes_view.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

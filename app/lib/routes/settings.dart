@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import '../local_storage.dart';
-import '../bike/models.dart';
-import '../bike/bike.dart';
+import 'package:mooovy/local_storage.dart';
+import 'package:mooovy/bike/models.dart';
+import 'package:mooovy/bike/bike.dart';
+import 'package:mooovy/widgets/settings/share_settings.dart';
+import 'package:mooovy/widgets/settings/section.dart';
+import 'package:mooovy/widgets/settings/close_button.dart';
 
 class Settings extends StatelessWidget {
   const Settings({required this.ios, required this.bike, super.key});
@@ -18,7 +21,8 @@ class Settings extends StatelessWidget {
           backgroundColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
           leading: Container(),
           middle: const Text('Settings'),
-          trailing: _CloseButton(onPressed: () => Navigator.pop(context)),
+          trailing:
+              SettingsCloseButton(onPressed: () => Navigator.pop(context)),
         ) as PreferredSizeWidget
       : AppBar(
           title: const Text('Settings'),
@@ -47,14 +51,20 @@ class Settings extends StatelessWidget {
           child: SafeArea(
             child: Column(
               children: [
-                _Section(
+                Section(
                   title: 'Bike',
                   children: [
                     BellSoundControl(bike),
                     LightStateControl(bike),
                   ],
                 ),
-                _Section(
+                Section(
+                  title: 'Share bike',
+                  children: [
+                    ShareBikeControl(bike),
+                  ],
+                ),
+                Section(
                   title: 'Account',
                   children: [
                     ElevatedButton(
@@ -122,6 +132,30 @@ class BellSoundControl extends StatelessWidget {
   }
 }
 
+class ShareBikeControl extends StatelessWidget {
+  const ShareBikeControl(this.bike, {super.key});
+
+  final Bike bike;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => showModalBottomSheet(
+        context: context,
+        builder: (context) => ShareSettings(bike: bike),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(Icons.share),
+          SizedBox(width: 5),
+          Text('Manage sharing'),
+        ],
+      ),
+    );
+  }
+}
+
 class LightStateControl extends StatelessWidget {
   const LightStateControl(this.bike, {super.key});
 
@@ -169,67 +203,6 @@ class LightStateControl extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onPressed, super.key});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.black12,
-        ),
-        padding: const EdgeInsets.all(2),
-        child: const Icon(Icons.close_rounded, size: 22),
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.children, super.key});
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  height: 1,
-                  color: Colors.black26,
-                  width: double.infinity,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ],
-      ),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:animated_fractionally_sized_box/animated_fractionally_sized_box.dart';
 
 class BatteryIndicator extends StatelessWidget {
   const BatteryIndicator({

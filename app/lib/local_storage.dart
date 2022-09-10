@@ -1,8 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
-import 'api.dart';
-import 'bike/bike.dart';
+import 'package:mooovy/api.dart';
+import 'package:mooovy/bike/bike.dart';
 
 _getEncryptionKey() async {
   const secureStorage = FlutterSecureStorage();

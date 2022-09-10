@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'selected_indicator.dart';
-import 'bike_view.dart';
-import '../../bike/bike.dart';
+import 'package:mooovy/widgets/home_bikes_view/selected_indicator.dart';
+import 'package:mooovy/widgets/home_bikes_view/bike_view.dart';
+import 'package:mooovy/bike/bike.dart';
 
 class BikesView extends StatelessWidget {
   const BikesView({

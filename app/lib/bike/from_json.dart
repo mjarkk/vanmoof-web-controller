@@ -1,4 +1,4 @@
-import 'bike.dart';
+import 'package:mooovy/bike/bike.dart';
 
 Bike bikeCredentialsFromJson(Map<String, dynamic> json) {
   return Bike(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'control.dart';
-import '../../bike/bike.dart';
-import '../../bike/models.dart';
+import 'package:mooovy/widgets/controls/control.dart';
+import 'package:mooovy/bike/bike.dart';
+import 'package:mooovy/bike/models.dart';
 
 class Controls extends StatelessWidget {
   const Controls(this.bike, {super.key});
