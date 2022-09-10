@@ -33,7 +33,7 @@ class _LoginState extends State<Login> {
       await storeApiTokens(api);
       await storeBikes(bikes);
 
-      navigator.popAndPushNamed('/home');
+      navigator.popAndPushNamed('/home', arguments: bikes);
     } catch (e) {
       setState(() {
         error = e.toString();

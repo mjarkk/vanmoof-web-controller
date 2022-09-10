@@ -21,7 +21,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   _HomeState() : bikes = obtainBikes();
 
-  final List<Bike> bikes;
+  List<Bike> bikes;
+
   int selectedBikeIdx = 0;
   bool useDummy = kDebugMode;
 
@@ -92,6 +93,11 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
+    final routeArguments = ModalRoute.of(context)!.settings.arguments;
+    if (routeArguments != null) {
+      bikes = routeArguments as List<Bike>;
+    }
+
     if (useDummy) {
       setupDummyConnections();
     } else {
