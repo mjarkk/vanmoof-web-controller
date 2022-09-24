@@ -120,19 +120,16 @@ class _HomeState extends State<Home> {
       overlayStyle: SystemUiOverlayStyle.dark,
       body: Scaffold(
         body: SafeArea(
-          child: ListenToBikeState(
-            bike: selectedBike,
-            child: Column(
-              children: [
-                BikesView(
-                  bikes: bikes,
-                  onBikeSelected: setSelectedBikeIdx,
-                  selectedBike: selectedBikeIdx,
-                ),
-                Controls(selectedBike),
-              ],
-            ),
-          ),
+          child: selectedBike.injectState(Column(
+            children: [
+              BikesView(
+                bikes: bikes,
+                onBikeSelected: setSelectedBikeIdx,
+                selectedBike: selectedBikeIdx,
+              ),
+              Controls(selectedBike),
+            ],
+          )),
         ),
       ),
     );

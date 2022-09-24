@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mooovy/bike/models.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 part 'bike.g.dart';
 
@@ -20,7 +21,8 @@ class Bike {
         battery = BikeBatteryState(),
         info = BikeInfo(),
         bell = BikeBellState(),
-        light = BikeLightState();
+        light = BikeLightState(),
+        alarm = BikeAlarmState();
 
   @HiveField(0)
   final int id;
@@ -51,6 +53,18 @@ class Bike {
   final BikeInfo info;
   final BikeBellState bell;
   final BikeLightState light;
+  final BikeAlarmState alarm;
+  injectState(Widget child) {
+    Widget resp = child;
+    resp = ListenToChanges(power, child);
+    resp = ListenToChanges(lock, resp);
+    resp = ListenToChanges(battery, resp);
+    resp = ListenToChanges(info, resp);
+    resp = ListenToChanges(bell, resp);
+    resp = ListenToChanges(light, resp);
+    resp = ListenToChanges(alarm, resp);
+    return resp;
+  }
 
   List<String> get bluetoothName {
     final bleNameSuffix = macAddress.replaceAll(':', '');
@@ -95,6 +109,7 @@ abstract class BikeConnection {
   Future<PowerLevel> setPowerLvl(PowerLevel lvl);
   Future<BellSound> setBellSound(BellSound sound);
   Future<LightState> setLightState(LightState state);
+  Future<bool> setAlarmState(bool state);
   Future<void> unlock();
 }
 

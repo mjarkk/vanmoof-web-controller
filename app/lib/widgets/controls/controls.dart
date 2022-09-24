@@ -88,6 +88,7 @@ class SpeedLimitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final powerState = context.watch<BikePowerState>();
+
     final speedLimit = powerState.speedLimit;
 
     late final int speedLimitIndex;
@@ -111,7 +112,7 @@ class SpeedLimitButton extends StatelessWidget {
 }
 
 class UnlockButton extends StatelessWidget {
-  const UnlockButton(this.bike);
+  const UnlockButton(this.bike, {super.key});
 
   final Bike bike;
 

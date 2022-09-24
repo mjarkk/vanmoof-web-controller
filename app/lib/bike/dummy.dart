@@ -33,4 +33,10 @@ class DummyBikeConnection implements BikeConnection {
     bike.light.lightState = state;
     return state;
   }
+
+  @override
+  Future<bool> setAlarmState(bool state) async {
+    bike.alarm.alarmState = state;
+    return state;
+  }
 }

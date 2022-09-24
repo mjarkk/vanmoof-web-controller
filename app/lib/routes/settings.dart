@@ -28,54 +28,34 @@ class Settings extends StatelessWidget {
           title: const Text('Settings'),
         );
 
-  logout(context) async {
-    removeApiTokens();
-    final navigator = Navigator.of(context);
-    while (true) {
-      final popped = await navigator.maybePop();
-      if (!popped) {
-        break;
-      }
-    }
-    navigator.popAndPushNamed('/login');
-  }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoScaffold(
       overlayStyle: SystemUiOverlayStyle.dark,
       body: Scaffold(
         appBar: buildAppBar(context),
-        body: ListenToBikeState(
-          bike: bike,
-          child: SafeArea(
-            child: Column(
-              children: [
-                Section(
-                  title: 'Bike',
-                  children: [
-                    BellSoundControl(bike),
-                    LightStateControl(bike),
-                  ],
-                ),
-                Section(
-                  title: 'Share bike',
-                  children: [
-                    ShareBikeControl(bike),
-                  ],
-                ),
-                Section(
-                  title: 'Account',
-                  children: [
-                    ElevatedButton(
-                        onPressed: () => logout(context),
-                        child: const Text('Logout')),
-                  ],
-                ),
-              ],
-            ),
+        body: bike.injectState(SafeArea(
+          child: Column(
+            children: [
+              Section(
+                title: 'Bike',
+                children: [
+                  BellSoundControl(bike),
+                  LightStateControl(bike),
+                  AlarmControl(bike),
+                ],
+              ),
+              Section(
+                title: 'Share bike',
+                children: [ShareBikeControl(bike)],
+              ),
+              const Section(
+                title: 'Account',
+                children: [LogoutButton()],
+              ),
+            ],
           ),
-        ),
+        )),
       ),
     );
   }
@@ -203,6 +183,105 @@ class LightStateControl extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AlarmOption extends StatelessWidget {
+  const AlarmOption(this.icon, this.text, {super.key});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 4),
+          child: Icon(icon, size: 18),
+        ),
+        Text(text)
+      ],
+    );
+  }
+}
+
+class AlarmControl extends StatelessWidget {
+  const AlarmControl(this.bike, {super.key});
+
+  final Bike bike;
+
+  mightSetNewAlarmState(bool? value) {
+    if (value != null) bike.connection?.setAlarmState(value);
+  }
+
+  final options = const <bool, AlarmOption>{
+    false: AlarmOption(Icons.alarm_off, 'Off'),
+    true: AlarmOption(Icons.alarm_on, 'On'),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final alarmState = context.watch<BikeAlarmState>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(6),
+          child: Text(
+            'Alarm',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: CupertinoSlidingSegmentedControl(
+            onValueChanged: mightSetNewAlarmState,
+            groupValue: alarmState.alarm,
+            children: options.map((key, value) => MapEntry(key, value)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LogoutButton extends StatelessWidget {
+  const LogoutButton({super.key});
+
+  logout(context) async {
+    removeApiTokens();
+    final navigator = Navigator.of(context);
+    while (true) {
+      final popped = await navigator.maybePop();
+      if (!popped) {
+        break;
+      }
+    }
+    navigator.popAndPushNamed('/login');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => logout(context),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(
+              Icons.logout,
+              size: 18,
+            ),
+            SizedBox(width: 5),
+            Text('Logout'),
+          ],
+        ),
+      ),
     );
   }
 }

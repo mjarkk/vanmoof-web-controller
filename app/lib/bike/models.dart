@@ -2,28 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mooovy/bike/bike.dart';
 
-class ListenToBikeState extends StatelessWidget {
-  const ListenToBikeState({required this.bike, required this.child, super.key});
+class ListenToChanges<T extends ChangeNotifier?> extends StatelessWidget {
+  const ListenToChanges(this.value, this.child, {super.key});
 
-  final Bike bike;
+  final T value;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-        value: bike.power,
-        child: ChangeNotifierProvider.value(
-            value: bike.lock,
-            child: ChangeNotifierProvider.value(
-                value: bike.battery,
-                child: ChangeNotifierProvider.value(
-                    value: bike.bell,
-                    child: ChangeNotifierProvider.value(
-                      value: bike.light,
-                      child: child,
-                    )))));
+    return ChangeNotifierProvider.value(value: value, child: child);
   }
 }
+
+// class ListenToBikeState extends StatelessWidget {
+//   const ListenToBikeState({required this.bike, required this.child, super.key});
+
+//   final Bike bike;
+//   final Widget child;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     Widget resp = ListenToChanges(bike.power, child);
+//     resp = ListenToChanges(bike.lock, resp);
+//     resp = ListenToChanges(bike.battery, resp);
+//     resp = ListenToChanges(bike.info, resp);
+//     resp = ListenToChanges(bike.bell, resp);
+//     resp = ListenToChanges(bike.light, resp);
+//     resp = ListenToChanges(bike.alarm, resp);
+//     return resp;
+//   }
+// }
 
 class BikePowerState extends ChangeNotifier {
   SpeedLimit _speedLimit = SpeedLimit.eu;
@@ -81,6 +89,15 @@ class BikeLightState extends ChangeNotifier {
   LightState get lightState => _lightState;
   set lightState(LightState value) {
     _lightState = value;
+    notifyListeners();
+  }
+}
+
+class BikeAlarmState extends ChangeNotifier {
+  bool _alarm = true;
+  bool get alarm => _alarm;
+  set alarmState(bool value) {
+    _alarm = value;
     notifyListeners();
   }
 }

@@ -304,11 +304,17 @@ class RealBikeConnection implements BikeConnection {
   }
 
   Future<LightState> bltReadLightState() async {
-    await bltReadAndDecrypt(lightMode!);
     final value = await bltReadAndDecrypt(lightMode!);
     final parsedState = _lightStateToEnum(value.isEmpty ? 0x0 : value[0]);
     bike.light.lightState = parsedState;
     return parsedState;
+  }
+
+  @override
+  Future<bool> setAlarmState(bool state) async {
+    // TODO
+    bike.alarm.alarmState = state;
+    return state;
   }
 }
 
