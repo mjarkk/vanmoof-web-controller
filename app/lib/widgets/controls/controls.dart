@@ -61,7 +61,8 @@ class PowerLevelButton extends StatelessWidget {
     }
 
     return DraggableControl(
-      label: const ControlButtonLabel(Icons.wind_power, 'Power Level'),
+      label: const ControlButtonLabel(
+          icon: Icons.wind_power, label: 'Power Level'),
       valueLabelForIndex: (int idx) => powerLevelToString(allLevels[idx]),
       levels: allLevels.length,
       selectedLevel: powerLevelIndex,
@@ -101,7 +102,7 @@ class SpeedLimitButton extends StatelessWidget {
 
     return DraggableControl(
       valueLabelForIndex: (int idx) => speedLimitToString(allLevels[idx]),
-      label: const ControlButtonLabel(Icons.speed, 'Speed limit'),
+      label: const ControlButtonLabel(icon: Icons.speed, label: 'Speed limit'),
       levels: allLevels.length,
       selectedLevel: speedLimitIndex,
       onSelectLevel: (l) => onSelectNewLevel(allLevels[l]),
