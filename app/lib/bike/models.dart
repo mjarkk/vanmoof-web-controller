@@ -94,7 +94,7 @@ class BikeLightState extends ChangeNotifier {
 }
 
 class BikeAlarmState extends ChangeNotifier {
-  bool _alarm = true;
+  bool _alarm = false;
   bool get alarm => _alarm;
   set alarmState(bool value) {
     _alarm = value;

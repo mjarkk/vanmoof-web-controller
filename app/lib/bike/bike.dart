@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mooovy/bike/models.dart';
 import 'package:hive/hive.dart';
-import 'package:provider/provider.dart';
 
 part 'bike.g.dart';
 

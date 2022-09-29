@@ -173,7 +173,7 @@ class _DraggableControlState extends State<DraggableControl> {
 }
 
 class Control extends StatelessWidget {
-  Control({
+  const Control({
     required this.icon,
     required this.onPressed,
     this.onLongPress,
