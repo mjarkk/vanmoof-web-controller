@@ -75,13 +75,25 @@ function BikeStats({ bike }: { bike: Bike }) {
     )
 }
 
+interface SpeedLimitFirmwareVersionState {
+    version: string
+    supportsDebugSettings: boolean
+}
+
 function SpeedLimit({ bike }: { bike: Bike }) {
     const [currentSpeedLimit, setCurrentSpeedLimit] = useState<SpeedLimitEnum | undefined>(undefined)
-    const [currentFirmwareVersion, setCurrentFirmwareVersion] = useState<string | undefined>(undefined)
+    const [currentFirmwareVersion, setCurrentFirmwareVersion] = useState<SpeedLimitFirmwareVersionState>()
 
     const obtainSpeedLimitFromBike = () => bike.getSpeedLimit().then(setCurrentSpeedLimit)
-    const obtainFirmwareVersionFromBike = () => bike.bikeFirmwareVersion().then(setCurrentFirmwareVersion)
-    useEffect(() => { 
+    const obtainFirmwareVersionFromBike = async () => {
+        const version = await bike.bikeFirmwareVersion()
+        setCurrentFirmwareVersion({
+            version,
+            supportsDebugSettings: compareVersions('1.7.6', version) >= 0
+        })
+    }
+
+    useEffect(() => {
         obtainSpeedLimitFromBike()
         obtainFirmwareVersionFromBike()
     }, [])
@@ -91,26 +103,20 @@ function SpeedLimit({ bike }: { bike: Bike }) {
         setCurrentSpeedLimit(await bike.setSpeedLimit(id))
     }
 
-    const options: Array<[string, number, SpeedLimitEnum, string?]> = [
+    const options: Array<[string, number, SpeedLimitEnum]> = [
         ['🇯🇵', 24, SpeedLimitEnum.JP],
         ['🇪🇺', 25, SpeedLimitEnum.EU],
         ['🇺🇸', 32, SpeedLimitEnum.US],
-        ['😎', 37, SpeedLimitEnum.NO_LIMIT, '1.7.6'],
     ]
-
-    const getPossibleSpeedOptions = (): Array<[string, number, SpeedLimitEnum, string?]> => {
-        return options.filter(([, , , latestSupportedFirmwareVersion]) => {
-            if (latestSupportedFirmwareVersion == undefined || currentFirmwareVersion == undefined) return true
-            const firmwareTooNew: Boolean = compareVersions(latestSupportedFirmwareVersion, currentFirmwareVersion) < 1
-            return !firmwareTooNew;
-        })
+    if (currentFirmwareVersion?.supportsDebugSettings) {
+        options.push(['😎', 37, SpeedLimitEnum.NO_LIMIT])
     }
 
     return (
         <>
             <h3>Speed limit</h3>
             <div style={{ display: 'inline-block' }}>
-                {getPossibleSpeedOptions().map(([countryFlag, maxSpeed, id]) =>
+                {options.map(([countryFlag, maxSpeed, id]) =>
                     <SetSpeedLimitButton
                         key={id}
                         country={countryFlag}
@@ -224,8 +230,8 @@ function PowerLevel({ bike }: { bike: Bike }) {
 
     const obtainFromBike = () => bike.getPowerLvl().then(setCurrentLevel)
     const obtainFirmwareVersionFromBike = () => bike.bikeFirmwareVersion().then(setCurrentFirmwareVersion)
-    useEffect(() => { 
-        obtainFromBike() 
+    useEffect(() => {
+        obtainFromBike()
         obtainFirmwareVersionFromBike()
     }, [])
 
