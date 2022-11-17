@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ControlButtonLabel extends StatelessWidget {
-  const ControlButtonLabel(this.icon, [this.label]);
+  const ControlButtonLabel({super.key, required this.icon, this.label});
 
   final IconData icon;
   final String? label;
@@ -173,7 +173,7 @@ class _DraggableControlState extends State<DraggableControl> {
 }
 
 class Control extends StatelessWidget {
-  Control({
+  const Control({
     required this.icon,
     required this.onPressed,
     this.onLongPress,

@@ -6,7 +6,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:mooovy/bike/bike.dart';
 import 'package:mooovy/bike/real.dart';
 import 'package:mooovy/bike/dummy.dart';
-import 'package:mooovy/bike/models.dart';
 import 'package:mooovy/local_storage.dart';
 import 'package:mooovy/widgets/controls/controls.dart';
 import 'package:mooovy/widgets/home_bikes_view/bikes_view.dart';
