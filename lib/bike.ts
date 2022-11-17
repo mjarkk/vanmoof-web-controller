@@ -132,6 +132,11 @@ export class Bike {
         return strValue.split('.').map(part => part.match(/^0+(.+)/)?.[1] ?? part).join('.')
     }
 
+    async batteryChargingLevel(): Promise<number> {
+        const value = await this.bluetoothRead(MOTOR_BATTERY_LEVEL);
+        return value[0];
+    }
+
     // returns the distance in kilometers
     async bikeDistance(): Promise<number> {
         const distanceInBytes = await this.bluetoothRead(DISTANCE)

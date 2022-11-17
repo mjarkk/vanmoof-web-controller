@@ -5,6 +5,7 @@ import { ShareBike } from './sharing/ShareBike'
 import { Button } from './Button'
 import { Api, ApiContext } from '../lib/api'
 import { CurrentShares } from './sharing/CurrentShares'
+import { compareVersions } from 'compare-versions'
 
 export interface BikeControlsArgs {
     bike: Bike
@@ -35,12 +36,14 @@ function BikeStats({ bike }: { bike: Bike }) {
     const [info, setInfo] = useState<{
         version?: string
         distance?: number
+        batteryPercentage?: number
     }>({})
 
     const loadInfo = async () => {
         setInfo({
             version: await bike.bikeFirmwareVersion(),
             distance: await bike.bikeDistance(),
+            batteryPercentage: await bike.batteryChargingLevel()
         })
     }
 
@@ -53,6 +56,7 @@ function BikeStats({ bike }: { bike: Bike }) {
             <h3>Bike info</h3>
             <div className='bikeInfo'>
                 <p>Version: <b>{info.version ?? 'loading..'}</b></p>
+                <p>Battery percentage: <strong>{info.batteryPercentage ? info.batteryPercentage + '%' : 'Loading...'}</strong></p>
                 <p>Distance driven: <b>{info.distance ? info.distance + ' KM' : 'loading..'}</b></p>
                 <p>Mac: <b>{bike.mac}</b></p>
                 <style jsx>{`
@@ -71,11 +75,28 @@ function BikeStats({ bike }: { bike: Bike }) {
     )
 }
 
+interface SpeedLimitFirmwareVersionState {
+    version: string
+    supportsDebugSettings: boolean
+}
+
 function SpeedLimit({ bike }: { bike: Bike }) {
     const [currentSpeedLimit, setCurrentSpeedLimit] = useState<SpeedLimitEnum | undefined>(undefined)
+    const [currentFirmwareVersion, setCurrentFirmwareVersion] = useState<SpeedLimitFirmwareVersionState>()
 
-    const obtainFromBike = () => bike.getSpeedLimit().then(setCurrentSpeedLimit)
-    useEffect(() => { obtainFromBike() }, [])
+    const obtainSpeedLimitFromBike = () => bike.getSpeedLimit().then(setCurrentSpeedLimit)
+    const obtainFirmwareVersionFromBike = async () => {
+        const version = await bike.bikeFirmwareVersion()
+        setCurrentFirmwareVersion({
+            version,
+            supportsDebugSettings: compareVersions('1.7.6', version) >= 0
+        })
+    }
+
+    useEffect(() => {
+        obtainSpeedLimitFromBike()
+        obtainFirmwareVersionFromBike()
+    }, [])
 
     const newLimit = async (id: SpeedLimitEnum) => {
         setCurrentSpeedLimit(id)
@@ -86,8 +107,10 @@ function SpeedLimit({ bike }: { bike: Bike }) {
         ['🇯🇵', 24, SpeedLimitEnum.JP],
         ['🇪🇺', 25, SpeedLimitEnum.EU],
         ['🇺🇸', 32, SpeedLimitEnum.US],
-        ['😎', 37, SpeedLimitEnum.NO_LIMIT],
     ]
+    if (currentFirmwareVersion?.supportsDebugSettings) {
+        options.push(['😎', 37, SpeedLimitEnum.NO_LIMIT])
+    }
 
     return (
         <>
@@ -203,29 +226,42 @@ function BellTone({ bike }: { bike: Bike }) {
 
 function PowerLevel({ bike }: { bike: Bike }) {
     const [currentLevel, setCurrentLevel] = useState<PowerLevelEnum | undefined>(undefined)
+    const [currentFirmwareVersion, setCurrentFirmwareVersion] = useState<string | undefined>(undefined)
 
     const obtainFromBike = () => bike.getPowerLvl().then(setCurrentLevel)
-    useEffect(() => { obtainFromBike() }, [])
+    const obtainFirmwareVersionFromBike = () => bike.bikeFirmwareVersion().then(setCurrentFirmwareVersion)
+    useEffect(() => {
+        obtainFromBike()
+        obtainFirmwareVersionFromBike()
+    }, [])
 
     const setNewLevel = async (id: PowerLevelEnum) => {
         setCurrentLevel(id)
         setCurrentLevel(await bike.setPowerLvl(id))
     }
 
-    const levels: Array<[string, PowerLevelEnum]> = [
+    const levels: Array<[string, PowerLevelEnum, string?]> = [
         ['0', PowerLevelEnum.Off],
         ['1', PowerLevelEnum.First],
         ['2', PowerLevelEnum.Second],
         ['3', PowerLevelEnum.Third],
         ['4', PowerLevelEnum.Fourth],
-        ['5', PowerLevelEnum.Max],
+        ['5', PowerLevelEnum.Max, '1.7.6'],
     ]
+
+    const getPossibleSpeedLevels = (): Array<[string, PowerLevelEnum, string?]> => {
+        return levels.filter(([, , latestSupportedFirmwareVersion]) => {
+            if (latestSupportedFirmwareVersion == undefined || currentFirmwareVersion == undefined) return true
+            const firmwareTooNew: Boolean = compareVersions(latestSupportedFirmwareVersion, currentFirmwareVersion) < 1
+            return !firmwareTooNew;
+        })
+    }
 
     return (
         <>
             <h3>Power level</h3>
             <div style={{ display: 'inline-block' }}>
-                {levels.map(([label, id]) =>
+                {getPossibleSpeedLevels().map(([label, id]) =>
                     <SetPowerLevelButton
                         key={id}
                         level={label}
