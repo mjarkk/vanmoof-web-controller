@@ -32,10 +32,7 @@ Future<ApiClient> authenticate(String email, String password) async {
 }
 
 class ApiClient {
-  const ApiClient({
-    required this.token,
-    required this.refreshToken,
-  });
+  const ApiClient({required this.token, required this.refreshToken});
 
   final String token;
   final String refreshToken;

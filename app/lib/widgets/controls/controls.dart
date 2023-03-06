@@ -134,10 +134,7 @@ class UnlockButton extends StatelessWidget {
 }
 
 class FixedGrid extends StatelessWidget {
-  const FixedGrid({
-    required this.children,
-    super.key,
-  });
+  const FixedGrid({required this.children, super.key});
 
   final List<Widget> children;
 
