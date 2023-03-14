@@ -136,7 +136,6 @@ class _ShareHolderList extends StatefulWidget {
   const _ShareHolderList({
     required this.shareHolders,
     required this.refreshList,
-    super.key,
   });
 
   final dynamic shareHolders;
