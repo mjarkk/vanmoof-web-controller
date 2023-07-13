@@ -79,7 +79,10 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                         const a = document.createElement('a')
                         a.href = url
                         a.download = 'bike-credentials.json'
+                        document.body.appendChild(a)
                         a.click()
+                        document.body.removeChild(a)
+                        setTimeout(() => URL.revokeObjectURL(url), 0) // clean up the URL object
                     }
                     }
                     secondary
