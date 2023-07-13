@@ -76,15 +76,20 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                     onClick={() => {
                         const blob = new Blob([JSON.stringify(bikeCredentials)], { type: 'application/json' })
                         const url = URL.createObjectURL(blob)
-                        const a = document.createElement('a')
-                        a.href = url
-                        a.download = 'bike-credentials.json'
-                        document.body.appendChild(a)
-                        a.click()
-                        document.body.removeChild(a)
-                        setTimeout(() => URL.revokeObjectURL(url), 0) // clean up the URL object
-                    }
-                    }
+
+                        // If the user is on iOS and has the Bluefy browser, we can't save the file directly
+                        // so we'll just show the user the JSON file and they can save it manually
+                        if (navigator.userAgent.includes('iPhone') && navigator.userAgent.includes('Bluefy')) {
+                            // Show the user the JSON file
+                            window.open(url)
+                        } else {
+                            // Save the file
+                            const a = document.createElement('a')
+                            a.href = url
+                            a.download = 'vm-bike-credentials.json'
+                            a.click()
+                        }
+                    }}
                     secondary
                 >
                     Save login info
