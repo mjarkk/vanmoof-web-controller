@@ -80,8 +80,23 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                         // If the user is on iOS and has the Bluefy browser, we can't save the file directly
                         // so we'll just show the user the JSON file and they can save it manually
                         if (navigator.userAgent.includes('iPhone') && navigator.userAgent.includes('Bluefy')) {
-                            // Show the user the JSON file
-                            window.open(url)
+                            // Show the user the JSON on the same page in a scrollable div
+                            const div = document.createElement('div')
+
+                            const pre = document.createElement('pre')
+
+                            const code = document.createElement('code')
+
+                            code.innerText = JSON.stringify(bikeCredentials, null, 2)
+
+                            pre.appendChild(code)
+
+                            div.appendChild(pre)
+
+                            document.body.appendChild(div)
+
+                            // Scroll to the bottom of the page
+                            window.scrollTo(0, document.body.scrollHeight)
                         } else {
                             // Save the file
                             const a = document.createElement('a')
