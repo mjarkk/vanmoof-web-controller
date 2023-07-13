@@ -9,11 +9,29 @@ import { compareVersions } from 'compare-versions'
 
 export interface BikeControlsArgs {
     bike: Bike
-    api: Api
+    api: Api | undefined
     disconnect: () => void
 }
 
 export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs) {
+    // Check if api is available
+    if (!api) {
+        console.error('Api not available')
+
+        return (
+            <BikeContext.Provider value={bike}>
+                <BikeStats bike={bike} />
+                <SpeedLimit bike={bike} />
+                <PowerLevel bike={bike} />
+                <BellTone bike={bike} />
+                <SoundBoard />
+                <Button onClick={disconnect} secondary>
+                    Disconnect bike
+                </Button>
+            </BikeContext.Provider>
+        )
+    }
+
     return (
         <BikeContext.Provider value={bike}>
             <ApiContext.Provider value={api}>

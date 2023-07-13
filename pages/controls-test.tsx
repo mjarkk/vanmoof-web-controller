@@ -55,6 +55,10 @@ class FakeBike {
     async playSound(id: number) {
         console.log('play sound:', id)
     }
+
+    async batteryChargingLevel() {
+        return 100
+    }
 }
 
 const dummyBike: BikeCredentials = {
@@ -90,20 +94,18 @@ export default function ControlsTest() {
             const apiCredential = localStorage.getItem('vm-api-credentials')
             const rawBikeCredentials = localStorage.getItem('vm-bike-credentials')
 
-            if (!apiCredential || !rawBikeCredentials)
-                throw 'no cached credentials that can be used, you can login on the root page (/) page to get them'
+            if (!rawBikeCredentials)
+                throw 'No cached credentials that can be used, you can login on the root page (/) page to get them'
 
-            const apiCredentials = JSON.parse(apiCredential)
+            const apiCredentials = apiCredential ? JSON.parse(apiCredential) : undefined
             const parsedBikeCredentials = JSON.parse(rawBikeCredentials)
 
-            const parsedApi = new Api(apiCredentials)
-
             setCredentials({
-                api: parsedApi,
+                api: apiCredentials ? new Api(apiCredentials) : undefined,
                 bikes: [dummyBike, ...parsedBikeCredentials],
             })
         } catch (e) {
-            console.log('unable to parse bike/api credentials from local storage, error:', e)
+            console.log('Unable to parse bike/api credentials from local storage, error:', e)
         }
     }, [])
 

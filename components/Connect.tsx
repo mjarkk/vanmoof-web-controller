@@ -35,7 +35,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
             setBikeInstance(bike)
         } catch (e) {
             const eStr = `${e}`
-            // eStr = 2 if you cancled the bluetooth connection screen on the Bluefy browser
+            // eStr = 2 if you canceled the bluetooth connection screen on the Bluefy browser
             if (eStr != '2' && !/permission|cancelled/.test(eStr)) setError(eStr)
             if (reachedAuth) setShowWakeupMessage(true)
         } finally {
@@ -68,6 +68,23 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                     secondary
                 >
                     Back to login
+                </Button>
+            </P>
+
+            <P vertical={10}>
+                <Button
+                    onClick={() => {
+                        const blob = new Blob([JSON.stringify(bikeCredentials)], { type: 'application/json' })
+                        const url = URL.createObjectURL(blob)
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download = 'bike-credentials.json'
+                        a.click()
+                    }
+                    }
+                    secondary
+                >
+                    Save login info
                 </Button>
             </P>
         </>
