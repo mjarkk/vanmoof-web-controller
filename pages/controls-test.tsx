@@ -17,7 +17,19 @@ class FakeBike {
         this.id = credentials.id
         this.mac = credentials.mac
     }
+    
+    async batteryChargingLevel() {
+        return 100
+    }
 
+    async initiateBellSoundTransfer(file: Uint8Array) {
+        console.log('initiateBellSoundTransfer', file)
+    }
+
+    async sendBellSoundChunk(chunk: Uint8Array) {
+        console.log('sendBellSoundChunk', chunk)
+    }   
+    
     async bikeFirmwareVersion() {
         return this.firmwareVersion
     }
