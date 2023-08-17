@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { Bike } from "../../lib/bike"
 import SelectFileStep from "./SelectFileStep"
-import ConvertStep from "./ConvertStep"
 import UploadStep from "./UploadStep"
 import { Callout, CalloutKind } from "../Callouts"
 import WalkthroughButton from "./WalkthroughButton"
+import dynamic from "next/dynamic"
+
+const ConvertStep = dynamic(() => import("./ConvertStep"), { ssr: false })
 
 export type CommonProps = {
     onDismiss: () => void
