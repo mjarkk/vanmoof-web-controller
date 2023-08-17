@@ -94,15 +94,16 @@ export default function ControlsTest() {
             const apiCredential = localStorage.getItem('vm-api-credentials')
             const rawBikeCredentials = localStorage.getItem('vm-bike-credentials')
 
-            if (!rawBikeCredentials)
-                throw 'No cached credentials that can be used, you can login on the root page (/) page to get them'
+            if (!apiCredential && !rawBikeCredentials) throw 'no cached credentials that can be used, you can login on the root page (/) page to get them'
 
-            const apiCredentials = apiCredential ? JSON.parse(apiCredential) : undefined
-            const parsedBikeCredentials = JSON.parse(rawBikeCredentials)
+            const apiCredentials = apiCredential ? JSON.parse(apiCredential) : null
+            const parsedBikeCredentials = rawBikeCredentials ? JSON.parse(rawBikeCredentials) : null
+
+            const parsedApi = new Api(apiCredentials)
 
             setCredentials({
-                api: apiCredentials ? new Api(apiCredentials) : undefined,
-                bikes: [dummyBike, ...parsedBikeCredentials],
+                api: parsedApi,
+                bikes: [dummyBike, ...(parsedBikeCredentials ? [parsedBikeCredentials] : [])],
             })
         } catch (e) {
             console.log('Unable to parse bike/api credentials from local storage, error:', e)

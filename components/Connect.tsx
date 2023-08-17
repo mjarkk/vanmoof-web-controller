@@ -15,6 +15,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [showWakeupMessage, setShowWakeupMessage] = useState(false)
+    const [ShowBackupKey, setShowBackupKey] = useState(false)
 
     const clickConnect = async (credentials: BikeCredentials) => {
         let reachedAuth = false
@@ -48,6 +49,19 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
             clickConnect(bikeCredentials[0])
     }, [])
 
+    const parsedCredentials = JSON.stringify(bikeCredentials, null, 2)
+
+    const handleCopy = () => navigator.clipboard.writeText(parsedCredentials)
+
+    const handleDownload = () => {
+        const element = document.createElement('a')
+        const file = new Blob([parsedCredentials], { type: 'text/plain' })
+        element.href = URL.createObjectURL(file)
+        element.download = 'vm-bike-credentials.json'
+        document.body.appendChild(element)
+        element.click()
+    }
+
     return (
         <>
             <P vertical={10}>
@@ -71,45 +85,41 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                 </Button>
             </P>
 
-            <P vertical={10}>
-                <Button
-                    onClick={() => {
-                        const blob = new Blob([JSON.stringify(bikeCredentials, null, 4)], { type: 'application/json' })
-                        const url = URL.createObjectURL(blob)
+            {/* If Backup button pressed hide it */}
+            {!ShowBackupKey && (
+                <P vertical={10}>
+                    <Button
+                        onClick={() => setShowBackupKey(true)}
+                        secondary
+                    >
+                        Backup login credentials
+                    </Button>
+                </P>
+            )}
 
-                        // If the user is on iOS and has the Bluefy browser, we can't save the file directly
-                        // so we'll just show the user the JSON file and they can save it manually
-                        if (navigator.userAgent.includes('iPhone') && navigator.userAgent.includes('Bluefy')) {
-                            // Show the user the JSON on the same page in a scrollable div
-                            const div = document.createElement('div')
+            {/* If Backup button pressed show the key */}
+            {ShowBackupKey && (
+                <>
+                    {/* Copy button */}
+                    <Button onClick={handleCopy} secondary>
+                        Copy credentials to clipboard
+                    </Button>
 
-                            const pre = document.createElement('pre')
+                    <P vertical={10}>
+                        {/* Download button */}
+                        <Button onClick={handleDownload} secondary>
+                            Download credentials as file
+                        </Button>
+                    </P>
 
-                            const code = document.createElement('code')
-
-                            code.innerText = JSON.stringify(bikeCredentials, null, 2)
-
-                            pre.appendChild(code)
-
-                            div.appendChild(pre)
-
-                            document.body.appendChild(div)
-
-                            // Scroll to the bottom of the page
-                            window.scrollTo(0, document.body.scrollHeight)
-                        } else {
-                            // Save the file
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.download = 'vm-bike-credentials.json'
-                            a.click()
-                        }
-                    }}
-                    secondary
-                >
-                    Save login info
-                </Button>
-            </P>
+                    {/* Show the key */}
+                    <textarea
+                        readOnly
+                        value={parsedCredentials}
+                        style={{ width: '85%', height: '200px' }}
+                    />
+                </>
+            )}
         </>
     )
 }

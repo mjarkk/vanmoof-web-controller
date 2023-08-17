@@ -90,6 +90,10 @@ export default function Login({ setCredentials }: LoginArgs) {
         }
     }
 
+    const onFileClick = () => {
+        setLoginMethod('file')
+    }
+
     return (
         <div className='loginContainer'>
             <form className='loginForm' onSubmit={onSubmit} style={{ display: loginMethod === 'email' ? 'block' : 'none' }}>
@@ -114,30 +118,7 @@ export default function Login({ setCredentials }: LoginArgs) {
                         value={login.password}
                         onChange={e => setLogin(v => ({ ...v, password: e.target.value }))}
                         type="password"
-                    />
-                </div>
-                <div className='loginBtn'>
-                    <P top={20}>
-                        <Button
-                            disabled={loading}
-                            type='submit'
-                        >Login</Button>
-                    </P>
-                </div>
-                <FormError error={error} />
-            </form>
-            <form className='loginForm' onSubmit={onSubmit} style={{ display: loginMethod === 'file' ? 'block' : 'none' }}>
-                <Callout kind={CalloutKind.Warning}>This website is <b>NOT</b> an offical VanMoof service/product</Callout>
-                <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
-                Login using your local JSON file
-                <div className='formField'>
-                    <label htmlFor='file'>Select JSON file</label>
-                    <input
-                        disabled={loading}
-                        id='file'
-                        type='file'
-                        accept='.json'
-                        onChange={onFileChange}
+                        placeholder="********"
                     />
                 </div>
                 <div className='loginBtn'>
@@ -151,26 +132,17 @@ export default function Login({ setCredentials }: LoginArgs) {
                 <FormError error={error} />
             </form>
             <div className='loginMethod'>
-                <label>
-                    <input
-                        type='radio'
-                        name='loginMethod'
-                        value='email'
-                        checked={loginMethod === 'email'}
-                        onChange={() => setLoginMethod('email')}
-                    />
-                    Login using email and password
-                </label>
-                <label>
-                    <input
-                        type='radio'
-                        name='loginMethod'
-                        value='file'
-                        checked={loginMethod === 'file'}
-                        onChange={() => setLoginMethod('file')}
-                    />
-                    Login using local JSON file
-                </label>
+                {/* Have text with like login using a file which is clickable looks like link and when u click it you can instantly select a file and u will be logged in with it*/}
+                <label htmlFor='file' style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={onFileClick}>Login using a file</label>
+                <input
+                    disabled={loading}
+                    id='file'
+                    type='file'
+                    onChange={onFileChange}
+                    style={{ display: 'none' }}
+                    accept='.json,.txt'
+                />
+
             </div>
             <style jsx>{`
                 .loginContainer {
