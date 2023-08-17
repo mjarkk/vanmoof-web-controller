@@ -23,7 +23,7 @@ export default function Login({ setCredentials }: LoginArgs) {
         password: '',
     })
 
-    const [loginMethod, setLoginMethod] = useState('email')
+    const [loginMethod, setLoginMethod] = useState<'email' | 'file'>('email')
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
