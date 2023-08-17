@@ -25,28 +25,29 @@ export default function BellSoundWalkthrough({ bike, onDismiss }: CommonProps & 
     const [convertedFile, setConvertedFile] = useState<Uint8Array | null>(null)
     const [error, setError] = useState<string | null>(null)
 
-    const onFileSelected = (file: File) => {
-        setError("")
-        setSelectedFile(file)
-        setCurrentStep(WalkthroughStep.Convert)
+    const goToStep = (step: WalkthroughStep) => {
+        setError(null)
+        setCurrentStep(step)
     }
 
-    const onConversionCompleted = (convertedFile: Uint8Array) => {
-        setError("")
+    const onFileSelected = (file: File) => {
+        setSelectedFile(file)
+        goToStep(WalkthroughStep.Convert)
+    }
 
-        if (convertedFile.byteLength > 400_000) {
+    const onConversionCompleted = (file: Uint8Array) => {
+        if (file.byteLength > 400_000) {
+            goToStep(WalkthroughStep.SelectFile)
             setError("Converted file is too large. Please select a shorter sound.")
-            setCurrentStep(WalkthroughStep.SelectFile)
             return
         }
 
-        setConvertedFile(convertedFile)
-        setCurrentStep(WalkthroughStep.Upload)
+        setConvertedFile(file)
+        goToStep(WalkthroughStep.Upload)
     }
 
     const onUploadCompleted = () => {
-        setError("")
-        setCurrentStep(WalkthroughStep.Done)
+        goToStep(WalkthroughStep.Done)
     }
 
     const stepComponent = (() => {
