@@ -74,7 +74,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
             <P vertical={10}>
                 <Button
                     onClick={() => {
-                        const blob = new Blob([JSON.stringify(bikeCredentials)], { type: 'application/json' })
+                        const blob = new Blob([JSON.stringify(bikeCredentials, null, 4)], { type: 'application/json' })
                         const url = URL.createObjectURL(blob)
 
                         // If the user is on iOS and has the Bluefy browser, we can't save the file directly
