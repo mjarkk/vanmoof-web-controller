@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.4",
+    "@ffmpeg/util": "^0.12.0",
     "compare-versions": "^5.0.1",
+    "crc-32": "^1.2.2",
     "next": "12.2.0",
     "next-pwa": "^5.5.4",
     "react": "18.2.0",
@@ -24,6 +27,6 @@
     "@types/web-bluetooth": "^0.0.14",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.0",
-    "typescript": "4.7.4"
+    "typescript": "^4.9.5"
   }
 }

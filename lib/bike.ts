@@ -1,4 +1,5 @@
 import { createContext } from 'react'
+import CRC32 from 'crc-32'
 import { AESECB } from './aes'
 import { Queue } from './queue'
 
@@ -193,6 +194,23 @@ export class Bike {
         const result = await this.bluetoothReadWrite(SPEED_LIMIT, new Uint8Array([limit, 0x1]), { timeout: 400 })
         return uwnrapSpeedLimit(result)
     }
+
+    async initiateBellSoundTransfer(buffer: ArrayBuffer): Promise<any> {
+        const fileHeader = new Uint8Array(9)
+        fileHeader.set([0x19], 0)
+
+        const fileSize = buffer.byteLength
+        fileHeader.set([fileSize >> 24, fileSize >> 16, fileSize >> 8, fileSize], 1)
+
+        const crc = CRC32.buf(new Uint8Array(buffer))
+        fileHeader.set([crc >> 24, crc >> 16, crc >> 8, crc], 5)
+
+        return await this.bluetoothWrite(FIRMWARE_METADATA, new Uint8Array(fileHeader))
+    }
+
+    async sendBellSoundChunk(chunk: ArrayBuffer): Promise<any> {
+        return await this.bluetoothWrite(FIRMWARE_BLOCK, new Uint8Array(chunk), false)
+    }
 }
 
 export interface BikeCredentials {
@@ -221,7 +239,7 @@ export async function connectToBike(credentials: BikeCredentials): Promise<Bike>
             { name: 'ES3-' + credentials.mac.replaceAll(':', '').toUpperCase() },
             { name: 'EX3-' + credentials.mac.replaceAll(':', '').toUpperCase() }
         ],
-        optionalServices: [SECURITY_SERVICE, DEFENSE_SERVICE, MOVEMENT_SERVICE, BIKE_INFO_SERVICE, BIKE_STATE_SERVICE, SOUND_SERVICE, LIGHT_SERVICE]
+        optionalServices: [SECURITY_SERVICE, DEFENSE_SERVICE, MOVEMENT_SERVICE, BIKE_INFO_SERVICE, BIKE_STATE_SERVICE, SOUND_SERVICE, LIGHT_SERVICE, FIRMWARE_SERVICE]
     })
 
     const gatt = device.gatt
@@ -311,3 +329,8 @@ export const BELL_SOUND = c(SOUND_SERVICE, "6acc5574-e631-4069-944d-b8ca7598ad50
 const LIGHT_SERVICE = "6acc5580-e631-4069-944d-b8ca7598ad50"
 export const LIGHT_MODE = c(LIGHT_SERVICE, "6acc5581-e631-4069-944d-b8ca7598ad50")
 export const SENSOR = c(LIGHT_SERVICE, "6acc5584-e631-4069-944d-b8ca7598ad50")
+
+// Firmware upload
+const FIRMWARE_SERVICE = "6acc5510-e631-4069-944d-b8ca7598ad50"
+export const FIRMWARE_METADATA = c(FIRMWARE_SERVICE, "6acc5511-e631-4069-944d-b8ca7598ad50")
+export const FIRMWARE_BLOCK = c(FIRMWARE_SERVICE, "6acc5512-e631-4069-944d-b8ca7598ad50")
