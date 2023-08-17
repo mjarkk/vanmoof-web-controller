@@ -6,6 +6,8 @@ import { FFmpeg } from "@ffmpeg/ffmpeg"
 import { fetchFile, toBlobURL } from "@ffmpeg/util"
 import WalkthroughButton from "./WalkthroughButton"
 
+const globalFfmpeg = new FFmpeg()
+
 export default function ConvertStep({ onDismiss, selectedFile, onConversionCompleted }: CommonProps & {
     selectedFile: File,
     onConversionCompleted: (convertedFile: Uint8Array) => void,
@@ -13,7 +15,6 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
     const [ffmpegLog, setFfmpegLog] = useState<string>("")
     const [showLog, setShowLog] = useState<boolean>(false)
     const [converting, setConverting] = useState<boolean>(false)
-    const ffmpegRef = useRef<FFmpeg>(new FFmpeg())
 
     const log = (message: string) => {
         console.log(`[ConvertStep] ${message}`)
@@ -22,7 +23,7 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
 
     const loadFfmpeg = async () => {
         const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.2/dist/umd"
-        const ffmpeg = ffmpegRef.current
+        const ffmpeg = globalFfmpeg
         if (ffmpeg.loaded) return
 
         ffmpeg.on("log", ({ message }) => {
@@ -59,18 +60,50 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
         return fileWithHeader
     }
 
+    const getBestSampleRate = (lengthInSeconds: number, currentSampleRate: number): number => {
+        const maxFileSize = 400_000
+
+        const projectedCurrentSize = currentSampleRate * 2 * lengthInSeconds
+        if (projectedCurrentSize < maxFileSize) return currentSampleRate
+
+        const possibleSampleRates = [
+            44100,
+            22050,
+            16000,
+            11025,
+            8000,
+            6000
+        ]
+
+        for (const sampleRate of possibleSampleRates) {
+            const projectedSize = sampleRate * 2 * lengthInSeconds
+            if (projectedSize < maxFileSize) return sampleRate
+        }
+
+        return 6000
+    }
+
     const startConversion = async () => {
         if (converting) return
         setConverting(true)
 
+        log("Choosing appropriate sample rate...")
+        const audioContext = new AudioContext()
+        const audioBuffer = await audioContext.decodeAudioData(await selectedFile.arrayBuffer())
+        const duration = audioBuffer.duration
+
+        const bestSampleRate = getBestSampleRate(duration, audioBuffer.sampleRate)
+
+        log(`Choosing sample rate of ${bestSampleRate} Hz based on file duration of ${duration} seconds`)
+
         await loadFfmpeg()
-        const ffmpeg = ffmpegRef.current
+        const ffmpeg = globalFfmpeg
 
         log("Loading file into memory...")
         await ffmpeg.writeFile(selectedFile.name, await fetchFile(selectedFile))
 
         log("Converting file...")
-        const ffmpegArgs = "-acodec pcm_s16le -ac 1 -ar 22050 -map_metadata -1 -fflags +bitexact".split(" ")
+        const ffmpegArgs = `-acodec pcm_s16le -ac 1 -ar ${bestSampleRate} -map_metadata -1 -fflags +bitexact`.split(" ")
         await ffmpeg.exec(["-i", selectedFile.name, ...ffmpegArgs, "output.wav"])
 
         const convertedFile = await ffmpeg.readFile("output.wav", "binary") as Uint8Array

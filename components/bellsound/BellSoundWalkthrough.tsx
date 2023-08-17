@@ -53,11 +53,20 @@ export default function BellSoundWalkthrough({ bike, onDismiss }: CommonProps & 
     const stepComponent = (() => {
         switch (currentStep) {
             case WalkthroughStep.SelectFile:
-                return <SelectFileStep onDismiss={onDismiss} onFileSelected={onFileSelected} />
+                return <SelectFileStep 
+                    onDismiss={onDismiss}
+                    onFileSelected={onFileSelected} />
             case WalkthroughStep.Convert:
-                return <ConvertStep onDismiss={onDismiss} selectedFile={selectedFile!} onConversionCompleted={onConversionCompleted} />
+                return <ConvertStep
+                    onDismiss={onDismiss}
+                    selectedFile={selectedFile!}
+                    onConversionCompleted={onConversionCompleted} />
             case WalkthroughStep.Upload:
-                return <UploadStep bike={bike} onDismiss={onDismiss} convertedFile={convertedFile!} onUploadCompleted={onUploadCompleted} />
+                return <UploadStep
+                    bike={bike}
+                    onDismiss={onDismiss}
+                    convertedFile={convertedFile!}
+                    onUploadCompleted={onUploadCompleted} />
             case WalkthroughStep.Done:
                 return <DoneStep onDismiss={onDismiss} />
             default:
