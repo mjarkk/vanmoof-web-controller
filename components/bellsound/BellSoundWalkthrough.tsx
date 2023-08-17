@@ -34,7 +34,7 @@ export default function BellSoundWalkthrough({ bike, onDismiss }: CommonProps & 
     const onConversionCompleted = (convertedFile: Uint8Array) => {
         setError("")
 
-        if (convertedFile.byteLength > 500_000) {
+        if (convertedFile.byteLength > 400_000) {
             setError("Converted file is too large. Please select a shorter sound.")
             setCurrentStep(WalkthroughStep.SelectFile)
             return
