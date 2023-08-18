@@ -116,7 +116,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                     <textarea
                         readOnly
                         value={parsedCredentials}
-                        style={{ width: '85%', height: '200px' }}
+                        style={{ width: '85%', height: '200px', fontSize: '0.5rem' }}
                     />
                 </>
             )}
