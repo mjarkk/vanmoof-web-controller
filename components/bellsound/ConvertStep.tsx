@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CommonProps } from "./BellSoundWalkthrough"
 import { FFmpeg } from "@ffmpeg/ffmpeg"
 import { fetchFile, toBlobURL } from "@ffmpeg/util"
@@ -16,6 +16,10 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
     const [ffmpegLog, setFfmpegLog] = useState<string>("")
     const [showLog, setShowLog] = useState<boolean>(false)
     const [converting, setConverting] = useState<boolean>(false)
+
+    useEffect(() => {
+        startConversion()
+    }, [])
 
     const log = (message: string) => {
         console.log(`[ConvertStep] ${message}`)
@@ -133,12 +137,10 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
     return (
         <>
             <p>Selected file: {selectedFile.name}</p>
-            {converting ?
-                <p>Converting...</p> :
-                <p>Now we need to convert your file to the VanMoof bell format. Press Convert to continue.</p>}
+            <p>Converting to VanMoof bell format...</p>
+
             {showLog ? <textarea readOnly value={ffmpegLog}></textarea> : null}
 
-            <WalkthroughButton onClick={startConversion} disabled={converting} isPrimary>Convert</WalkthroughButton>
             {!showLog ? <WalkthroughButton onClick={() => setShowLog(true)}>Show Log</WalkthroughButton> : null}
             <WalkthroughButton onClick={onDismiss}>Cancel</WalkthroughButton>
 

@@ -32,7 +32,8 @@ export default function UploadStep({ bike, onDismiss, convertedFile, onUploadCom
 
     return (
         <>
-            <p>Conversion is complete; now we will upload the file to your bike.</p>
+            <p>Your sound has been converted to the VanMoof bell sound format, and is now ready to upload.</p>
+            <p>Press Upload to continue, and keep this device close to your bike.</p>
             {uploading ? <p>Uploading... {Math.round(uploadProgress * 100)}%</p> : null}
 
             <WalkthroughButton onClick={startUpload} disabled={uploading} isPrimary>Upload!</WalkthroughButton>
