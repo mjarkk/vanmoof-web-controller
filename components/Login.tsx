@@ -5,6 +5,7 @@ import { Callout, CalloutKind } from './Callouts'
 import { Button } from './Button'
 import { FormError } from './Form'
 import { P } from './Spacing'
+import { z } from 'zod'
 
 export interface BikeAndApiCredentials {
     api: Api | undefined,
@@ -74,8 +75,53 @@ export default function Login({ setCredentials }: LoginArgs) {
                     throw new Error('Invalid JSON file')
                 }
 
-                // Parse the JSON as BikeCredentials (There could be one bike but also multiple)
-                const bikes = JSON.parse(reader.result as string) as Array<BikeCredentials>
+                let json = JSON.parse(reader.result as string)
+
+                // Check if we have a full response or just the bikeDetails
+                // Get rid of the extra data if we have a full response
+                if (json.data?.bikeDetails) {
+                    json = json.data.bikeDetails
+                }
+
+                // Check if everyting is in the right place
+                // If not, try to fix it
+                if (Array.isArray(json)) {
+                    json.forEach((bike: any) => {
+                        if (bike.macAddress) {
+                            bike.mac = bike.macAddress
+                        }
+
+                        if (bike.key?.encryptionKey) {
+                            bike.encryptionKey = bike.key.encryptionKey
+                        }
+
+                        if (bike.key?.userKeyId) {
+                            bike.userKeyId = bike.key.userKeyId
+                        }
+                    })
+                }
+
+                // Now check with zod if the array contains valid BikeCredentials            
+                const checkedArray = z.array(z.object({
+                    id: z.union([z.string(), z.number()]),
+                    mac: z.string(),
+                    encryptionKey: z.string(),
+                    userKeyId: z.number(),
+                    name: z.string(),
+                    ownerName: z.string(),
+                    modelColor: z.nullable(z.object({
+                        name: z.string(),
+                        primary: z.string(),
+                        secondary: z.string(),
+                    })),
+                    links: z.nullable(z.object({
+                        hash: z.string(),
+                        thumbnail: z.string(),
+                    })),
+                })).parse(json)
+
+                // Save it as an array of BikeCredentials
+                const bikes = checkedArray as Array<BikeCredentials>
 
                 // Store the credentials in local storage
                 localStorage.setItem('vm-bike-credentials', JSON.stringify(bikes))

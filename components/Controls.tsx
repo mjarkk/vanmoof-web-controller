@@ -14,38 +14,22 @@ export interface BikeControlsArgs {
 }
 
 export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs) {
-    // Check if api is available
-    if (!api) {
-        console.error('Api not available')
-
-        return (
-            <BikeContext.Provider value={bike}>
-                <BikeStats bike={bike} />
-                <SpeedLimit bike={bike} />
-                <PowerLevel bike={bike} />
-                <BellTone bike={bike} />
-                <SoundBoard />
-                <Button onClick={disconnect} secondary>
-                    Disconnect bike
-                </Button>
-            </BikeContext.Provider>
-        )
-    }
-
     return (
         <BikeContext.Provider value={bike}>
-            <ApiContext.Provider value={api}>
-                <BikeStats bike={bike} />
-                <SpeedLimit bike={bike} />
-                <PowerLevel bike={bike} />
-                <BellTone bike={bike} />
-                <SoundBoard />
-                <ShareBike bike={bike} api={api} />
-                <CurrentShares bike={bike} api={api} />
-                <Button onClick={disconnect} secondary>
-                    Disconnect bike
-                </Button>
-            </ApiContext.Provider>
+            <BikeStats bike={bike} />
+            <SpeedLimit bike={bike} />
+            <PowerLevel bike={bike} />
+            <BellTone bike={bike} />
+            <SoundBoard />
+            {api ?
+                <ApiContext.Provider value={api}>
+                    <ShareBike bike={bike} api={api} />
+                    <CurrentShares bike={bike} api={api} />
+                </ApiContext.Provider >
+                : undefined}
+            <Button onClick={disconnect} secondary>
+                Disconnect bike
+            </Button>
         </BikeContext.Provider>
     )
 }
