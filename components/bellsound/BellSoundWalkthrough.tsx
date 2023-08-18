@@ -106,8 +106,17 @@ export default function BellSoundWalkthrough({ bike, onDismiss }: CommonProps & 
                     border-radius: 5px;
                     padding: 1.5rem;
                     margin: 0.5rem;
-                    max-height: 80%;
                     max-width: 500px;
+                    overflow: scroll;
+                }
+
+                @media (max-width: 500px) {
+                    .modal {
+                        border-radius: 0;
+                        width: 100%;
+                        height: 100%;
+                        margin: 0;
+                    }
                 }
 
                 h1 {

@@ -149,7 +149,7 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
 
                 textarea {
                     display: block;
-                    min-width: 450px;
+                    min-width: 100%;
                     min-height: 150px;
                     margin-bottom: 1em;
                 }
