@@ -17,11 +17,11 @@ export default function SelectFileStep({ onDismiss, onFileSelected }: CommonProp
             <p>Things to know:</p>
             <ul>
                 <li>Your custom sound will replace the <strong>Foghorn</strong> or <strong>Ping</strong> bell sound</li>
-                <li>The sound should be 10 seconds or less</li>
+                <li>The sound should be 10 seconds or less for the best quality</li>
                 <li>Keep this device close to your bike for the duration of the upload</li>
             </ul>
 
-            <input type="file" accept="audio/*" onChange={fileInputChanged} ref={fileInput} />
+            <input type="file" onChange={fileInputChanged} ref={fileInput} />
             <WalkthroughButton onClick={selectFile} isPrimary>Select Sound File</WalkthroughButton>
             <WalkthroughButton onClick={onDismiss}>Cancel</WalkthroughButton>
 
