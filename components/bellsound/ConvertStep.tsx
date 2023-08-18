@@ -8,9 +8,10 @@ import WalkthroughButton from "./WalkthroughButton"
 
 const globalFfmpeg = new FFmpeg()
 
-export default function ConvertStep({ onDismiss, selectedFile, onConversionCompleted }: CommonProps & {
+export default function ConvertStep({ onDismiss, selectedFile, onConversionCompleted, onError }: CommonProps & {
     selectedFile: File,
     onConversionCompleted: (convertedFile: Uint8Array) => void,
+    onError: (error: string) => void,
 }) {
     const [ffmpegLog, setFfmpegLog] = useState<string>("")
     const [showLog, setShowLog] = useState<boolean>(false)
@@ -104,12 +105,24 @@ export default function ConvertStep({ onDismiss, selectedFile, onConversionCompl
 
         log("Converting file...")
         const ffmpegArgs = `-acodec pcm_s16le -ac 1 -ar ${bestSampleRate} -map_metadata -1 -fflags +bitexact`.split(" ")
-        await ffmpeg.exec(["-i", selectedFile.name, ...ffmpegArgs, "output.wav"])
+        const exitCode = await ffmpeg.exec(["-i", selectedFile.name, ...ffmpegArgs, "output.wav"])
+
+        if (exitCode !== 0) {
+            onError("There was an error converting your file. Please select a different one. Standard formats like MP3 or WAV work best.")
+            setConverting(false)
+            return
+        }
 
         const convertedFile = await ffmpeg.readFile("output.wav", "binary") as Uint8Array
 
         log("Applying VanMoof sound header...")
         const fileWithHeader = applyHeader(convertedFile)
+
+        if (fileWithHeader.byteLength > 400_000) {
+            onError("The converted file is too large. Please select a shorter sound.")
+            setConverting(false)
+            return
+        }
 
         onConversionCompleted(fileWithHeader)
 
