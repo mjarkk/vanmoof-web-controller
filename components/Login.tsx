@@ -5,9 +5,10 @@ import { Callout, CalloutKind } from './Callouts'
 import { Button } from './Button'
 import { FormError } from './Form'
 import { P } from './Spacing'
+import { z } from 'zod'
 
 export interface BikeAndApiCredentials {
-    api: Api,
+    api: Api | undefined,
     bikes: Array<BikeCredentials>,
 }
 
@@ -22,6 +23,8 @@ export default function Login({ setCredentials }: LoginArgs) {
         email: '',
         password: '',
     })
+
+    const [loginMethod, setLoginMethod] = useState<'email' | 'file'>('email')
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -53,39 +56,148 @@ export default function Login({ setCredentials }: LoginArgs) {
         }
     }
 
+    const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault()
+        try {
+            setLoading(true)
+            const file = event.target.files?.[0]
+            if (!file) {
+                throw new Error('No file selected')
+            }
+            const reader = new FileReader()
+            reader.readAsText(file)
+            reader.onload = async () => {
+                // Check if the file is valid JSON
+                try {
+                    JSON.parse(reader.result as string)
+                }
+                catch (e) {
+                    throw new Error('Invalid JSON file')
+                }
+
+                let json = JSON.parse(reader.result as string)
+
+                // Check if we have a full response or just the bikeDetails
+                // Get rid of the extra data if we have a full response
+                if (json.data?.bikeDetails) {
+                    json = json.data.bikeDetails
+                }
+
+                // Check if everyting is in the right place
+                // If not, try to fix it
+                if (Array.isArray(json)) {
+                    json.forEach((bike: any) => {
+                        if (bike.macAddress) {
+                            bike.mac = bike.macAddress
+                        }
+
+                        if (bike.key?.encryptionKey) {
+                            bike.encryptionKey = bike.key.encryptionKey
+                        }
+
+                        if (bike.key?.userKeyId) {
+                            bike.userKeyId = bike.key.userKeyId
+                        }
+                    })
+                }
+
+                // Now check with zod if the array contains valid BikeCredentials            
+                const checkedArray = z.array(z.object({
+                    id: z.union([z.string(), z.number()]),
+                    mac: z.string(),
+                    encryptionKey: z.string(),
+                    userKeyId: z.number(),
+                    name: z.string(),
+                    ownerName: z.string(),
+                    modelColor: z.nullable(z.object({
+                        name: z.string(),
+                        primary: z.string(),
+                        secondary: z.string(),
+                    })),
+                    links: z.nullable(z.object({
+                        hash: z.string(),
+                        thumbnail: z.string(),
+                    })),
+                })).parse(json)
+
+                // Save it as an array of BikeCredentials
+                const bikes = checkedArray as Array<BikeCredentials>
+
+                // Store the credentials in local storage
+                localStorage.setItem('vm-bike-credentials', JSON.stringify(bikes))
+
+                // Disable api functionality because we don't have the api credentials
+                setCredentials({ bikes, api: undefined })
+            }
+        } catch (e) {
+            setError(`${e}`)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onFileClick = () => {
+        setLoginMethod('file')
+    }
+
     return (
-        <form className='loginForm' onSubmit={onSubmit}>
-            <Callout kind={CalloutKind.Warning}>This website is <b>NOT</b> an offical VanMoof service/product</Callout>
-            <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
-            Login using your VanMoof account
-            <div className='formField'>
-                <label htmlFor="email">Email</label>
+        <div className='loginContainer'>
+            <form className='loginForm' onSubmit={onSubmit} style={{ display: loginMethod === 'email' ? 'block' : 'none' }}>
+                <Callout kind={CalloutKind.Warning}>This website is <b>NOT</b> an offical VanMoof service/product</Callout>
+                <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
+                Login using your VanMoof account
+                <div className='formField'>
+                    <label htmlFor="email">Email</label>
+                    <input
+                        disabled={loading}
+                        id="email"
+                        value={login.email}
+                        onChange={e => setLogin(v => ({ ...v, email: e.target.value }))}
+                        placeholder="example@example.com"
+                    />
+                </div>
+                <div className='formField'>
+                    <label htmlFor='password'>Password</label>
+                    <input
+                        disabled={loading}
+                        id="password"
+                        value={login.password}
+                        onChange={e => setLogin(v => ({ ...v, password: e.target.value }))}
+                        type="password"
+                        placeholder="********"
+                    />
+                </div>
+                <div className='loginBtn'>
+                    <P top={20}>
+                        <Button
+                            disabled={loading}
+                            type='submit'
+                        >Login</Button>
+                    </P>
+                </div>
+                <FormError error={error} />
+            </form>
+            <div className='loginMethod'>
+                {/* Have text with like login using a file which is clickable looks like link and when u click it you can instantly select a file and u will be logged in with it*/}
+                <label htmlFor='file' style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={onFileClick}>Login using a file</label>
                 <input
                     disabled={loading}
-                    id="email"
-                    value={login.email}
-                    onChange={e => setLogin(v => ({ ...v, email: e.target.value }))}
-                    placeholder="example@example.com"
+                    id='file'
+                    type='file'
+                    onChange={onFileChange}
+                    style={{ display: 'none' }}
+                    accept='.json,.txt'
                 />
+
             </div>
-            <div className='formField'>
-                <label htmlFor='password'>Password</label>
-                <input
-                    disabled={loading}
-                    id="password"
-                    value={login.password}
-                    onChange={e => setLogin(v => ({ ...v, password: e.target.value }))}
-                    type="password"
-                />
-            </div>
-            <P top={20}>
-                <Button
-                    disabled={loading || !login.email || !login.password}
-                    type='submit'
-                >Login</Button>
-            </P>
-            <FormError error={error} />
             <style jsx>{`
+                .loginContainer {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+
                 .loginForm {
                     display: flex;
                     flex-direction: column;
@@ -95,7 +207,6 @@ export default function Login({ setCredentials }: LoginArgs) {
 
                 .formField {
                     max-width: 100%;
-                    width: 260px;
                     margin-top: 15px;
                 }
 
@@ -124,7 +235,24 @@ export default function Login({ setCredentials }: LoginArgs) {
                     background-color: rgba(0, 0, 0, .07);
                     color: var(--disabled-text-color);
                 }
+
+                .loginMethod {
+                    margin-top: 20px;
+                }
+
+                .loginMethod label {
+                    margin-right: 20px;
+                }
+
+                .loginBtn {
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .loginBtn > button {
+                    width: 100%;
+                }
             `}</style>
-        </form>
+        </div>
     )
 }

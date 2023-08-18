@@ -34,15 +34,15 @@ const Home: NextPage = () => {
 
     const apiCredential = localStorage.getItem('vm-api-credentials')
     const rawBikeCredentials = localStorage.getItem('vm-bike-credentials')
-    if (apiCredential && rawBikeCredentials) {
+    if (rawBikeCredentials) {
       try {
-        const apiCredentials = JSON.parse(apiCredential)
+        const apiCredentials = apiCredential ? JSON.parse(apiCredential) : undefined
         const parsedBikeCredentials = JSON.parse(rawBikeCredentials)
 
         if (!Array.isArray(parsedBikeCredentials))
           throw 'old bike credentials format'
 
-        const parsedApi = new Api(apiCredentials)
+        const parsedApi = apiCredentials ? new Api(apiCredentials) : undefined
 
         setCredentials({
           api: parsedApi,

@@ -15,6 +15,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [showWakeupMessage, setShowWakeupMessage] = useState(false)
+    const [ShowBackupKey, setShowBackupKey] = useState(false)
 
     const clickConnect = async (credentials: BikeCredentials) => {
         let reachedAuth = false
@@ -35,7 +36,7 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
             setBikeInstance(bike)
         } catch (e) {
             const eStr = `${e}`
-            // eStr = 2 if you cancled the bluetooth connection screen on the Bluefy browser
+            // eStr = 2 if you canceled the bluetooth connection screen on the Bluefy browser
             if (eStr != '2' && !/permission|cancelled/.test(eStr)) setError(eStr)
             if (reachedAuth) setShowWakeupMessage(true)
         } finally {
@@ -47,6 +48,19 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
         if (bikeCredentials.length === 1)
             clickConnect(bikeCredentials[0])
     }, [])
+
+    const parsedCredentials = JSON.stringify(bikeCredentials, null, 2)
+
+    const handleCopy = () => navigator.clipboard.writeText(parsedCredentials)
+
+    const handleDownload = () => {
+        const element = document.createElement('a')
+        const file = new Blob([parsedCredentials], { type: 'text/plain' })
+        element.href = URL.createObjectURL(file)
+        element.download = 'vm-bike-credentials.json'
+        document.body.appendChild(element)
+        element.click()
+    }
 
     return (
         <>
@@ -70,6 +84,42 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                     Back to login
                 </Button>
             </P>
+
+            {/* If Backup button pressed hide it */}
+            {!ShowBackupKey && (
+                <P vertical={10}>
+                    <Button
+                        onClick={() => setShowBackupKey(true)}
+                        secondary
+                    >
+                        Backup login credentials
+                    </Button>
+                </P>
+            )}
+
+            {/* If Backup button pressed show the key */}
+            {ShowBackupKey && (
+                <>
+                    {/* Copy button */}
+                    <Button onClick={handleCopy} secondary>
+                        Copy credentials to clipboard
+                    </Button>
+
+                    <P vertical={10}>
+                        {/* Download button */}
+                        <Button onClick={handleDownload} secondary>
+                            Download credentials as file
+                        </Button>
+                    </P>
+
+                    {/* Show the key */}
+                    <textarea
+                        readOnly
+                        value={parsedCredentials}
+                        style={{ width: '85%', height: '200px', fontSize: '0.5rem' }}
+                    />
+                </>
+            )}
         </>
     )
 }
