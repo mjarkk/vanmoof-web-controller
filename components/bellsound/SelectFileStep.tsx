@@ -21,7 +21,7 @@ export default function SelectFileStep({ onDismiss, onFileSelected }: CommonProp
                 <li>Keep this device close to your bike for the duration of the upload</li>
             </ul>
 
-            <input type="file" onChange={fileInputChanged} ref={fileInput} />
+            <input type="file" accept="audio/*,video/*,.mp3,.wav,.aac,.aiff,.flac,.m4a,.ogg,.opus,.wma" onChange={fileInputChanged} ref={fileInput} />
             <WalkthroughButton onClick={selectFile} isPrimary>Select Sound File</WalkthroughButton>
             <WalkthroughButton onClick={onDismiss}>Cancel</WalkthroughButton>
 
