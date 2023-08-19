@@ -6,6 +6,7 @@ import { Button } from './Button'
 import { Api, ApiContext } from '../lib/api'
 import { CurrentShares } from './sharing/CurrentShares'
 import { compareVersions } from 'compare-versions'
+import BellSoundWalkthrough from "./bellsound/BellSoundWalkthrough"
 
 export interface BikeControlsArgs {
     bike: Bike
@@ -156,6 +157,7 @@ function SetSpeedLimitButton({ country, maxSpeed, selected, select }: SetSpeedLi
 
 function BellTone({ bike }: { bike: Bike }) {
     const [currentTone, setCurrentTone] = useState<BellToneEnum | undefined>(undefined)
+    const [showBellSoundWalkthrough, setShowBellSoundWalkthrough] = useState(false)
 
     useEffect(() => { bike.getBellTone().then(setCurrentTone) }, [])
 
@@ -170,8 +172,17 @@ function BellTone({ bike }: { bike: Bike }) {
         setCurrentTone(await bike.setBellTone(tone))
     }
 
+    const toggleBellSoundWalkthrough = () => setShowBellSoundWalkthrough(!showBellSoundWalkthrough)
+
+    const bellSoundWalkthrough = showBellSoundWalkthrough ? (
+        <BellSoundWalkthrough
+            bike={bike}
+            onDismiss={toggleBellSoundWalkthrough} />
+    ) : null
+
     return (
         <>
+            {bellSoundWalkthrough}
             <div className='toneList'>
                 <h3>Bell tone</h3>
                 <div className='tone'>
@@ -184,6 +195,12 @@ function BellTone({ bike }: { bike: Bike }) {
                             onSelect={() => setNewTone(id)}
                         />
                     )}
+                    <SetBellToneButton
+                        icon="✨"
+                        label="Custom"
+                        selected={false}
+                        onSelect={() => toggleBellSoundWalkthrough()}
+                    />
                 </div>
             </div>
 
