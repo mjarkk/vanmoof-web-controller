@@ -22,6 +22,7 @@ A web app for changing the speed limit of your VanMoof S3 and X3.
 - Share your bike to someone using their email.
 - Show a list of people you are currently sharing your bike with and a button to stop sharing.
 - Set your bell tone (Bell, Submarine, Sonar, Party & Foghorn)
+- Upload your own custom bell (will replace the Foghorn/Ping bell)
 
 ### Want to help?
 
@@ -29,7 +30,7 @@ Here are some things you can do to help!
 
 - [Confirm v1.8.**2** still works](https://github.com/mjarkk/vanmoof-web-controller/issues/22) (v1.8.**1** has been confirmed to work already!)
 - Help reverse engineer how the refresh token works for the VanMoof API
-- Hackin support for older bikes
+- Hackin support for older/newer bikes
 - Help with finding out what is send from / to the bike over bluetooth and having a good workflow for doing this
 
 ### Development
