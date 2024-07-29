@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { MaterialCloseRounded } from "./icons/MaterialCloseRounded";
 import { ReactNode } from "react";
+import { Button } from "./Button";
 
 export interface ModalProps {
     open: boolean
@@ -16,9 +17,13 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         <div className="modal">
             <div className="header">
                 <h2>{title}</h2>
-                {/* <MaterialCloseRounded onClick={onClose} /> */}
+                <button onClick={onClose}>
+                    <MaterialCloseRounded />
+                </button>
             </div>
-            {children}
+            <div className="content">
+                {children}
+            </div>
         </div>
         <style jsx>{`
             .modalContainer {
@@ -36,14 +41,59 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
                 background-color: var(--main-bg-color);
                 border: 2px solid var(--divider-color);
                 color: var(--text-color);
-                padding: 20px;
                 width: 400px;
                 max-width: 100%;
                 max-height: 100%;
             }
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 2px solid var(--divider-color);
+            }
             .header h2 {
                 margin: 0;
             }
+            .header button {
+                background: transparent;
+                border: none;
+                padding: 0;
+                cursor: pointer;
+            }
+            .content {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
         `}</style>
     </div>, document.querySelector('#modals')!)
+}
+
+export interface ModalConfirmOrDecline {
+    onCancel: () => void
+    onConfirm?: () => void
+    confirmIsSubmit?: boolean
+    disableConfirm?: boolean
+    confirmText: string
+}
+
+export function ModalConfirmOrDecline({ onCancel, onConfirm, confirmIsSubmit, disableConfirm, confirmText }: ModalConfirmOrDecline) {
+    const styleOpts = { width: 'auto', flex: '1' }
+
+    return <div className="buttons">
+        <Button style={styleOpts} type="button" secondary onClick={onCancel}>Cancel</Button>
+        <Button style={styleOpts} type={confirmIsSubmit ? "submit" : "button"} disabled={disableConfirm} onClick={onConfirm}>{confirmText}</Button>
+        <style jsx>{`
+            .buttons {
+                margin-top: 20px;
+                display: flex;
+                width: 100%;
+                gap: 20px;
+            }
+        `}</style>
+    </div>
 }

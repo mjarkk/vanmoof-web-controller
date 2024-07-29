@@ -2,6 +2,7 @@ import { FormEvent, useMemo, useState } from "react"
 import { Button } from "./Button"
 import { Input } from "./Input"
 import { BikeCredentials } from "../lib/bike"
+import { Modal, ModalConfirmOrDecline } from "./Modal"
 
 interface AddBikeProps {
     updated: (credentials: Array<BikeCredentials>) => void
@@ -68,9 +69,13 @@ export function AddBike({ updated }: AddBikeProps) {
         updated(bikes)
     }
 
-    return <form className='addNewBike' onSubmit={addCreds}>
-        {showAddBike ?
-            <>
+    return <div>
+        <Modal
+            open={showAddBike}
+            onClose={() => setShowAddBike(false)}
+            title="Add a new bike"
+        >
+            <form className='addNewBike' onSubmit={addCreds}>
                 <Input
                     id='name'
                     label="Bike name"
@@ -82,9 +87,9 @@ export function AddBike({ updated }: AddBikeProps) {
                     id='mac'
                     label="MAC address"
                     value={mac}
-                    onChange={setMac}
+                    onChange={v => setMac(v.toUpperCase())}
                     placeholder='FF:FF:FF:FF:FF:FF'
-                    error={invalidMac ? 'Invalid MAC address must be in format FF:FF:FF:FF:FF:FF' : undefined}
+                    error={invalidMac && mac.length !== 0 ? 'Invalid MAC address must be in format FF:FF:FF:FF:FF:FF' : undefined}
                 />
                 <Input
                     id='encryptionKey'
@@ -93,17 +98,27 @@ export function AddBike({ updated }: AddBikeProps) {
                     onChange={setEncryptionKey}
                     placeholder='aabbcc'
                 />
-                <div className="buttons">
-                    <Button style={{ width: 'auto', flex: '1' }} type='button' secondary onClick={() => setShowAddBike(false)}>Back</Button>
-                    <Button style={{ width: 'auto', flex: '1' }} type="submit" disabled={!canSubmit}>Add</Button>
-                </div>
-            </> : <>
-                <Button onClick={() => setShowAddBike(true)}>Add a bike</Button>
-            </>}
+                <ModalConfirmOrDecline
+                    onCancel={() => setShowAddBike(false)}
+                    confirmIsSubmit
+                    disableConfirm={!canSubmit}
+                    confirmText="Add"
+                />
+            </form>
+        </Modal>
+        <div className="center">
+            <Button onClick={() => setShowAddBike(true)}>Add a bike</Button>
+        </div>
         <style jsx>{`
             .addNewBike {
-                margin-top: 20px;
                 margin-bottom: 20px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .center {
                 text-align: center;
                 display: flex;
                 flex-direction: column;
@@ -117,5 +132,5 @@ export function AddBike({ updated }: AddBikeProps) {
                 gap: 20px;
             }
         `}</style>
-    </form>
+    </div>
 }

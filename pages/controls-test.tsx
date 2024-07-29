@@ -119,6 +119,9 @@ export default function ControlsTest() {
         }
     }, [])
 
+    const deleteCredentials = (idx: number) =>
+        setCredentials(v => ({ api: v.api, bikes: credentials.bikes.filter((_, i) => idx !== i) }))
+
     return (
         <div>
             <h1>Page for testing the bike controls</h1>
@@ -132,6 +135,7 @@ export default function ControlsTest() {
                 : <BikeSelector
                     options={credentials.bikes}
                     onSelect={bike => setFakeBike(new FakeBike(bike))}
+                    onDelete={deleteCredentials}
                 />
             }
 

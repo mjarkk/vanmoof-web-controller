@@ -45,6 +45,12 @@ export default function BluetoothConnect({ bikeCredentials, updateBikeCredential
         }
     }
 
+    const deleteBike = (idx: number) => {
+        const newBikes = bikeCredentials.filter((_, i) => i !== idx)
+        localStorage.setItem('vm-bike-credentials', JSON.stringify(newBikes))
+        updateBikeCredentials(newBikes)
+    }
+
     useEffect(() => {
         if (bikeCredentials.length === 1)
             clickConnect(bikeCredentials[0])
@@ -58,6 +64,7 @@ export default function BluetoothConnect({ bikeCredentials, updateBikeCredential
                     : <BikeSelector
                         options={bikeCredentials}
                         onSelect={credentials => clickConnect(credentials)}
+                        onDelete={(idx) => deleteBike(idx)}
                     />
                 }
             </P>
