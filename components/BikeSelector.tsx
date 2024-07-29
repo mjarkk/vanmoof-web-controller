@@ -1,40 +1,21 @@
 import { BikeCredentials } from '../lib/bike'
 import { Button } from './Button'
+import { MaterialMoreVert } from './icons/MaterialMoreVert'
 
 interface BikeSelectorProps {
     options: Array<BikeCredentials>
     onSelect: (option: BikeCredentials, idx: number) => void
-    title: string
 }
 
-export function BikeSelector({ options, onSelect, title }: BikeSelectorProps) {
+export function BikeSelector({ options, onSelect }: BikeSelectorProps) {
     return (
         <div>
-            <h2>{title}</h2>
+            <h2>Select a bike to connect with</h2>
             <div className='bikes'>
                 {options.map((bike, idx) =>
-                    <Button
-                        key={idx}
-                        style={{ padding: 0, margin: 10 }}
-                        onClick={() => onSelect(bike, idx)}
-                    >
-                        <div
-                            className='previewImage'
-                            style={bike.links
-                                ? { backgroundImage: `url('${bike.links.thumbnail}')` }
-                                : undefined
-                            }
-                        />
-                        <div className='detials'>
-                            <h3>{bike.name}</h3>
-                            <p>{bike.ownerName}</p>
-                            <div className='meta'>
-                                <p><span>id</span>{bike.id}</p>
-                                <p><span>mac</span>{bike.mac}</p>
-                            </div>
-                        </div>
-                    </Button>
+                    <Bike key={idx} bike={bike} onSelect={() => onSelect(bike, idx)} />
                 )}
+                {options.length === 0 && <p className='noBikes'>No bikes found</p>}
             </div>
             <style jsx>{`
                 h2 {
@@ -45,6 +26,10 @@ export function BikeSelector({ options, onSelect, title }: BikeSelectorProps) {
                     flex-wrap: wrap;
                     justify-content: center;
                 }
+                .noBikes {
+                    text-align: center;
+                    color: var(--label-color)
+                }
                 .previewImage {
                     height: 150px;
                     background-position: center;
@@ -52,11 +37,15 @@ export function BikeSelector({ options, onSelect, title }: BikeSelectorProps) {
                     background-repeat: no-repeat;
                     background-color: white;
                 }
+                .detialsAndOptions {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 20px;
+                }
                 .detials {
                     display: flex;
                     align-items: flex-start;
                     flex-direction: column;
-                    padding: 20px;
                 }
                 .detials p {
                     margin: 0;
@@ -76,6 +65,43 @@ export function BikeSelector({ options, onSelect, title }: BikeSelectorProps) {
                     content: ': ';
                 }
             `}</style>
-        </div>
+        </div >
     )
+}
+
+export interface BikeProps {
+    bike: BikeCredentials
+    onSelect: () => void
+}
+
+function Bike({ bike, onSelect }: BikeProps) {
+    return <Button
+        style={{ padding: 0, margin: 10 }}
+        onClick={() => onSelect()}
+    >
+        {bike.links ?
+            <div
+                className='previewImage'
+                style={{ backgroundImage: `url('${bike.links.thumbnail}')` }}
+            />
+            : undefined}
+        <div className='detialsAndOptions'>
+            <div className='detials'>
+                <h3>{bike.name}</h3>
+                {bike.ownerName && <p>{bike.ownerName}</p>}
+                <div className='meta'>
+                    {bike.id &&
+                        <p><span>id</span>{bike.id}</p>
+                    }
+                    <p><span>mac</span>{bike.mac}</p>
+                </div>
+            </div>
+            <div className='options'>
+                {/* <MaterialMoreVert size={22} /> */}
+            </div>
+        </div>
+        <style jsx>{`
+
+        `}</style>
+    </Button>
 }

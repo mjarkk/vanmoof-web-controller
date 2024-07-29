@@ -1,13 +1,14 @@
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, MouseEventHandler } from 'react'
 import type { BikeCredentials } from '../lib/bike'
 import { Api, API_KEY } from '../lib/api'
 import { Callout, CalloutKind } from './Callouts'
 import { Button } from './Button'
 import { FormError } from './Form'
 import { P } from './Spacing'
+import { Input } from './Input'
 
 export interface BikeAndApiCredentials {
-    api: Api,
+    api: Api | undefined,
     bikes: Array<BikeCredentials>,
 }
 
@@ -53,37 +54,54 @@ export default function Login({ setCredentials }: LoginArgs) {
         }
     }
 
+    const loginWithoutAccount: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.preventDefault()
+
+        let bikes = []
+        try {
+            const storedCredentials = localStorage.getItem('vm-bike-credentials') ?? ''
+            const prevCredentials = JSON.parse(storedCredentials)
+            if (Array.isArray(prevCredentials)) {
+                bikes = prevCredentials
+            }
+        } catch (e) {
+            // Ignore
+        }
+
+        localStorage.setItem('vm-bike-credentials', JSON.stringify(bikes))
+
+        setCredentials({ bikes, api: undefined })
+    }
+
     return (
         <form className='loginForm' onSubmit={onSubmit}>
             <Callout kind={CalloutKind.Warning}>This website is <b>NOT</b> an offical VanMoof service/product</Callout>
             <Callout kind={CalloutKind.Warning}>Changing your speed limit might cause you to drive faster than the laws allow you to in your country</Callout>
             Login using your VanMoof account
-            <div className='formField'>
-                <label htmlFor="email">Email</label>
-                <input
-                    disabled={loading}
-                    id="email"
-                    value={login.email}
-                    onChange={e => setLogin(v => ({ ...v, email: e.target.value }))}
-                    placeholder="example@example.com"
-                />
-            </div>
-            <div className='formField'>
-                <label htmlFor='password'>Password</label>
-                <input
-                    disabled={loading}
-                    id="password"
-                    value={login.password}
-                    onChange={e => setLogin(v => ({ ...v, password: e.target.value }))}
-                    type="password"
-                />
-            </div>
-            <P top={20}>
+            <Input
+                disabled={loading}
+                id="email"
+                value={login.email}
+                onChange={email => setLogin(v => ({ ...v, email }))}
+                placeholder="example@example.com"
+            />
+            <Input
+                disabled={loading}
+                id="password"
+                value={login.password}
+                onChange={password => setLogin(v => ({ ...v, password }))}
+                type="password"
+            />
+            <P vertical={20}>
                 <Button
                     disabled={loading || !login.email || !login.password}
                     type='submit'
                 >Login</Button>
             </P>
+            Or manually add bike credentials
+            < P top={20} >
+                <Button onClick={loginWithoutAccount}>Login without a account</Button>
+            </P >
             <FormError error={error} />
             <style jsx>{`
                 .loginForm {
@@ -125,6 +143,6 @@ export default function Login({ setCredentials }: LoginArgs) {
                     color: var(--disabled-text-color);
                 }
             `}</style>
-        </form>
+        </form >
     )
 }

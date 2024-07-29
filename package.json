@@ -9,22 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "^0.12.4",
-    "@ffmpeg/util": "^0.12.0",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "compare-versions": "^5.0.1",
     "crc-32": "^1.2.2",
     "next": "12.2.0",
     "next-pwa": "^5.5.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "ua-parser-js": "^1.0.2"
+    "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
     "@types/node": "18.0.1",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
-    "@types/ua-parser-js": "^0.7.36",
-    "@types/web-bluetooth": "^0.0.14",
+    "@types/ua-parser-js": "^0.7.39",
+    "@types/web-bluetooth": "^0.0.20",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.0",
     "typescript": "^4.9.5"

@@ -4,14 +4,16 @@ import { Button } from './Button'
 import { FormError, FormHint } from './Form'
 import { P } from './Spacing'
 import { BikeSelector } from './BikeSelector'
+import { AddBike } from './AddBike'
 
 interface BluetoothConnectArgs {
     bikeCredentials: Array<BikeCredentials>
+    updateBikeCredentials: (credentials: Array<BikeCredentials>) => void
     backToLogin: () => void
     setBikeInstance: (bike: Bike) => void,
 }
 
-export default function BluetoothConnect({ bikeCredentials, setBikeInstance, backToLogin }: BluetoothConnectArgs) {
+export default function BluetoothConnect({ bikeCredentials, updateBikeCredentials, setBikeInstance, backToLogin }: BluetoothConnectArgs) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
     const [showWakeupMessage, setShowWakeupMessage] = useState(false)
@@ -56,12 +58,12 @@ export default function BluetoothConnect({ bikeCredentials, setBikeInstance, bac
                     : <BikeSelector
                         options={bikeCredentials}
                         onSelect={credentials => clickConnect(credentials)}
-                        title={'Select a bike to connect with'}
                     />
                 }
             </P>
             <FormError error={error} />
             <FormHint hint={showWakeupMessage ? 'You might need to wake the bike before you can connect' : undefined} />
+            <AddBike updated={updateBikeCredentials} />
             <P vertical={10}>
                 <Button
                     onClick={backToLogin}

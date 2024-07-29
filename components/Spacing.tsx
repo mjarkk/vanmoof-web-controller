@@ -10,6 +10,7 @@ interface PDefaultProps {
     horizontal?: number | string
     left?: number | string
     right?: number | string
+    style?: CSSProperties
 }
 
 function addunit(n: number | string | undefined): undefined | string {
@@ -27,14 +28,16 @@ export function P({
     bottom,
     horizontal,
     left,
-    right
+    right,
+    style,
 }: PDefaultProps) {
-    const style: CSSProperties = {
+    const divStyle: CSSProperties = {
         paddingTop: addunit(top ?? vertical ?? all),
         paddingRight: addunit(right ?? horizontal ?? all),
         paddingBottom: addunit(bottom ?? vertical ?? all),
         paddingLeft: addunit(left ?? horizontal ?? all),
         display: block ? 'block' : 'inline-block',
+        ...(style ?? {}),
     }
-    return <div style={style}>{children}</div>
+    return <div style={divStyle}>{children}</div>
 }
