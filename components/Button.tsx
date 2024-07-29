@@ -10,7 +10,7 @@ interface ButtonProps {
     type?: 'submit' | 'reset' | 'button'
 }
 
-export function Button({ children, onClick, disabled, positive, secondary, style, type }: ButtonProps) {
+export function Button({ children, onClick, disabled, positive, secondary, ghost, style, type }: ButtonProps) {
     const classNames = [
         positive ? 'postive' : undefined,
         secondary ? 'secondary' : undefined,

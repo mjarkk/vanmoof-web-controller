@@ -1,6 +1,8 @@
+import { MouseEventHandler, useState } from 'react'
 import { BikeCredentials } from '../lib/bike'
 import { Button } from './Button'
 import { MaterialMoreVert } from './icons/MaterialMoreVert'
+import { Modal } from './Modal'
 
 interface BikeSelectorProps {
     options: Array<BikeCredentials>
@@ -37,33 +39,6 @@ export function BikeSelector({ options, onSelect }: BikeSelectorProps) {
                     background-repeat: no-repeat;
                     background-color: white;
                 }
-                .detialsAndOptions {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 20px;
-                }
-                .detials {
-                    display: flex;
-                    align-items: flex-start;
-                    flex-direction: column;
-                }
-                .detials p {
-                    margin: 0;
-                }
-                .detials h3 {
-                    margin: 1px 0;
-                }
-                .detials .meta {
-                    font-size: 0.7rem;
-                    color: var(--label-color);
-                    padding-top: 10px;
-                    display: flex;
-                    align-items: flex-start;
-                    flex-direction: column;
-                }
-                .detials .meta span::after {
-                    content: ': ';
-                }
             `}</style>
         </div >
     )
@@ -75,6 +50,14 @@ export interface BikeProps {
 }
 
 function Bike({ bike, onSelect }: BikeProps) {
+    const [showOptions, setShowOptions] = useState(false)
+
+    const clickOptions: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowOptions(true)
+    }
+
     return <Button
         style={{ padding: 0, margin: 10 }}
         onClick={() => onSelect()}
@@ -97,11 +80,51 @@ function Bike({ bike, onSelect }: BikeProps) {
                 </div>
             </div>
             <div className='options'>
-                {/* <MaterialMoreVert size={22} /> */}
+                <button className='option' onClick={clickOptions}>
+                    <MaterialMoreVert size={22} />
+                </button>
             </div>
         </div>
+        <Modal open={showOptions} onClose={() => setShowOptions(false)} title='sussy bakka'>
+            hoi
+        </Modal>
         <style jsx>{`
-
+            .detialsAndOptions {
+                display: flex;
+                justify-content: space-between;
+                padding: 20px;
+            }
+            .detials {
+                display: flex;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .detials p {
+                margin: 0;
+            }
+            .detials h3 {
+                margin: 1px 0;
+            }
+            .detials .meta {
+                font-size: 0.7rem;
+                color: var(--label-color);
+                padding-top: 10px;
+                display: flex;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .detials .meta span::after {
+                content: ': ';
+            }
+            .option {
+                background-color: transparent;
+                border: none;
+                height: 44px;
+                width: 44px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         `}</style>
     </Button>
 }

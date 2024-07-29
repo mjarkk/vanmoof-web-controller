@@ -13,6 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <meta property="og:image" content="https://mooovy.app/screenshot_dark.png" />
     </Head>
     <Component {...pageProps} />
+    <div id="modals" />
   </div>
 }
 
