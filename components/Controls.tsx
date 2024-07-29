@@ -23,9 +23,9 @@ export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs
                 <PowerLevel bike={bike} />
                 <BellTone bike={bike} />
                 <SoundBoard />
-                {api && <>
+                {api && bike.id && <>
                     <ShareBike bike={bike} api={api} />
-                    <CurrentShares bike={bike} api={api} />
+                    <CurrentShares bikeId={bike.id} api={api} />
                 </>}
                 <Button onClick={disconnect} secondary>
                     Disconnect bike

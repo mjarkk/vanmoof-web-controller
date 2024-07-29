@@ -33,7 +33,7 @@ const wait = (timeout: number): Promise<never> =>
 
 export class Bike {
     mac: string
-    id: string | number
+    id: string | number | undefined
     server: BluetoothRemoteGATTServer
     encryptionKey: string
     userKeyId: number

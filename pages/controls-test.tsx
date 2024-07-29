@@ -6,7 +6,7 @@ import { BikeSelector } from '../components/BikeSelector'
 import type { BikeAndApiCredentials } from '../components/Login'
 
 class FakeBike {
-    id: string
+    id: string | undefined
     mac: string
     private speedLimit = SpeedLimit.EU
     private powerLevel = PowerLevel.Fourth
