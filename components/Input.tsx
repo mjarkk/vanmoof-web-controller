@@ -7,9 +7,11 @@ export interface InputProps {
     onChange?: (value: string) => void
     placeholder?: string
     error?: string
+    min?: number
+    max?: number
 }
 
-export function Input({ id, label, disabled, value, type, onChange, placeholder, error }: InputProps) {
+export function Input({ id, label, disabled, value, type, onChange, placeholder, error, min, max }: InputProps) {
     return <div className='formField'>
         {label &&
             <label htmlFor={id}>{label}</label>
@@ -21,6 +23,8 @@ export function Input({ id, label, disabled, value, type, onChange, placeholder,
             type={type}
             onChange={onChange ? (e => onChange(e.target.value)) : undefined}
             placeholder={placeholder}
+            min={min}
+            max={max}
         />
         {error &&
             <p className="errorMsg">{error}</p>
