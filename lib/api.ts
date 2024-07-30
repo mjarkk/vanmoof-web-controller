@@ -135,4 +135,4 @@ export class Api {
 
 }
 
-export const ApiContext = createContext<Api>(new Api({ token: 'dummy', refreshToken: 'dummy' }))
+export const ApiContext = createContext<Api|undefined>(undefined)

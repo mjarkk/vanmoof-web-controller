@@ -6,7 +6,7 @@ import { BikeSelector } from '../components/BikeSelector'
 import type { BikeAndApiCredentials } from '../components/Login'
 
 class FakeBike {
-    id: string
+    id: string | undefined
     mac: string
     private speedLimit = SpeedLimit.EU
     private powerLevel = PowerLevel.Fourth
@@ -17,7 +17,7 @@ class FakeBike {
         this.id = credentials.id
         this.mac = credentials.mac
     }
-    
+
     async batteryChargingLevel() {
         return 100
     }
@@ -28,8 +28,8 @@ class FakeBike {
 
     async sendBellSoundChunk(chunk: Uint8Array) {
         console.log('sendBellSoundChunk', chunk)
-    }   
-    
+    }
+
     async bikeFirmwareVersion() {
         return this.firmwareVersion
     }
@@ -119,6 +119,9 @@ export default function ControlsTest() {
         }
     }, [])
 
+    const deleteCredentials = (idx: number) =>
+        setCredentials(v => ({ api: v.api, bikes: credentials.bikes.filter((_, i) => idx !== i) }))
+
     return (
         <div>
             <h1>Page for testing the bike controls</h1>
@@ -132,7 +135,7 @@ export default function ControlsTest() {
                 : <BikeSelector
                     options={credentials.bikes}
                     onSelect={bike => setFakeBike(new FakeBike(bike))}
-                    title='Select a bike'
+                    onDelete={deleteCredentials}
                 />
             }
 

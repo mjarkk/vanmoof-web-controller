@@ -1,10 +1,9 @@
-import { Bike } from '../../lib/bike'
 import type { Api, BikeShareEntry } from '../../lib/api'
 import { useState, FormEvent } from 'react'
 import { FormError } from '../Form'
 import { Button } from '../Button'
 
-export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
+export function CurrentShares({ bikeId, api }: { bikeId: string | number, api: Api }) {
     const [shares, setShares] = useState<Array<BikeShareEntry>>()
     const [error, setError] = useState<string | undefined>(undefined)
 
@@ -12,7 +11,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
         try {
             setError(undefined)
             setShares(undefined)
-            const shares = await api.getCurrentShares(bike.id)
+            const shares = await api.getCurrentShares(bikeId)
             setShares(shares)
         } catch (e) {
             setError(`${e}`)
@@ -25,7 +24,7 @@ export function CurrentShares({ bike, api }: { bike: Bike, api: Api }) {
             setError(undefined)
             setShares(undefined)
             await api.removeShareHolder(guid)
-            const shares = await api.getCurrentShares(bike.id)
+            const shares = await api.getCurrentShares(bikeId)
             setShares(shares)
         } catch (e) {
             setError(`${e}`)

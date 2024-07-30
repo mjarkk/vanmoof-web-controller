@@ -1,8 +1,8 @@
-import type { ReactNode, CSSProperties } from "react"
+import type { ReactNode, CSSProperties, MouseEventHandler } from "react"
 
 interface ButtonProps {
     children?: ReactNode
-    onClick?: () => void
+    onClick?: MouseEventHandler<HTMLButtonElement>
     disabled?: boolean
     positive?: boolean
     secondary?: boolean

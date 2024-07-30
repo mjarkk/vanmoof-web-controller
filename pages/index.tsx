@@ -32,20 +32,24 @@ const Home: NextPage = () => {
   useEffect(() => {
     setBrowserCompatible(!!navigator.bluetooth)
 
-    const apiCredential = localStorage.getItem('vm-api-credentials')
     const rawBikeCredentials = localStorage.getItem('vm-bike-credentials')
-    if (apiCredential && rawBikeCredentials) {
+    if (rawBikeCredentials) {
+      let api: Api | undefined = undefined
       try {
-        const apiCredentials = JSON.parse(apiCredential)
+        const apiCredential = localStorage.getItem('vm-api-credentials')
+        api = new Api(JSON.parse(apiCredential ?? ''))
+      } catch (e) {
+        // Ignore
+      }
+
+      try {
         const parsedBikeCredentials = JSON.parse(rawBikeCredentials)
 
         if (!Array.isArray(parsedBikeCredentials))
           throw 'old bike credentials format'
 
-        const parsedApi = new Api(apiCredentials)
-
         setCredentials({
-          api: parsedApi,
+          api,
           bikes: parsedBikeCredentials,
         })
       } catch (e) {
@@ -107,6 +111,7 @@ const Home: NextPage = () => {
               />
               : <BluetoothConnect
                 bikeCredentials={credentials.bikes}
+                updateBikeCredentials={(bikes) => setCredentials(prev => ({ api: prev?.api, bikes }))}
                 setBikeInstance={setBikeInstance}
                 backToLogin={backToLogin}
               />

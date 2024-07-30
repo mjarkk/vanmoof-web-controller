@@ -33,7 +33,7 @@ const wait = (timeout: number): Promise<never> =>
 
 export class Bike {
     mac: string
-    id: string | number
+    id: string | number | undefined
     server: BluetoothRemoteGATTServer
     encryptionKey: string
     userKeyId: number
@@ -214,13 +214,13 @@ export class Bike {
 }
 
 export interface BikeCredentials {
-    id: string
+    id?: string
     mac: string
     encryptionKey: string
     userKeyId: number
 
     name: string
-    ownerName: string
+    ownerName?: string
 
     modelColor: null | {
         name: 'Dark' | string // TODO find out what other colors this can be

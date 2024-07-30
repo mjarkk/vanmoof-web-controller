@@ -10,7 +10,7 @@ import BellSoundWalkthrough from "./bellsound/BellSoundWalkthrough"
 
 export interface BikeControlsArgs {
     bike: Bike
-    api: Api
+    api: Api | undefined
     disconnect: () => void
 }
 
@@ -23,8 +23,10 @@ export default function BikeControls({ bike, api, disconnect }: BikeControlsArgs
                 <PowerLevel bike={bike} />
                 <BellTone bike={bike} />
                 <SoundBoard />
-                <ShareBike bike={bike} api={api} />
-                <CurrentShares bike={bike} api={api} />
+                {api && bike.id && <>
+                    <ShareBike bike={bike} api={api} />
+                    <CurrentShares bikeId={bike.id} api={api} />
+                </>}
                 <Button onClick={disconnect} secondary>
                     Disconnect bike
                 </Button>
